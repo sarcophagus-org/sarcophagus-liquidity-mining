@@ -1,12 +1,30 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { ethers } from 'ethers'
+import { ToastContainer } from 'react-toastify'
+import { Web3ReactProvider, createWeb3ReactRoot } from '@web3-react/core'
 import './index.css'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 
+const Web3ReactProviderInjected = createWeb3ReactRoot("injected")
+
+const getLibraryNetwork = provider => {
+  return new ethers.providers.JsonRpcProvider(provider)
+}
+
+const getLibraryInjected = provider => {
+  return new ethers.providers.Web3Provider(provider)
+}
+
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Web3ReactProvider getLibrary={getLibraryNetwork}>
+      <Web3ReactProviderInjected getLibrary={getLibraryInjected}>
+        <App />
+        <ToastContainer closeButton={false} />
+      </Web3ReactProviderInjected>
+    </Web3ReactProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

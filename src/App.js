@@ -1,9 +1,13 @@
+import Header from './components/Header'
+import Footer from './components/Footer'
+
 const App = () => {
   return (
-    <div className="container">
-      <h1 className="text-center my-8 text-3xl">
-        Sarcophagus Liquidity Mining
-      </h1>
+    <div className="container min-h-screen flex flex-col justify-between">
+      <div>
+        <Header />
+      </div>
+      <Footer />
     </div>
   )
 }
