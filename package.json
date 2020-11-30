@@ -12,6 +12,7 @@
     "web-vitals": "^0.2.4"
   },
   "devDependencies": {
+    "@openzeppelin/contracts": "^3.3.0",
     "truffle": "^5.1.55"
   },
   "scripts": {
