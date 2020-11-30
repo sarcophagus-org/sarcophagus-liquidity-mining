@@ -11,6 +11,9 @@
     "react-scripts": "4.0.1",
     "web-vitals": "^0.2.4"
   },
+  "devDependencies": {
+    "truffle": "^5.1.55"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
