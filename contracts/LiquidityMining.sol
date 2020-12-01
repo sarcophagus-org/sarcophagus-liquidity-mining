@@ -4,16 +4,17 @@ pragma solidity ^0.6.12;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 contract LiquidityMining is Ownable, ReentrancyGuard {
     using SafeMath for uint256;
+    using SafeMath for uint8;
 
-    IERC20 public immutable _usdc;
-    IERC20 public immutable _usdt;
-    IERC20 public immutable _dai;
-    IERC20 public immutable _sarco;
+    ERC20 public immutable _usdc;
+    ERC20 public immutable _usdt;
+    ERC20 public immutable _dai;
+    ERC20 public immutable _sarco;
 
     uint256 public _totalRewards;
     uint256 public _startBlock;
@@ -57,10 +58,10 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         address sarco,
         address owner
     ) public {
-        _usdc = IERC20(usdc);
-        _usdt = IERC20(usdt);
-        _dai = IERC20(dai);
-        _sarco = IERC20(sarco);
+        _usdc = ERC20(usdc);
+        _usdt = ERC20(usdt);
+        _dai = ERC20(dai);
+        _sarco = ERC20(sarco);
 
         transferOwnership(owner);
     }
@@ -134,6 +135,29 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         _;
     }
 
+    function shift(ERC20 token) private view returns (uint8 shifted) {
+        uint8 decimals = token.decimals();
+        shifted = uint8(uint8(18).sub(decimals));
+    }
+
+    function normalize(ERC20 token, uint256 tokenIn)
+        private
+        view
+        returns (uint256 normalized)
+    {
+        uint8 _shift = shift(token);
+        normalized = tokenIn.mul(10**uint256(_shift));
+    }
+
+    function denormalize(ERC20 token, uint256 tokenIn)
+        private
+        view
+        returns (uint256 denormalized)
+    {
+        uint8 _shift = shift(token);
+        denormalized = tokenIn.div(10**uint256(_shift));
+    }
+
     function stake(
         uint256 usdcIn,
         uint256 usdtIn,
@@ -173,7 +197,11 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
             _dai.transferFrom(msg.sender, address(this), daiIn);
         }
 
-        _stake(usdcIn, usdtIn, daiIn);
+        _stake(
+            normalize(_usdc, usdcIn),
+            normalize(_usdt, usdtIn),
+            normalize(_dai, daiIn)
+        );
     }
 
     function withdraw()
@@ -191,15 +219,15 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         emit Withdraw(msg.sender, usdcOut, usdtOut, daiOut, reward);
 
         if (usdcOut > 0) {
-            _usdc.transfer(msg.sender, usdcOut);
+            _usdc.transfer(msg.sender, denormalize(_usdc, usdcOut));
         }
 
         if (usdtOut > 0) {
-            _usdt.transfer(msg.sender, usdtOut);
+            _usdt.transfer(msg.sender, denormalize(_usdt, usdtOut));
         }
 
         if (daiOut > 0) {
-            _dai.transfer(msg.sender, daiOut);
+            _dai.transfer(msg.sender, denormalize(_dai, daiOut));
         }
 
         if (reward > 0) {
