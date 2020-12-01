@@ -20,8 +20,8 @@ const Header = () => {
   }
 
   return (
-    <div className="text-center">
-      <h1 className="my-8 text-5xl">
+    <div className="text-center py-6">
+      <h1 className="mb-3 text-5xl">
         Sarcophagus Liquidity Mining
       </h1>
       <div>
