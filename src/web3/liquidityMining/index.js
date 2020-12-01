@@ -1,71 +1,12 @@
 import { useState, useEffect } from 'react'
-import { Contract, utils } from 'ethers'
-import { useWeb3 } from '..'
-import { useAddresses } from '../chains'
-import LiquidityMining from "../../../build-contracts/LiquidityMining.json"
-import ERC20 from "../../../build-contracts/ERC20.json"
-
-const useLiquidityMiningContract = () => {
-  const { web3, signerOrProvider } = useWeb3()
-  const addresses = useAddresses(web3?.chainId)
-  const [liquidityMiningContract, setLiquidityMiningContract] = useState()
-
-  useEffect(() => {
-    if (!web3 || !addresses) return
-
-    setLiquidityMiningContract(new Contract(addresses.liquidityMining, LiquidityMining.abi, signerOrProvider))
-  }, [web3, signerOrProvider, addresses])
-
-  return liquidityMiningContract
-}
-
-const useUsdcContract = () => {
-  const { signerOrProvider } = useWeb3()
-  const liquidityMining = useLiquidityMiningContract()
-  const [usdcContract, setUsdcContract] = useState()
-
-  useEffect(() => {
-    if (!liquidityMining) return
-
-    liquidityMining.usdc().then(usdc => {
-      setUsdcContract(new Contract(usdc, ERC20.abi, signerOrProvider))
-    })
-  }, [liquidityMining, signerOrProvider])
-
-  return usdcContract
-}
-
-const useUsdtContract = () => {
-  const { signerOrProvider } = useWeb3()
-  const liquidityMining = useLiquidityMiningContract()
-  const [usdtContract, setUsdtContract] = useState()
-
-  useEffect(() => {
-    if (!liquidityMining) return
-
-    liquidityMining.usdt().then(usdt => {
-      setUsdtContract(new Contract(usdt, ERC20.abi, signerOrProvider))
-    })
-  }, [liquidityMining, signerOrProvider])
-
-  return usdtContract
-}
-
-const useDaiContract = () => {
-  const { signerOrProvider } = useWeb3()
-  const liquidityMining = useLiquidityMiningContract()
-  const [daiContract, setDaiContract] = useState()
-
-  useEffect(() => {
-    if (!liquidityMining) return
-
-    liquidityMining.dai().then(dai => {
-      setDaiContract(new Contract(dai, ERC20.abi, signerOrProvider))
-    })
-  }, [liquidityMining, signerOrProvider])
-
-  return daiContract
-}
+import { utils } from 'ethers'
+import {
+  useLiquidityMiningContract,
+  useUsdcContract,
+  useUsdtContract,
+  useDaiContract,
+  useSarcoContract
+} from './contracts'
 
 const useTotalUsdcDeposits = () => {
   const liquidityMining = useLiquidityMiningContract()
@@ -124,9 +65,65 @@ const useTotalDaiDeposits = () => {
   return totalDaiDeposits
 }
 
+const useTotalSarcoRewards = () => {
+  const liquidityMining = useLiquidityMiningContract()
+  const sarcoContract = useSarcoContract()
+  const [totalSarcoRewards, setTotalSarcoRewards] = useState("0.0")
+
+  useEffect(() => {
+    if (!liquidityMining || !sarcoContract ) return
+
+    sarcoContract.decimals().then(decimals => {
+      liquidityMining.totalRewards().then(sarco => {
+        setTotalSarcoRewards(utils.formatUnits(sarco, decimals))
+      })
+    })
+  }, [liquidityMining, sarcoContract])
+
+  return totalSarcoRewards
+}
+
+const useTotalClaimedSarcoRewards = () => {
+  const liquidityMining = useLiquidityMiningContract()
+  const sarcoContract = useSarcoContract()
+  const [totalClaimedSarcoRewards, setTotalClaimedSarcoRewards] = useState("0.0")
+
+  useEffect(() => {
+    if (!liquidityMining || !sarcoContract ) return
+
+    sarcoContract.decimals().then(decimals => {
+      liquidityMining.claimedRewards().then(sarco => {
+        setTotalClaimedSarcoRewards(utils.formatUnits(sarco, decimals))
+      })
+    })
+  }, [liquidityMining, sarcoContract])
+
+  return totalClaimedSarcoRewards
+}
+
+const usePerBlockSarcoRewards = () => {
+  const liquidityMining = useLiquidityMiningContract()
+  const sarcoContract = useSarcoContract()
+  const [perBlockSarcoRewards, setPerBlockSarcoRewards] = useState("0.0")
+
+  useEffect(() => {
+    if (!liquidityMining || !sarcoContract ) return
+
+    sarcoContract.decimals().then(decimals => {
+      liquidityMining.perBlockReward().then(sarco => {
+        setPerBlockSarcoRewards(utils.formatUnits(sarco, decimals))
+      })
+    })
+  }, [liquidityMining, sarcoContract])
+
+  return perBlockSarcoRewards
+}
+
 export {
-  useLiquidityMiningContract,
   useTotalUsdcDeposits,
   useTotalUsdtDeposits,
-  useTotalDaiDeposits
+  useTotalDaiDeposits,
+  useTotalSarcoRewards,
+  useTotalClaimedSarcoRewards,
+  usePerBlockSarcoRewards
 }

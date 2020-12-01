@@ -17,11 +17,11 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
     ERC20 public immutable sarco;
 
     uint256 public totalRewards;
+    uint256 public claimedRewards;
     uint256 public startBlock;
     uint256 public firstStakeBlock;
     uint256 public blockLength;
     uint256 public perBlockReward;
-    uint256 public claimedRewards;
 
     uint256 private _totalStakeUsdc;
     uint256 private _totalStakeUsdt;
