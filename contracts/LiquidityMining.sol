@@ -11,31 +11,30 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
     using SafeMath for uint256;
     using SafeMath for uint8;
 
-    ERC20 public immutable _usdc;
-    ERC20 public immutable _usdt;
-    ERC20 public immutable _dai;
-    ERC20 public immutable _sarco;
+    ERC20 public immutable usdc;
+    ERC20 public immutable usdt;
+    ERC20 public immutable dai;
+    ERC20 public immutable sarco;
 
-    uint256 public _totalRewards;
-    uint256 public _startBlock;
-    uint256 public _blockLength;
-    uint256 public _perBlockReward;
-    uint256 public _claimedRewards;
+    uint256 public totalRewards;
+    uint256 public startBlock;
+    uint256 public firstStakeBlock;
+    uint256 public blockLength;
+    uint256 public perBlockReward;
+    uint256 public claimedRewards;
 
-    uint256 public _totalStakeUsdc;
-    uint256 public _totalStakeUsdt;
-    uint256 public _totalStakeDai;
-    uint256 public _totalWeight;
+    uint256 private _totalStakeUsdc;
+    uint256 private _totalStakeUsdt;
+    uint256 private _totalStakeDai;
+    uint256 private _totalWeight;
+    uint256 private _mostRecentValueCalcBlock;
 
-    uint256 public _firstStakeBlock;
-    uint256 public _mostRecentValueCalcBlock;
+    mapping(address => uint256) private _stakedUsdc;
+    mapping(address => uint256) private _stakedUsdt;
+    mapping(address => uint256) private _stakedDai;
 
-    mapping(address => uint256) public _stakedUsdc;
-    mapping(address => uint256) public _stakedUsdt;
-    mapping(address => uint256) public _stakedDai;
-
-    mapping(address => uint256) public _weighted;
-    mapping(address => uint256) public _accumulated;
+    mapping(address => uint256) private _weighted;
+    mapping(address => uint256) private _accumulated;
 
     event Stake(
         address indexed staker,
@@ -52,48 +51,80 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
     );
 
     constructor(
-        address usdc,
-        address usdt,
-        address dai,
-        address sarco,
+        address _usdc,
+        address _usdt,
+        address _dai,
+        address _sarco,
         address owner
     ) public {
-        _usdc = ERC20(usdc);
-        _usdt = ERC20(usdt);
-        _dai = ERC20(dai);
-        _sarco = ERC20(sarco);
+        usdc = ERC20(_usdc);
+        usdt = ERC20(_usdt);
+        dai = ERC20(_dai);
+        sarco = ERC20(_sarco);
 
         transferOwnership(owner);
     }
 
+    function totalStakeUsdc() public view returns (uint256 totalUsdc) {
+        totalUsdc = denormalize(usdc, _totalStakeUsdc);
+    }
+
+    function totalStakeUsdt() public view returns (uint256 totalUsdt) {
+        totalUsdt = denormalize(usdt, _totalStakeUsdt);
+    }
+
+    function totalStakeDai() public view returns (uint256 totalDai) {
+        totalDai = denormalize(dai, _totalStakeDai);
+    }
+
+    function userStakeUsdc(address user)
+        public
+        view
+        returns (uint256 usdcStake)
+    {
+        usdcStake = denormalize(usdc, _stakedUsdc[user]);
+    }
+
+    function userStakeUsdt(address user)
+        public
+        view
+        returns (uint256 usdtStake)
+    {
+        usdtStake = denormalize(usdt, _stakedUsdt[user]);
+    }
+
+    function userStakeDai(address user) public view returns (uint256 daiStake) {
+        daiStake = denormalize(dai, _stakedDai[user]);
+    }
+
     function deposit(
-        uint256 amount,
-        uint256 startBlock,
-        uint256 blockLength
+        uint256 _amount,
+        uint256 _startBlock,
+        uint256 _blockLength
     ) public onlyOwner {
         require(
-            _startBlock == 0,
+            startBlock == 0,
             "LiquidityMining::deposit: already received deposit"
         );
 
         require(
-            startBlock >= block.number,
+            _startBlock >= block.number,
             "LiquidityMining::deposit: start block must be in future"
         );
 
         require(
-            amount.mod(blockLength) == 0,
+            _amount.mod(_blockLength) == 0,
             "LiquidityMining::deposit: rewards mod length must be zero"
         );
 
-        _totalRewards = amount;
+        totalRewards = _amount;
 
-        _sarco.transferFrom(msg.sender, address(this), amount);
+        sarco.transferFrom(msg.sender, address(this), _amount);
 
-        _startBlock = startBlock;
-        _blockLength = blockLength;
+        startBlock = _startBlock;
+        blockLength = _blockLength;
 
-        _perBlockReward = amount.div(blockLength);
+        perBlockReward = _amount.div(_blockLength);
     }
 
     function totalStake() private view returns (uint256 total) {
@@ -106,10 +137,10 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
 
     modifier update() {
         if (_mostRecentValueCalcBlock == 0) {
-            _mostRecentValueCalcBlock = _firstStakeBlock;
+            _mostRecentValueCalcBlock = firstStakeBlock;
         }
 
-        uint256 lastBlock = _firstStakeBlock.add(_blockLength);
+        uint256 lastBlock = firstStakeBlock.add(blockLength);
         uint256 totalCurrentStake = totalStake();
 
         if (totalCurrentStake > 0 && _mostRecentValueCalcBlock < lastBlock) {
@@ -117,12 +148,10 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
             uint256 sinceLastCalc = block.number.sub(_mostRecentValueCalcBlock);
 
             if (block.number < lastBlock) {
-                value = sinceLastCalc.mul(_perBlockReward);
+                value = sinceLastCalc.mul(perBlockReward);
             } else {
                 uint256 sinceLastBlock = block.number.sub(lastBlock);
-                value = (sinceLastCalc.sub(sinceLastBlock)).mul(
-                    _perBlockReward
-                );
+                value = (sinceLastCalc.sub(sinceLastBlock)).mul(perBlockReward);
             }
 
             _totalWeight = _totalWeight.add(
@@ -168,39 +197,39 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
             "LiquidityMining::stake: missing stablecoin"
         );
         require(
-            block.number >= _startBlock,
+            block.number >= startBlock,
             "LiquidityMining::stake: staking isn't live yet"
         );
         require(
-            _sarco.balanceOf(address(this)) > 0,
+            sarco.balanceOf(address(this)) > 0,
             "LiquidityMining::stake: no sarco balance"
         );
 
-        if (_firstStakeBlock == 0) {
-            _firstStakeBlock = block.number;
+        if (firstStakeBlock == 0) {
+            firstStakeBlock = block.number;
         } else {
             require(
-                block.number < _firstStakeBlock.add(_blockLength),
+                block.number < firstStakeBlock.add(blockLength),
                 "LiquidityMining::stake: staking is over"
             );
         }
 
         if (usdcIn > 0) {
-            _usdc.transferFrom(msg.sender, address(this), usdcIn);
+            usdc.transferFrom(msg.sender, address(this), usdcIn);
         }
 
         if (usdtIn > 0) {
-            _usdt.transferFrom(msg.sender, address(this), usdtIn);
+            usdt.transferFrom(msg.sender, address(this), usdtIn);
         }
 
         if (daiIn > 0) {
-            _dai.transferFrom(msg.sender, address(this), daiIn);
+            dai.transferFrom(msg.sender, address(this), daiIn);
         }
 
         _stake(
-            normalize(_usdc, usdcIn),
-            normalize(_usdt, usdtIn),
-            normalize(_dai, daiIn)
+            normalize(usdc, usdcIn),
+            normalize(usdt, usdtIn),
+            normalize(dai, daiIn)
         );
     }
 
@@ -219,20 +248,20 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         emit Withdraw(msg.sender, usdcOut, usdtOut, daiOut, reward);
 
         if (usdcOut > 0) {
-            _usdc.transfer(msg.sender, denormalize(_usdc, usdcOut));
+            usdc.transfer(msg.sender, denormalize(usdc, usdcOut));
         }
 
         if (usdtOut > 0) {
-            _usdt.transfer(msg.sender, denormalize(_usdt, usdtOut));
+            usdt.transfer(msg.sender, denormalize(usdt, usdtOut));
         }
 
         if (daiOut > 0) {
-            _dai.transfer(msg.sender, denormalize(_dai, daiOut));
+            dai.transfer(msg.sender, denormalize(dai, daiOut));
         }
 
         if (reward > 0) {
-            _sarco.transfer(msg.sender, reward);
-            _claimedRewards = _claimedRewards.add(reward);
+            sarco.transfer(msg.sender, reward);
+            claimedRewards = claimedRewards.add(reward);
         }
     }
 
@@ -248,8 +277,8 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         reward = _reward;
 
         if (reward > 0) {
-            _sarco.transfer(msg.sender, reward);
-            _claimedRewards = _claimedRewards.add(reward);
+            sarco.transfer(msg.sender, reward);
+            claimedRewards = claimedRewards.add(reward);
             _stake(usdcOut, usdtOut, daiOut);
         }
     }
@@ -347,26 +376,26 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         address to,
         uint256 amount
     ) public onlyOwner nonReentrant returns (bool) {
-        if (tokenToRescue == address(_usdc)) {
+        if (tokenToRescue == address(usdc)) {
             require(
-                amount <= _usdc.balanceOf(address(this)).sub(_totalStakeUsdc),
+                amount <= usdc.balanceOf(address(this)).sub(_totalStakeUsdc),
                 "LiquidityMining::rescueTokens: that usdc belongs to stakers"
             );
-        } else if (tokenToRescue == address(_usdt)) {
+        } else if (tokenToRescue == address(usdt)) {
             require(
-                amount <= _usdt.balanceOf(address(this)).sub(_totalStakeUsdt),
+                amount <= usdt.balanceOf(address(this)).sub(_totalStakeUsdt),
                 "LiquidityMining::rescueTokens: that usdt belongs to stakers"
             );
-        } else if (tokenToRescue == address(_dai)) {
+        } else if (tokenToRescue == address(dai)) {
             require(
-                amount <= _dai.balanceOf(address(this)).sub(_totalStakeDai),
+                amount <= dai.balanceOf(address(this)).sub(_totalStakeDai),
                 "LiquidityMining::rescueTokens: that dai belongs to stakers"
             );
-        } else if (tokenToRescue == address(_sarco)) {
+        } else if (tokenToRescue == address(sarco)) {
             require(
                 amount <=
-                    _sarco.balanceOf(address(this)).sub(
-                        _totalRewards.sub(_claimedRewards)
+                    sarco.balanceOf(address(this)).sub(
+                        totalRewards.sub(claimedRewards)
                     ),
                 "LiquidityMining::rescueTokens: that sarco belongs to stakers"
             );
