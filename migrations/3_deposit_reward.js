@@ -13,6 +13,6 @@ module.exports = async function (_, network) {
     await sarcoMock.approve(liquidityMining.address, amount)
 
     const blockLength = 1000
-    await liquidityMining.deposit(amount, (await web3.eth.getBlock("latest")).number + 1, blockLength)
+    await liquidityMining.deposit(amount, (await web3.eth.getBlock("latest")).number + 10, blockLength)
   }
 }

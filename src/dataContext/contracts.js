@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Contract } from 'ethers'
-import { useWeb3 } from '..'
-import { useAddresses } from '../chains'
-import LiquidityMining from "../../../build-contracts/LiquidityMining.json"
-import ERC20 from "../../../build-contracts/ERC20.json"
+import { useWeb3 } from '../web3'
+import { useAddresses } from '../web3/chains'
+import LiquidityMining from "../../build-contracts/LiquidityMining.json"
+import ERC20 from "../../build-contracts/ERC20.json"
 
 const useLiquidityMiningContract = () => {
   const { web3, signerOrProvider } = useWeb3()
@@ -19,9 +19,8 @@ const useLiquidityMiningContract = () => {
   return liquidityMiningContract
 }
 
-const useUsdcContract = () => {
+const useUsdcContract = (liquidityMining) => {
   const { signerOrProvider } = useWeb3()
-  const liquidityMining = useLiquidityMiningContract()
   const [usdcContract, setUsdcContract] = useState()
 
   useEffect(() => {
@@ -35,9 +34,8 @@ const useUsdcContract = () => {
   return usdcContract
 }
 
-const useUsdtContract = () => {
+const useUsdtContract = (liquidityMining) => {
   const { signerOrProvider } = useWeb3()
-  const liquidityMining = useLiquidityMiningContract()
   const [usdtContract, setUsdtContract] = useState()
 
   useEffect(() => {
@@ -51,9 +49,8 @@ const useUsdtContract = () => {
   return usdtContract
 }
 
-const useDaiContract = () => {
+const useDaiContract = (liquidityMining) => {
   const { signerOrProvider } = useWeb3()
-  const liquidityMining = useLiquidityMiningContract()
   const [daiContract, setDaiContract] = useState()
 
   useEffect(() => {
@@ -67,9 +64,8 @@ const useDaiContract = () => {
   return daiContract
 }
 
-const useSarcoContract = () => {
+const useSarcoContract = (liquidityMining) => {
   const { signerOrProvider } = useWeb3()
-  const liquidityMining = useLiquidityMiningContract()
   const [sarcoContract, setSarcoContract] = useState()
 
   useEffect(() => {
@@ -83,10 +79,25 @@ const useSarcoContract = () => {
   return sarcoContract
 }
 
+const useDecimals = (contract) => {
+  const [decimals, setDecimals] = useState(null)
+
+  useEffect(() => {
+    if (!contract) return
+
+    contract.decimals().then(decimals => {
+      setDecimals(decimals)
+    })
+  }, [contract])
+
+  return decimals
+}
+
 export {
   useLiquidityMiningContract,
   useUsdcContract,
   useUsdtContract,
   useDaiContract,
-  useSarcoContract
+  useSarcoContract,
+  useDecimals
 }

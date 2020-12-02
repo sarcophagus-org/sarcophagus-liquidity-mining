@@ -5,6 +5,7 @@ import { ToastContainer } from 'react-toastify'
 import { Web3ReactProvider, createWeb3ReactRoot } from '@web3-react/core'
 import './index.css'
 import App from './App'
+import { DataProvider } from './dataContext'
 import reportWebVitals from './reportWebVitals'
 
 const Web3ReactProviderInjected = createWeb3ReactRoot("injected")
@@ -21,8 +22,10 @@ ReactDOM.render(
   <React.StrictMode>
     <Web3ReactProvider getLibrary={getLibraryNetwork}>
       <Web3ReactProviderInjected getLibrary={getLibraryInjected}>
-        <App />
-        <ToastContainer closeButton={false} />
+        <DataProvider>
+          <App />
+          <ToastContainer closeButton={false} />
+        </DataProvider>
       </Web3ReactProviderInjected>
     </Web3ReactProvider>
   </React.StrictMode>,

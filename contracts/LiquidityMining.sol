@@ -21,7 +21,6 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
     uint256 public startBlock;
     uint256 public firstStakeBlock;
     uint256 public blockLength;
-    uint256 public perBlockReward;
 
     uint256 private _totalStakeUsdc;
     uint256 private _totalStakeUsdt;
@@ -36,6 +35,7 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
     mapping(address => uint256) private _weighted;
     mapping(address => uint256) private _accumulated;
 
+    event Deposit(uint256 amount, uint256 startBlock, uint256 blockLength);
     event Stake(
         address indexed staker,
         uint256 usdcIn,
@@ -124,7 +124,7 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         startBlock = _startBlock;
         blockLength = _blockLength;
 
-        perBlockReward = _amount.div(_blockLength);
+        emit Deposit(_amount, _startBlock, _blockLength);
     }
 
     function totalStake() private view returns (uint256 total) {
@@ -146,6 +146,7 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         if (totalCurrentStake > 0 && _mostRecentValueCalcBlock < lastBlock) {
             uint256 value = 0;
             uint256 sinceLastCalc = block.number.sub(_mostRecentValueCalcBlock);
+            uint256 perBlockReward = totalRewards.div(blockLength);
 
             if (block.number < lastBlock) {
                 value = sinceLastCalc.mul(perBlockReward);
@@ -245,18 +246,23 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         )
     {
         (usdcOut, usdtOut, daiOut, reward) = _applyReward();
+
+        usdcOut = denormalize(usdc, usdcOut);
+        usdtOut = denormalize(usdt, usdtOut);
+        daiOut = denormalize(dai, daiOut);
+
         emit Withdraw(msg.sender, usdcOut, usdtOut, daiOut, reward);
 
         if (usdcOut > 0) {
-            usdc.transfer(msg.sender, denormalize(usdc, usdcOut));
+            usdc.transfer(msg.sender, usdcOut);
         }
 
         if (usdtOut > 0) {
-            usdt.transfer(msg.sender, denormalize(usdt, usdtOut));
+            usdt.transfer(msg.sender, usdtOut);
         }
 
         if (daiOut > 0) {
-            dai.transfer(msg.sender, denormalize(dai, daiOut));
+            dai.transfer(msg.sender, daiOut);
         }
 
         if (reward > 0) {
@@ -273,7 +279,13 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
             uint256 _reward
         ) = _applyReward();
 
-        emit Withdraw(msg.sender, usdcOut, usdtOut, daiOut, _reward);
+        emit Withdraw(
+            msg.sender,
+            denormalize(usdc, usdcOut),
+            denormalize(usdt, usdtOut),
+            denormalize(dai, daiOut),
+            _reward
+        );
         reward = _reward;
 
         if (reward > 0) {
@@ -333,7 +345,12 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
             _totalStakeDai = _totalStakeDai.add(addBackDai);
         }
 
-        emit Stake(msg.sender, usdcIn, usdtIn, daiIn);
+        emit Stake(
+            msg.sender,
+            denormalize(usdc, usdcIn),
+            denormalize(usdt, usdtIn),
+            denormalize(dai, daiIn)
+        );
     }
 
     function _applyReward()

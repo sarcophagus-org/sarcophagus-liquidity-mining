@@ -1,19 +1,7 @@
-import {
-  useTotalUsdcDeposits,
-  useTotalUsdtDeposits,
-  useTotalDaiDeposits,
-  useTotalSarcoRewards,
-  useTotalClaimedSarcoRewards,
-  usePerBlockSarcoRewards
-} from "../web3/liquidityMining"
+import { useData } from '../dataContext'
 
 const GlobalStats = () => {
-  const usdc = useTotalUsdcDeposits()
-  const usdt = useTotalUsdtDeposits()
-  const dai = useTotalDaiDeposits()
-  const sarco = useTotalSarcoRewards()
-  const claimed = useTotalClaimedSarcoRewards()
-  const perBlock = usePerBlockSarcoRewards()
+  const data = useData()
 
   const Section = ({ children }) => {
     return (
@@ -44,29 +32,29 @@ const GlobalStats = () => {
       <div className="mx-4">
         <Section>
           <Title>Total SARCO Rewards</Title>
-          <Value>{sarco}</Value>
-        </Section>
-        <Section>
-          <Title>Total Claimed Rewards</Title>
-          <Value>{claimed}</Value>
+          <Value>{data.totalRewards}</Value>
         </Section>
         <Section>
           <Title>Rewards Per Block</Title>
-          <Value>{perBlock}</Value>
+          <Value>{data.rewardsPerBlock}</Value>
+        </Section>
+        <Section>
+          <Title>Total Claimed Rewards</Title>
+          <Value>{data.totalClaimedRewards}</Value>
         </Section>
       </div>
       <div className="mx-4">
         <Section>
           <Title>Total Staked USDC</Title>
-          <Value>{usdc}</Value>
+          <Value>{data.totalStakeUsdc}</Value>
         </Section>
         <Section>
           <Title>Total Staked USDT</Title>
-          <Value>{usdt}</Value>
+          <Value>{data.totalStakeUsdt}</Value>
         </Section>
         <Section>
           <Title>Total Staked DAI</Title>
-          <Value>{dai}</Value>
+          <Value>{data.totalStakeDai}</Value>
         </Section>
       </div>
     </div>
