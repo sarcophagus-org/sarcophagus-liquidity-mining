@@ -21,7 +21,7 @@ const GlobalStats = () => {
   }
 
   return (
-    <div className="-mb-4 flex justify-end -mx-4">
+    <div className="-mb-4 flex justify-center sm:justify-end -mx-4">
       <div className="mx-4">
         <Section>
           <Title>Total SARCO Rewards</Title>

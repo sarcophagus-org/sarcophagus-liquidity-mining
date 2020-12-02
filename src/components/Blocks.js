@@ -7,7 +7,7 @@ const Blocks = () => {
 
   const Container = ({ children }) => {
     return (
-      <div className="flex flex-col items-center text-center mb-6 border-b pb-6">
+      <div className="flex flex-col items-center text-center mb-6 border-b border-t py-6">
         {children}
       </div>
     )

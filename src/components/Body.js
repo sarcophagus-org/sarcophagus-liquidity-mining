@@ -10,7 +10,7 @@ const Body = () => {
         <div className="flex-auto text-center sm:text-right">
           <GlobalStats />
         </div>
-        <div className="mx-2 w-1 border-r border-grey-300" />
+        <div className="my-4 sm:my-0 sm:mx-4 border-b border-r border-grey-300" />
         <div className="flex-auto text-center sm:text-left">
           <Stakes />
         </div>

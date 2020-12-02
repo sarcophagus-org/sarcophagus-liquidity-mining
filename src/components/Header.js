@@ -3,11 +3,24 @@ import { useInjectedConnect, manuallyConnect } from '../web3/injected'
 const Header = () => {
   const web3 = useInjectedConnect()
   
+  const truncate = (fullStr, strLen, separator) => {
+    if (fullStr.length <= strLen) return fullStr;
+  
+    separator = separator || '...';
+  
+    const sepLen = separator.length
+    const charsToShow = strLen - sepLen
+    const frontChars = Math.ceil(charsToShow / 2 + 1) // accounts for the "0x"
+    const backChars = Math.floor(charsToShow / 2 - 1) // accounts for the "0x"
+  
+    return fullStr.substr(0, frontChars) + separator + fullStr.substr(fullStr.length - backChars);
+  }
+
   const AccountDisplay = ({ account }) => {
     if (account) {
       return (
         <div>
-          {account}
+          {truncate(account, 25)}
         </div>
       )
     } else {
@@ -24,7 +37,7 @@ const Header = () => {
       <h1 className="mb-3 text-5xl">
         Sarcophagus Liquidity Mining
       </h1>
-      <div>
+      <div className="text-lg">
         <AccountDisplay account={web3.account} />
       </div>
     </div>
