@@ -13,7 +13,7 @@ import {
   useTotalStakeUsdc,
   useTotalStakeUsdt,
   useTotalStakeDai,
-} from './stakes'
+} from './totalStakes'
 import {
   useTotalRewards,
   useTotalClaimedRewards,
@@ -25,6 +25,11 @@ import {
   useFirstStakeBlock,
   useBlockLength,
 } from './blocks'
+import {
+  useMyStakeUsdc,
+  useMyStakeUsdt,
+  useMyStakeDai,
+} from './myStakes'
 
 let context
 
@@ -61,6 +66,10 @@ const createDataRoot = () => {
 
     const rewardsPerBlock = useRewardsPerBlock(totalRewards, blockLength)
 
+    const myStakeUsdc = useMyStakeUsdc(liquidityMining)
+    const myStakeUsdt = useMyStakeUsdt(liquidityMining)
+    const myStakeDai = useMyStakeDai(liquidityMining)
+
     const dataContext = {
       totalRewards: numeral(utils.formatUnits(totalRewards, decimalsSarco)).format(`0,0.[${Array(decimalsSarco).fill(0)}]`),
       totalClaimedRewards: numeral(utils.formatUnits(totalClaimedRewards, decimalsSarco)).format(`0,0.[${Array(decimalsSarco).fill(0)}]`),
@@ -75,7 +84,11 @@ const createDataRoot = () => {
       firstStakeBlock: numeral(firstStakeBlock.toString()).format(),
       endingBlock: numeral(firstStakeBlock.add(blockLength).toString()).format(),
       blocksUntilKickoff: numeral(startBlock.sub(currentBlock).toString()).format(),
-      remainingBlocks: numeral(firstStakeBlock.add(blockLength).sub(currentBlock).toString()).format()
+      remainingBlocks: numeral(firstStakeBlock.add(blockLength).sub(currentBlock).toString()).format(),
+
+      myStakeUsdc: numeral(utils.formatUnits(myStakeUsdc, decimalsUsdc)).format(`0,0.[${Array(decimalsUsdc).fill(0)}]`),
+      myStakeUsdt: numeral(utils.formatUnits(myStakeUsdt, decimalsUsdt)).format(`0,0.[${Array(decimalsUsdt).fill(0)}]`),
+      myStakeDai: numeral(utils.formatUnits(myStakeDai, decimalsDai)).format(`0,0.[${Array(decimalsDai).fill(0)}]`),
     }
 
     return <Provider value={dataContext}>{children}</Provider>

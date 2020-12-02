@@ -11,14 +11,20 @@ const useTotalStakeUsdc = (liquidityMining) => {
       setTotalStakeUsdc(usdc)
     })
 
-    const updateUsdc = (_, usdc) => {
+    const addUsdc = (_, usdc) => {
       setTotalStakeUsdc(_usdc => _usdc.add(usdc))
     }
 
-    liquidityMining.on('Stake', updateUsdc)
+    const removeUsdc = (_, usdc) => {
+      setTotalStakeUsdc(_usdc => _usdc.sub(usdc))
+    }
+
+    liquidityMining.on('Stake', addUsdc)
+    liquidityMining.on('Withdraw', removeUsdc)
 
     return () => {
-      liquidityMining.removeListener('Stake', updateUsdc)
+      liquidityMining.removeListener('Stake', addUsdc)
+      liquidityMining.removeListener('Withdraw', removeUsdc)
     }
   }, [liquidityMining])
 
@@ -35,14 +41,20 @@ const useTotalStakeUsdt = (liquidityMining) => {
       setTotalStakeUsdt(usdt)
     })
 
-    const updateUsdt = (_, __, usdt) => {
+    const addUsdt = (_, __, usdt) => {
       setTotalStakeUsdt(_usdt => _usdt.add(usdt))
     }
 
-    liquidityMining.on('Stake', updateUsdt)
+    const removeUsdt = (_, __, usdt) => {
+      setTotalStakeUsdt(_usdt => _usdt.sub(usdt))
+    }
+
+    liquidityMining.on('Stake', addUsdt)
+    liquidityMining.on('Withdraw', removeUsdt)
 
     return () => {
-      liquidityMining.removeListener('Stake', updateUsdt)
+      liquidityMining.removeListener('Stake', addUsdt)
+      liquidityMining.removeListener('Withdraw', removeUsdt)
     }
   }, [liquidityMining])
 
@@ -59,14 +71,20 @@ const useTotalStakeDai = (liquidityMining) => {
       setTotalStakeDai(dai)
     })
 
-    const updateDai = (_, __, ___, dai) => {
+    const addDai = (_, __, ___, dai) => {
       setTotalStakeDai(_dai => _dai.add(dai))
     }
 
-    liquidityMining.on('Stake', updateDai)
+    const removeDai = (_, __, ___, dai) => {
+      setTotalStakeDai(_dai => _dai.sub(dai))
+    }
+
+    liquidityMining.on('Stake', addDai)
+    liquidityMining.on('Withdraw', removeDai)
 
     return () => {
-      liquidityMining.removeListener('Stake', updateDai)
+      liquidityMining.removeListener('Stake', addDai)
+      liquidityMining.removeListener('Withdraw', removeDai)
     }
   }, [liquidityMining])
 
