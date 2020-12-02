@@ -62,18 +62,20 @@ const createDataRoot = () => {
     const rewardsPerBlock = useRewardsPerBlock(totalRewards, blockLength)
 
     const dataContext = {
-      totalRewards: numeral(utils.formatUnits(totalRewards, decimalsSarco)).format(),
-      totalClaimedRewards: numeral(utils.formatUnits(totalClaimedRewards, decimalsSarco)).format(),
-      rewardsPerBlock: numeral(utils.formatUnits(rewardsPerBlock, decimalsSarco)).format(),
+      totalRewards: numeral(utils.formatUnits(totalRewards, decimalsSarco)).format(`0,0.[${Array(decimalsSarco).fill(0)}]`),
+      totalClaimedRewards: numeral(utils.formatUnits(totalClaimedRewards, decimalsSarco)).format(`0,0.[${Array(decimalsSarco).fill(0)}]`),
+      rewardsPerBlock: numeral(utils.formatUnits(rewardsPerBlock, decimalsSarco)).format(`0,0.[${Array(decimalsSarco).fill(0)}]`),
       
-      totalStakeUsdc: numeral(utils.formatUnits(totalStakeUsdc, decimalsUsdc)).format(),
-      totalStakeUsdt: numeral(utils.formatUnits(totalStakeUsdt, decimalsUsdt)).format(),
-      totalStakeDai: numeral(utils.formatUnits(totalStakeDai, decimalsDai)).format(),
+      totalStakeUsdc: numeral(utils.formatUnits(totalStakeUsdc, decimalsUsdc)).format(`0,0.[${Array(decimalsUsdc).fill(0)}]`),
+      totalStakeUsdt: numeral(utils.formatUnits(totalStakeUsdt, decimalsUsdt)).format(`0,0.[${Array(decimalsUsdt).fill(0)}]`),
+      totalStakeDai: numeral(utils.formatUnits(totalStakeDai, decimalsDai)).format(`0,0.[${Array(decimalsDai).fill(0)}]`),
 
-      currentBlock,
-      startBlock,
-      firstStakeBlock,
-      blockLength,
+      currentBlock: numeral(currentBlock.toString()).format(),
+      startBlock: numeral(startBlock.toString()).format(),
+      firstStakeBlock: numeral(firstStakeBlock.toString()).format(),
+      endingBlock: numeral(firstStakeBlock.add(blockLength).toString()).format(),
+      blocksUntilKickoff: numeral(startBlock.sub(currentBlock).toString()).format(),
+      remainingBlocks: numeral(firstStakeBlock.add(blockLength).sub(currentBlock).toString()).format()
     }
 
     return <Provider value={dataContext}>{children}</Provider>

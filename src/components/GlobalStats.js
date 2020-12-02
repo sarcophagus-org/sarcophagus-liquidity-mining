@@ -1,4 +1,5 @@
 import { useData } from '../dataContext'
+import { Value } from './shared/Value'
 
 const GlobalStats = () => {
   const data = useData()
@@ -14,14 +15,6 @@ const GlobalStats = () => {
   const Title = ({ children }) => {
     return (
       <div className="text-xl">
-        {children}
-      </div>
-    )
-  }
-
-  const Value = ({ children }) => {
-    return (
-      <div className="font-mono bg-gray-300 dark:bg-gray-600 px-2 inline">
         {children}
       </div>
     )
