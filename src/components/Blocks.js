@@ -1,4 +1,5 @@
 import { useData } from '../dataContext'
+import numeral from 'numeral'
 
 const Blocks = () => {
   const { currentBlock, startBlock, firstStakeBlock, blockLength } = useData()
@@ -17,10 +18,10 @@ const Blocks = () => {
             Liquidity mining starting block has been scheduled!
           </div>
           <div className="mx-2">
-            Starting Block: {startBlock.toString()}
+            Starting Block: {numeral(startBlock.toString()).format()}
           </div>
           <div className="mx-2">
-            Blocks until kickoff: {startBlock.sub(currentBlock).toString()}
+            Blocks until kickoff: {numeral(startBlock.sub(currentBlock).toString()).format()}
           </div>
         </>
       )
@@ -28,13 +29,13 @@ const Blocks = () => {
       return (
         <>
           <div className="mx-2">
-            Starting Block: {firstStakeBlock.toString()}
+            Starting Block: {numeral(firstStakeBlock.toString()).format()}
           </div>
           <div className="mx-2">
-            Ending Block: {firstStakeBlock.add(blockLength).toString()}
+            Ending Block: {numeral(firstStakeBlock.add(blockLength).toString()).format()}
           </div>
           <div className="mx-2">
-            Remaining Blocks: {firstStakeBlock.add(blockLength).sub(currentBlock).toString()}
+            Remaining Blocks: {numeral(firstStakeBlock.add(blockLength).sub(currentBlock).toString()).format()}
           </div>
         </>
       )

@@ -1,5 +1,6 @@
 import { createContext, useContext } from 'react'
 import { utils } from 'ethers'
+import numeral from 'numeral'
 import {
   useLiquidityMiningContract,
   useUsdcContract,
@@ -61,13 +62,13 @@ const createDataRoot = () => {
     const rewardsPerBlock = useRewardsPerBlock(totalRewards, blockLength)
 
     const dataContext = {
-      totalRewards: utils.formatUnits(totalRewards, decimalsSarco),
-      totalClaimedRewards: utils.formatUnits(totalClaimedRewards, decimalsSarco),
-      rewardsPerBlock: utils.formatUnits(rewardsPerBlock, decimalsSarco),
+      totalRewards: numeral(utils.formatUnits(totalRewards, decimalsSarco)).format(),
+      totalClaimedRewards: numeral(utils.formatUnits(totalClaimedRewards, decimalsSarco)).format(),
+      rewardsPerBlock: numeral(utils.formatUnits(rewardsPerBlock, decimalsSarco)).format(),
       
-      totalStakeUsdc: utils.formatUnits(totalStakeUsdc, decimalsUsdc),
-      totalStakeUsdt: utils.formatUnits(totalStakeUsdt, decimalsUsdt),
-      totalStakeDai: utils.formatUnits(totalStakeDai, decimalsDai),
+      totalStakeUsdc: numeral(utils.formatUnits(totalStakeUsdc, decimalsUsdc)).format(),
+      totalStakeUsdt: numeral(utils.formatUnits(totalStakeUsdt, decimalsUsdt)).format(),
+      totalStakeDai: numeral(utils.formatUnits(totalStakeDai, decimalsDai)).format(),
 
       currentBlock,
       startBlock,
