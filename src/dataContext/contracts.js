@@ -80,7 +80,7 @@ const useSarcoContract = (liquidityMining) => {
 }
 
 const useDecimals = (contract) => {
-  const [decimals, setDecimals] = useState(null)
+  const [decimals, setDecimals] = useState(0)
 
   useEffect(() => {
     if (!contract) return

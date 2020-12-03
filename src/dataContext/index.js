@@ -18,7 +18,7 @@ import {
   useTotalRewards,
   useTotalClaimedRewards,
   useRewardsPerBlock
-} from './rewards'
+} from './totalRewards'
 import {
   useCurrentBlock,
   useStartBlock,
@@ -30,6 +30,10 @@ import {
   useMyStakeUsdt,
   useMyStakeDai,
 } from './myStakes'
+import {
+  useMyPendingRewards,
+  useMyClaimedRewards,
+} from './myRewards'
 
 let context
 
@@ -38,6 +42,10 @@ const createDataRoot = () => {
 
   context.displayName = "Data Provider"
   const Provider = context.Provider
+
+  const makeDecimals = decimals => {
+    return `0,0.[${Array(decimals).fill(0)}]`
+  }
 
   return ({ children }) => {
     const liquidityMining = useLiquidityMiningContract()
@@ -70,14 +78,22 @@ const createDataRoot = () => {
     const myStakeUsdt = useMyStakeUsdt(liquidityMining)
     const myStakeDai = useMyStakeDai(liquidityMining)
 
+    const myPendingRewards = useMyPendingRewards(liquidityMining, currentBlock)
+    const myClaimedRewards = useMyClaimedRewards(liquidityMining)
+
     const dataContext = {
-      totalRewards: numeral(utils.formatUnits(totalRewards, decimalsSarco)).format(`0,0.[${Array(decimalsSarco).fill(0)}]`),
-      totalClaimedRewards: numeral(utils.formatUnits(totalClaimedRewards, decimalsSarco)).format(`0,0.[${Array(decimalsSarco).fill(0)}]`),
-      rewardsPerBlock: numeral(utils.formatUnits(rewardsPerBlock, decimalsSarco)).format(`0,0.[${Array(decimalsSarco).fill(0)}]`),
+      totalRewards: numeral(utils.formatUnits(totalRewards, decimalsSarco)).format(makeDecimals(decimalsSarco)),
+      totalClaimedRewards: numeral(utils.formatUnits(totalClaimedRewards, decimalsSarco)).format(makeDecimals(decimalsSarco)),
+      rewardsPerBlock: numeral(utils.formatUnits(rewardsPerBlock, decimalsSarco)).format(makeDecimals(decimalsSarco)),
       
-      totalStakeUsdc: numeral(utils.formatUnits(totalStakeUsdc, decimalsUsdc)).format(`0,0.[${Array(decimalsUsdc).fill(0)}]`),
-      totalStakeUsdt: numeral(utils.formatUnits(totalStakeUsdt, decimalsUsdt)).format(`0,0.[${Array(decimalsUsdt).fill(0)}]`),
-      totalStakeDai: numeral(utils.formatUnits(totalStakeDai, decimalsDai)).format(`0,0.[${Array(decimalsDai).fill(0)}]`),
+      totalStakeUsdc: numeral(utils.formatUnits(totalStakeUsdc, decimalsUsdc)).format(makeDecimals(decimalsUsdc)),
+      totalStakeUsdt: numeral(utils.formatUnits(totalStakeUsdt, decimalsUsdt)).format(makeDecimals(decimalsUsdt)),
+      totalStakeDai: numeral(utils.formatUnits(totalStakeDai, decimalsDai)).format(makeDecimals(decimalsDai)),
+      totalStakeStablecoins: numeral(
+        numeral(utils.formatUnits(totalStakeUsdc, decimalsUsdc)).value() +
+        numeral(utils.formatUnits(totalStakeUsdt, decimalsUsdt)).value() +
+        numeral(utils.formatUnits(totalStakeDai, decimalsDai)).value()
+      ).format(`0,0.[${Array(decimalsDai).fill(0)}]`),
 
       currentBlock: numeral(currentBlock.toString()).format(),
       startBlock: numeral(startBlock.toString()).format(),
@@ -86,9 +102,18 @@ const createDataRoot = () => {
       blocksUntilKickoff: numeral(startBlock.sub(currentBlock).toString()).format(),
       remainingBlocks: numeral(firstStakeBlock.add(blockLength).sub(currentBlock).toString()).format(),
 
-      myStakeUsdc: numeral(utils.formatUnits(myStakeUsdc, decimalsUsdc)).format(`0,0.[${Array(decimalsUsdc).fill(0)}]`),
-      myStakeUsdt: numeral(utils.formatUnits(myStakeUsdt, decimalsUsdt)).format(`0,0.[${Array(decimalsUsdt).fill(0)}]`),
-      myStakeDai: numeral(utils.formatUnits(myStakeDai, decimalsDai)).format(`0,0.[${Array(decimalsDai).fill(0)}]`),
+      myStakeUsdc: numeral(utils.formatUnits(myStakeUsdc, decimalsUsdc)).format(makeDecimals(decimalsUsdc)),
+      myStakeUsdt: numeral(utils.formatUnits(myStakeUsdt, decimalsUsdt)).format(makeDecimals(decimalsUsdt)),
+      myStakeDai: numeral(utils.formatUnits(myStakeDai, decimalsDai)).format(makeDecimals(decimalsDai)),
+      myStakedStablecoins: numeral(
+        numeral(utils.formatUnits(myStakeUsdc, decimalsUsdc)).value() + 
+        numeral(utils.formatUnits(myStakeUsdt, decimalsUsdt)).value() +
+        numeral(utils.formatUnits(myStakeDai, decimalsDai)).value()
+      ).format(`0,0.[${Array(decimalsDai).fill(0)}]`),
+
+      myPendingRewards: numeral(utils.formatUnits(myPendingRewards, decimalsSarco)).format(makeDecimals(decimalsSarco)),
+      myClaimedRewards: numeral(utils.formatUnits(myClaimedRewards, decimalsSarco)).format(makeDecimals(decimalsSarco)),
+      myTotalRewards: numeral(utils.formatUnits(myPendingRewards.add(myClaimedRewards), decimalsSarco)).format(makeDecimals(decimalsSarco)),
     }
 
     return <Provider value={dataContext}>{children}</Provider>

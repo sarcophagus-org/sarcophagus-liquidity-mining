@@ -24,7 +24,7 @@ const GlobalStats = () => {
     <div className="-mb-4 flex justify-center sm:justify-end -mx-4">
       <div className="mx-4">
         <Section>
-          <Title>Total SARCO Rewards</Title>
+          <Title>Total Rewards</Title>
           <Value>{data.totalRewards}</Value>
         </Section>
         <Section>
@@ -48,6 +48,10 @@ const GlobalStats = () => {
         <Section>
           <Title>Total Staked DAI</Title>
           <Value>{data.totalStakeDai}</Value>
+        </Section>
+        <Section>
+          <Title>Total Staked Stablecoins</Title>
+          <Value>{data.totalStakeStablecoins}</Value>
         </Section>
       </div>
     </div>

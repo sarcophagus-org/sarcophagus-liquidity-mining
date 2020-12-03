@@ -23,10 +23,12 @@ const useTotalClaimedRewards = (liquidityMining) => {
     if (!liquidityMining) return
 
     const getClaimedRewards = () => {
-      liquidityMining.claimedRewards().then(sarco => {
+      liquidityMining.totalClaimedRewards().then(sarco => {
         setTotalClaimedSarcoRewards(sarco)
       })
     }
+
+    getClaimedRewards()
 
     liquidityMining.on("Withdraw", getClaimedRewards)
 

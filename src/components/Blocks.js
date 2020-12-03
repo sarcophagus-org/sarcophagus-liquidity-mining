@@ -46,7 +46,7 @@ const Blocks = () => {
         </ValueItemContainer>
       </Container>
     )
-  } else if (numeral(firstStakeBlock).value() === 0) {
+  } else if (numeral(blocksUntilKickoff).value() > 0) {
     return (
       <Container>
         <Description>Liquidity Mining starting block has been scheduled!</Description>
@@ -57,7 +57,17 @@ const Blocks = () => {
         </ValueItemContainer>
       </Container>
     )
-  } else {
+  } else if (numeral(remainingBlocks).value() < 0) {
+    return (
+      <Container>
+        <Description>Ready for the first stake!</Description>
+        <ValueItemContainer>
+          <ValueItem value={startBlock}>Starting Block</ValueItem>
+          <ValueItem value={currentBlock}>Current Block</ValueItem>
+        </ValueItemContainer>
+      </Container>
+    )
+  } else if (numeral(remainingBlocks).value () >= 0) {
     return (
       <Container>
         <Description>Liquidity Mining is active!</Description>
@@ -66,6 +76,17 @@ const Blocks = () => {
           <ValueItem value={currentBlock}>Current Block</ValueItem>
           <ValueItem value={endingBlock}>Ending Block</ValueItem>
           <ValueItem value={remainingBlocks}>Remaining Blocks</ValueItem>
+        </ValueItemContainer>
+      </Container>
+    )
+  } else {
+    return (
+      <Container>
+        <Description>Liquidity Mining is over!</Description>
+        <ValueItemContainer>
+          <ValueItem value={firstStakeBlock}>Starting Block</ValueItem>
+          <ValueItem value={endingBlock}>Ending Block</ValueItem>
+          <ValueItem value={currentBlock}>Current Block</ValueItem>
         </ValueItemContainer>
       </Container>
     )

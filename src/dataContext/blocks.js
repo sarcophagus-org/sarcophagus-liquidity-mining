@@ -10,11 +10,11 @@ const useCurrentBlock = () => {
     if (!web3?.library) return
 
     web3.library.getBlockNumber().then(blockNumber => {
-      setCurrentBlock(blockNumber)
+      setCurrentBlock(BigNumber.from(blockNumber))
     })
 
     const updateBlockNumber = (blockNumber) => {
-      setCurrentBlock(blockNumber)
+      setCurrentBlock(BigNumber.from(blockNumber))
     }
 
     web3.library.on('block', updateBlockNumber)
@@ -22,9 +22,9 @@ const useCurrentBlock = () => {
     return () => {
       web3.library.removeListener('block', updateBlockNumber)
     }
-  }, [web3])
+  }, [web3?.library])
 
-  return BigNumber.from(currentBlock)
+  return currentBlock
 }
 
 const useStartBlock = (liquidityMining) => {
