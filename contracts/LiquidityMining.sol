@@ -17,7 +17,7 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
     ERC20 public immutable sarco;
 
     uint256 public totalRewards;
-    uint256 public claimedRewards;
+    uint256 public totalClaimedRewards;
     uint256 public startBlock;
     uint256 public firstStakeBlock;
     uint256 public blockLength;
@@ -31,6 +31,7 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
     mapping(address => uint256) private _stakedUsdc;
     mapping(address => uint256) private _stakedUsdt;
     mapping(address => uint256) private _stakedDai;
+    mapping(address => uint256) public userClaimedRewards;
 
     mapping(address => uint256) private _weighted;
     mapping(address => uint256) private _accumulated;
@@ -131,7 +132,7 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         total = _totalStakeUsdc.add(_totalStakeUsdt).add(_totalStakeDai);
     }
 
-    function totalUserStake(address user) private view returns (uint256 total) {
+    function totalUserStake(address user) public view returns (uint256 total) {
         total = _stakedUsdc[user].add(_stakedUsdt[user]).add(_stakedDai[user]);
     }
 
@@ -267,7 +268,10 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
 
         if (reward > 0) {
             sarco.transfer(msg.sender, reward);
-            claimedRewards = claimedRewards.add(reward);
+            userClaimedRewards[msg.sender] = userClaimedRewards[msg.sender].add(
+                reward
+            );
+            totalClaimedRewards = totalClaimedRewards.add(reward);
         }
     }
 
@@ -290,9 +294,13 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
 
         if (reward > 0) {
             sarco.transfer(msg.sender, reward);
-            claimedRewards = claimedRewards.add(reward);
-            _stake(usdcOut, usdtOut, daiOut);
+            userClaimedRewards[msg.sender] = userClaimedRewards[msg.sender].add(
+                reward
+            );
+            totalClaimedRewards = totalClaimedRewards.add(reward);
         }
+
+        _stake(usdcOut, usdtOut, daiOut);
     }
 
     function _stake(
@@ -412,7 +420,7 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
             require(
                 amount <=
                     sarco.balanceOf(address(this)).sub(
-                        totalRewards.sub(claimedRewards)
+                        totalRewards.sub(totalClaimedRewards)
                     ),
                 "LiquidityMining::rescueTokens: that sarco belongs to stakers"
             );
