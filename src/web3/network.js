@@ -14,7 +14,6 @@ const useNetworkConnect = () => {
 
   useEffect(() => {
     if (active) return
-    console.log("activating network connection")
 
     activate(network)
   }, [active, activate])

@@ -12,7 +12,6 @@ const useInactiveListener = () => {
   useEffect(() => {
     const { ethereum } = window
     if (!ethereum || !ethereum.on) return
-    console.log("starting injected listeners")
 
     const handleChainChanged = (chainId) => {
       if (!supportedChain(parseInt(chainId))) return
@@ -27,7 +26,6 @@ const useInactiveListener = () => {
     ethereum.on('chainChanged', handleChainChanged)
     
     return () => {
-      console.log("removing injected listeners")
       if (ethereum.removeListener) {
         ethereum.removeListener('chainChanged', handleChainChanged)
       }
@@ -43,14 +41,12 @@ const useInjectedConnect = () => {
 
   useEffect(() => {
     if (active) return
-    console.log("checking injected authorization")
 
     injected.isAuthorized().then((isAuthorized) => {
       if (!isAuthorized) {
         return
       }
 
-      console.log("activating injected connection")
       activate(injected, undefined, true).catch(error => {
         if (error instanceof UnsupportedChainIdError) {
           toast("Switch MetaMask to a supported network!", {
