@@ -6,15 +6,15 @@ import LiquidityMining from "../../build-contracts/LiquidityMining.json"
 import ERC20 from "../../build-contracts/ERC20.json"
 
 const useLiquidityMiningContract = () => {
-  const { web3, signerOrProvider } = useWeb3()
-  const addresses = useAddresses(web3?.chainId)
+  const { chainId, signerOrProvider } = useWeb3()
+  const addresses = useAddresses(chainId)
   const [liquidityMiningContract, setLiquidityMiningContract] = useState()
 
   useEffect(() => {
-    if (!web3 || !addresses) return
+    if (!chainId || !addresses) return
 
     setLiquidityMiningContract(new Contract(addresses.liquidityMining, LiquidityMining.abi, signerOrProvider))
-  }, [web3, signerOrProvider, addresses])
+  }, [chainId, signerOrProvider, addresses])
 
   return liquidityMiningContract
 }

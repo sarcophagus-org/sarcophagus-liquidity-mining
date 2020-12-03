@@ -4,12 +4,12 @@ import { useWeb3 } from '../web3'
 
 const useCurrentBlock = () => {
   const [currentBlock, setCurrentBlock] = useState(BigNumber.from(0))
-  const { web3 } = useWeb3()
+  const { library } = useWeb3()
 
   useEffect(() => {
-    if (!web3?.library) return
+    if (!library) return
 
-    web3.library.getBlockNumber().then(blockNumber => {
+    library.getBlockNumber().then(blockNumber => {
       setCurrentBlock(BigNumber.from(blockNumber))
     })
 
@@ -17,12 +17,12 @@ const useCurrentBlock = () => {
       setCurrentBlock(BigNumber.from(blockNumber))
     }
 
-    web3.library.on('block', updateBlockNumber)
+    library.on('block', updateBlockNumber)
 
     return () => {
-      web3.library.removeListener('block', updateBlockNumber)
+      library.removeListener('block', updateBlockNumber)
     }
-  }, [web3?.library])
+  }, [library])
 
   return currentBlock
 }

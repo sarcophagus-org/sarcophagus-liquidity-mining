@@ -8,31 +8,34 @@ const useWeb3 = () => {
   const injected = useInjectedConnect()
 
   const defaultName = "Not connected"
-  const [web3, setWeb3] = useState()
   const [name, setName] = useState(defaultName)
   const [account, setAccount] = useState(false)
+  const [chainId, setChainId] = useState(null)
+  const [library, setLibrary] = useState(null)
   const [signerOrProvider, setSignerOrProvider] = useState(null)
 
   useEffect(() => {
     if (injected.active && injected.account && supportedChain(injected.chainId)) {
-      setWeb3(injected)
       setName("Injected provider")
       setAccount(injected.account)
+      setChainId(injected.chainId)
+      setLibrary(injected.library)
       setSignerOrProvider(injected.library.getSigner())
     } else if (network.active) {
-      setWeb3(network)
       setName("Network provider")
       setAccount(false)
+      setChainId(network.chainId)
+      setLibrary(network.library)
       setSignerOrProvider(network.library)
     } else {
-      setWeb3()
       setName(defaultName)
       setAccount(false)
+      setLibrary(null)
       setSignerOrProvider(null)
     }
   }, [network, injected])
 
-  return { web3, name, account, signerOrProvider }
+  return { name, account, chainId, library, signerOrProvider }
 }
 
 export { useWeb3 }

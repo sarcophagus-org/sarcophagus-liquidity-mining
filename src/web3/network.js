@@ -21,4 +21,4 @@ const useNetworkConnect = () => {
   return web3React
 }
 
-export { network, useNetworkConnect }
+export { useNetworkConnect }
