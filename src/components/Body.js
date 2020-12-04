@@ -2,11 +2,8 @@ import Blocks from './Blocks'
 import GlobalStats from './GlobalStats'
 import MyStats from './MyStats'
 import Transactions from './Transactions'
-import { useWeb3 } from '../web3'
 
 const Body = () => {
-  const { account } = useWeb3()
-
   return (
     <div>
       <Blocks />
@@ -20,11 +17,9 @@ const Body = () => {
             <MyStats />
           </div>
         </div>
-        {account && (
-          <div className="mt-6 py-6 border-t border-grey-300 text-center">
-            <Transactions />
-          </div>
-        )}
+        <div className="mt-6 py-6 border-t border-grey-300 text-center">
+          <Transactions />
+        </div>
       </div>
     </div>
   )

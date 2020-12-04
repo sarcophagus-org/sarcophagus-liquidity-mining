@@ -1,4 +1,5 @@
 import { Value } from './shared/Value'
+import { Hidden } from './shared/Hidden'
 import { useData } from '../dataContext'
 
 const Transactions = () => {
@@ -45,15 +46,15 @@ const Transactions = () => {
       <SectionContainer>
         <Section>
           <Title>My USDC Balance</Title>
-          <Value>{myUsdcBalance}</Value>
+          <Hidden><Value>{myUsdcBalance}</Value></Hidden>
         </Section>
         <Section>
           <Title>My USDT Balance</Title>
-          <Value>{myUsdtBalance}</Value>
+          <Hidden><Value>{myUsdtBalance}</Value></Hidden>
         </Section>
         <Section>
           <Title>My DAI Balance</Title>
-          <Value>{myDaiBalance}</Value>
+          <Hidden><Value>{myDaiBalance}</Value></Hidden>
         </Section>
       </SectionContainer>
     </Container>

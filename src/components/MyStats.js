@@ -1,9 +1,8 @@
 import { useData } from '../dataContext'
 import { Value } from './shared/Value'
-import { useWeb3 } from '../web3'
+import { Hidden } from './shared/Hidden'
 
 const MyStats = () => {
-  const { account } = useWeb3()
   const {
     myStakeUsdc,
     myStakeUsdt,
@@ -46,48 +45,38 @@ const MyStats = () => {
     )
   }
 
-  if (!account) {
-    return (
-      <div className="h-full flex flex-col justify-center">
-        <div>
-          Connect your Web3 account to play!
-        </div>
-      </div>
-    )
-  }
-
   return (
     <Container>
       <SectionContainer>
         <Section>
           <Title>My Staked USDC</Title>
-          <Value>{myStakeUsdc}</Value>
+          <Hidden><Value>{myStakeUsdc}</Value></Hidden>
         </Section>
         <Section>
           <Title>My Staked USDT</Title>
-          <Value>{myStakeUsdt}</Value>
+          <Hidden><Value>{myStakeUsdt}</Value></Hidden>
         </Section>
         <Section>
           <Title>My Staked DAI</Title>
-          <Value>{myStakeDai}</Value>
+          <Hidden><Value>{myStakeDai}</Value></Hidden>
         </Section>
         <Section>
           <Title>My Staked Stablecoins</Title>
-          <Value>{myStakedStablecoins}</Value>
+          <Hidden><Value>{myStakedStablecoins}</Value></Hidden>
         </Section>
       </SectionContainer>
       <SectionContainer>
         <Section>
           <Title>My Pending Rewards</Title>
-          <Value>{myPendingRewards}</Value>
+          <Hidden><Value>{myPendingRewards}</Value></Hidden>
         </Section>
         <Section>
           <Title>My Claimed Rewards</Title>
-          <Value>{myClaimedRewards}</Value>
+          <Hidden><Value>{myClaimedRewards}</Value></Hidden>
         </Section>
         <Section>
           <Title>My Total Rewards</Title>
-          <Value>{myTotalRewards}</Value>
+          <Hidden><Value>{myTotalRewards}</Value></Hidden>
         </Section>
       </SectionContainer>
     </Container>
