@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react'
 import { getDefaultProvider } from 'ethers'
 
-const useFallbackConnect = (pending) => {
+const useFallbackConnect = (next) => {
   const [provider, setProvider] = useState(null)
 
   useEffect(() => {
-    if (provider || pending) return
+    if (provider || !next) return
 
     setProvider(getDefaultProvider(parseInt(process.env.REACT_APP_DEFAULT_CHAIN_ID, 10)))      
-  }, [provider, pending])
+  }, [provider, next])
 
   return provider
 }

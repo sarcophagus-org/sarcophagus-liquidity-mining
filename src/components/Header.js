@@ -1,7 +1,7 @@
 import { useInjectedConnect, manuallyConnect } from '../web3/injected'
 
 const Header = () => {
-  const web3 = useInjectedConnect()
+  const { injected } = useInjectedConnect()
   
   const truncate = (fullStr, strLen, separator) => {
     if (fullStr.length <= strLen) return fullStr;
@@ -25,7 +25,7 @@ const Header = () => {
       )
     } else {
       return (
-        <button onClick={() => manuallyConnect(web3)}>
+        <button onClick={() => manuallyConnect(injected)}>
           Connect Web3 Account
         </button>
       )
@@ -38,7 +38,7 @@ const Header = () => {
         Sarcophagus Liquidity Mining
       </h1>
       <div className="text-lg">
-        <AccountDisplay account={web3.account} />
+        <AccountDisplay account={injected.account} />
       </div>
     </div>
   )

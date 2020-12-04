@@ -1,63 +1,78 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, createContext, useContext } from 'react'
 import { useFallbackConnect } from './fallback'
 import { useLocalConnect } from './local'
 import { useInjectedConnect } from './injected'
 import { supportedChains } from './chains'
 
-const useWeb3 = () => {
-  const { local, pending } = useLocalConnect()
-  const fallback = useFallbackConnect(pending)
-  const injected = useInjectedConnect()
+let context
 
-  const defaultName = "Not connected"
+const createWeb3Root = () => {
+  context = createContext()
 
-  const [data, setData] = useState({
-    name: defaultName,
-    account: false,
-    chainId: null,
-    provider: null,
-    signerOrProvider: null,
-  })
+  context.displayName = "Web3 Provider"
+  const Provider = context.Provider
 
-  useEffect(() => {
-    if (injected.active && injected.account && supportedChains().includes(injected.chainId)) {
-      setData({
-        name: "Injected provider",
-        account: injected.account,
-        chainId: injected.chainId,
-        provider: injected.library,
-        signerOrProvider: injected.library.getSigner(),
-      })
-    } else if (local) {
-      local.detectNetwork().then(network => {
-        setData({
-          name: "Local provider",
-          account: false,
-          chainId: network.chainId,
-          provider: local,
-          signerOrProvider: local,
+  return ({ children }) => {
+    const { injected, injectedNext } = useInjectedConnect()
+    const { local, localNext } = useLocalConnect(injectedNext)
+    const fallback = useFallbackConnect(localNext)
+
+    const defaultName = "Not connected"
+
+    const [web3, setWeb3] = useState({
+      name: defaultName,
+      account: false,
+      chainId: null,
+      provider: null,
+      signerOrProvider: null,
+    })
+
+    useEffect(() => {
+      if (injected.active && injected.account && supportedChains().includes(injected.chainId)) {
+        setWeb3({
+          name: "Injected provider",
+          account: injected.account,
+          chainId: injected.chainId,
+          provider: injected.library,
+          signerOrProvider: injected.library.getSigner(),
         })
-      }).catch(error => console.error(error))
-    } else if (fallback) {
-      setData({
-        name: "Fallback provider",
-        account: false,
-        chainId: fallback.network.chainId,
-        provider: fallback,
-        signerOrProvider: fallback,
-      })
-    } else {
-      setData({
-        name: defaultName,
-        account: false,
-        chainId: null,
-        provider: null,
-        signerOrProvider: null
-      })
-    }
-  }, [fallback, local, injected])
+      } else if (local) {
+        local.detectNetwork().then(network => {
+          setWeb3({
+            name: "Local provider",
+            account: false,
+            chainId: network.chainId,
+            provider: local,
+            signerOrProvider: local,
+          })
+        }).catch(error => console.error(error))
+      } else if (fallback) {
+        setWeb3({
+          name: "Fallback provider",
+          account: false,
+          chainId: fallback.network.chainId,
+          provider: fallback,
+          signerOrProvider: fallback,
+        })
+      } else {
+        setWeb3({
+          name: defaultName,
+          account: false,
+          chainId: null,
+          provider: null,
+          signerOrProvider: null
+        })
+      }
+    }, [injected, local, fallback])
 
-  return { ...data }
+    return <Provider value={web3}>{children}</Provider>
+  }
 }
 
-export { useWeb3 }
+const Web3Provider = createWeb3Root()
+
+const useWeb3 = () => {
+  return useContext(context)
+}
+
+export { Web3Provider, useWeb3 }

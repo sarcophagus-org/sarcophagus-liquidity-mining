@@ -5,6 +5,7 @@ import { ToastContainer } from 'react-toastify'
 import { Web3ReactProvider } from '@web3-react/core'
 import './index.css'
 import App from './App'
+import { Web3Provider } from './web3'
 import { DataProvider } from './dataContext'
 import reportWebVitals from './reportWebVitals'
 
@@ -15,10 +16,12 @@ const getLibrary = provider => {
 ReactDOM.render(
   <React.StrictMode>
     <Web3ReactProvider getLibrary={getLibrary}>
-      <DataProvider>
-        <App />
-        <ToastContainer closeButton={false} />
-      </DataProvider>
+      <Web3Provider>
+        <DataProvider>
+          <App />
+          <ToastContainer closeButton={false} />
+        </DataProvider>
+      </Web3Provider>
     </Web3ReactProvider>
   </React.StrictMode>,
   document.getElementById('root')

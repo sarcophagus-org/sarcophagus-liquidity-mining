@@ -1,25 +1,26 @@
 import { useState, useEffect } from 'react'
 import { ethers } from 'ethers'
 
-const useLocalConnect = () => {
-  const [provider, setProvider] = useState(null)
-  const [pending, setPending] = useState(true)
+const useLocalConnect = (next) => {
+  const [local, setLocal] = useState(null)
+  const [localNext, setLocalNext] = useState(false)
 
   useEffect(() => {
-    if (provider || process.env.NODE_ENV === "production") return
+    if (local || process.env.NODE_ENV === "production" || !next) return
 
-    const _provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_LOCAL_PROVIDER_URL)
-    _provider.detectNetwork()
+    const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_LOCAL_PROVIDER_URL)
+    provider.detectNetwork()
       .then(() => {
-        setProvider(_provider)
+        setLocalNext(true)
+        setLocal(provider)
       })
       .catch(() => {
-        setPending(false)
-        setProvider(null)
+        setLocalNext(true)
+        setLocal(null)
       })
-  }, [provider])
+  }, [local, next])
 
-  return { local: provider, pending }
+  return { local, localNext }
 }
 
 export { useLocalConnect }

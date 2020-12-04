@@ -1,10 +1,10 @@
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { useWeb3React, UnsupportedChainIdError } from '@web3-react/core'
 import { InjectedConnector, NoEthereumProviderError, UserRejectedRequestError } from '@web3-react/injected-connector'
 import { supportedChains } from './chains'
 
-const injected = new InjectedConnector({ supportedChainIds: supportedChains() })
+const injectedConnector = new InjectedConnector({ supportedChainIds: supportedChains() })
 
 const useInactiveListener = () => {
   const { activate, chainId } = useWeb3React()
@@ -15,16 +15,16 @@ const useInactiveListener = () => {
 
     const handleChainChanged = (chainId) => {
       if (!supportedChains().includes(parseInt(chainId))) return
-      
-      injected.isAuthorized().then(isAuthorized => {
+
+      injectedConnector.isAuthorized().then(isAuthorized => {
         if (isAuthorized) {
-          activate(injected)
+          activate(injectedConnector)
         }
       }).catch(error => console.error(error))
     }
-    
+
     ethereum.on('chainChanged', handleChainChanged)
-    
+
     return () => {
       if (ethereum.removeListener) {
         ethereum.removeListener('chainChanged', handleChainChanged)
@@ -34,34 +34,44 @@ const useInactiveListener = () => {
 }
 
 const useInjectedConnect = () => {
-  const web3React = useWeb3React()
-  const { active, activate, chainId, setError } = web3React
+  const injected = useWeb3React()
+  const [injectedNext, setInjectedNext] = useState(false)
+
+  const { active, activate, chainId, setError } = injected
 
   useInactiveListener()
 
   useEffect(() => {
     if (active) return
 
-    injected.isAuthorized().then((isAuthorized) => {
+    injectedConnector.isAuthorized().then((isAuthorized) => {
       if (!isAuthorized) {
+        setInjectedNext(true)
         return
       }
 
-      activate(injected, undefined, true).catch(error => {
-        if (error instanceof UnsupportedChainIdError) {
-          toast("Switch MetaMask to a supported network!", {
-            toastId: "switchToSupported"
-          })
-        }
-      })
-    }).catch(error => console.error(error))
+      activate(injectedConnector, undefined, true)
+        .then(() => {
+          setInjectedNext(true)
+        }).catch(error => {
+          setInjectedNext(true)
+          if (error instanceof UnsupportedChainIdError) {
+            toast("Switch MetaMask to a supported network!", {
+              toastId: "switchToSupported"
+            })
+          }
+        })
+    }).catch(error => {
+      console.error(error)
+      setInjectedNext(true)
+    })
   }, [active, activate, chainId, setError])
 
-  return web3React
+  return { injected, injectedNext }
 }
 
 const manuallyConnect = (web3) => {
-  web3.activate(injected, undefined, true).catch(error => {
+  web3.activate(injectedConnector, undefined, true).catch(error => {
     if (error instanceof NoEthereumProviderError) {
       toast("Install MetaMask to interact!", {
         toastId: "installMetaMask"
@@ -82,4 +92,4 @@ const manuallyConnect = (web3) => {
   })
 }
 
-export { injected, useInjectedConnect, manuallyConnect }
+export { useInjectedConnect, manuallyConnect }
