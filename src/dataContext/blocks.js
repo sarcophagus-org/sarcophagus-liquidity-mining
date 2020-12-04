@@ -4,25 +4,25 @@ import { useWeb3 } from '../web3'
 
 const useCurrentBlock = () => {
   const [currentBlock, setCurrentBlock] = useState(BigNumber.from(0))
-  const { library } = useWeb3()
+  const { provider } = useWeb3()
 
   useEffect(() => {
-    if (!library) return
+    if (!provider) return
 
-    library.getBlockNumber().then(blockNumber => {
+    provider.getBlockNumber().then(blockNumber => {
       setCurrentBlock(BigNumber.from(blockNumber))
-    })
+    }).catch(error => console.error(error))
 
     const updateBlockNumber = (blockNumber) => {
       setCurrentBlock(BigNumber.from(blockNumber))
     }
 
-    library.on('block', updateBlockNumber)
+    provider.on('block', updateBlockNumber)
 
     return () => {
-      library.removeListener('block', updateBlockNumber)
+      provider.removeListener('block', updateBlockNumber)
     }
-  }, [library])
+  }, [provider])
 
   return currentBlock
 }
@@ -35,7 +35,7 @@ const useStartBlock = (liquidityMining) => {
 
     liquidityMining.startBlock().then(startBlock => {
       setStartBlock(startBlock)
-    })
+    }).catch(error => console.error(error))
 
     const updateStartBlock = (_, startBlock) => {
       setStartBlock(startBlock)
@@ -61,7 +61,7 @@ const useFirstStakeBlock = (liquidityMining) => {
     const updateFirstStake = () => {
       liquidityMining.firstStakeBlock().then(firstStakeBlock => {
         setFirstStakeBlock(firstStakeBlock)
-      })
+      }).catch(error => console.error(error))
     }
 
     updateFirstStake()
@@ -87,7 +87,7 @@ const useBlockLength = (liquidityMining) => {
     const updateBlockLength = () => {
       liquidityMining.blockLength().then(blockLength => {
         setBlockLength(blockLength)
-      })
+      }).catch(error => console.error(error))
     }
 
     updateBlockLength()

@@ -2,25 +2,25 @@ import { useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { useWeb3React, UnsupportedChainIdError } from '@web3-react/core'
 import { InjectedConnector, NoEthereumProviderError, UserRejectedRequestError } from '@web3-react/injected-connector'
-import { supportedChains, supportedChain } from './chains'
+import { supportedChains } from './chains'
 
 const injected = new InjectedConnector({ supportedChainIds: supportedChains() })
 
 const useInactiveListener = () => {
-  const { activate, chainId } = useWeb3React("injected")
+  const { activate, chainId } = useWeb3React()
 
   useEffect(() => {
     const { ethereum } = window
     if (!ethereum || !ethereum.on) return
 
     const handleChainChanged = (chainId) => {
-      if (!supportedChain(parseInt(chainId))) return
+      if (!supportedChains().includes(parseInt(chainId))) return
       
       injected.isAuthorized().then(isAuthorized => {
         if (isAuthorized) {
           activate(injected)
         }
-      })  
+      }).catch(error => console.error(error))
     }
     
     ethereum.on('chainChanged', handleChainChanged)
@@ -34,7 +34,7 @@ const useInactiveListener = () => {
 }
 
 const useInjectedConnect = () => {
-  const web3React = useWeb3React("injected")
+  const web3React = useWeb3React()
   const { active, activate, chainId, setError } = web3React
 
   useInactiveListener()
@@ -54,7 +54,7 @@ const useInjectedConnect = () => {
           })
         }
       })
-    })
+    }).catch(error => console.error(error))
   }, [active, activate, chainId, setError])
 
   return web3React

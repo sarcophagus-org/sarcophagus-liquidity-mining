@@ -13,11 +13,11 @@ const useMyPendingRewards = (liquidityMining, currentBlock) => {
       if (stake.gt(0)) {
         liquidityMining.callStatic.payout().then(reward => {
           setPendingRewards(reward)
-        })
+        }).catch(error => console.error(error))
       } else {
         setPendingRewards(BigNumber.from(0))
       }
-    })
+    }).catch(error => console.error(error))
     
   }, [liquidityMining, currentBlock, account])
 
@@ -33,7 +33,7 @@ const useMyClaimedRewards = (liquidityMining) => {
 
     liquidityMining.userClaimedRewards(account).then(reward => {
       setClaimedRewards(reward)
-    })
+    }).catch(error => console.error(error))
 
     const addMyClaimedRewards = (_, __, ___, ____, reward) => {
       setClaimedRewards(rewards => rewards.add(reward))

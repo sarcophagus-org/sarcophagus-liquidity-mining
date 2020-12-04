@@ -11,7 +11,7 @@ const useLiquidityMiningContract = () => {
   const [liquidityMiningContract, setLiquidityMiningContract] = useState()
 
   useEffect(() => {
-    if (!chainId || !addresses) return
+    if (!chainId || !addresses || !signerOrProvider) return
 
     setLiquidityMiningContract(new Contract(addresses.liquidityMining, LiquidityMining.abi, signerOrProvider))
   }, [chainId, signerOrProvider, addresses])
@@ -24,11 +24,11 @@ const useUsdcContract = (liquidityMining) => {
   const [usdcContract, setUsdcContract] = useState()
 
   useEffect(() => {
-    if (!liquidityMining) return
+    if (!liquidityMining || !signerOrProvider) return
 
     liquidityMining.usdc().then(usdc => {
       setUsdcContract(new Contract(usdc, ERC20.abi, signerOrProvider))
-    })
+    }).catch(error => console.error(error))
   }, [liquidityMining, signerOrProvider])
 
   return usdcContract
@@ -39,11 +39,11 @@ const useUsdtContract = (liquidityMining) => {
   const [usdtContract, setUsdtContract] = useState()
 
   useEffect(() => {
-    if (!liquidityMining) return
+    if (!liquidityMining || !signerOrProvider) return
 
     liquidityMining.usdt().then(usdt => {
       setUsdtContract(new Contract(usdt, ERC20.abi, signerOrProvider))
-    })
+    }).catch(error => console.error(error))
   }, [liquidityMining, signerOrProvider])
 
   return usdtContract
@@ -54,11 +54,11 @@ const useDaiContract = (liquidityMining) => {
   const [daiContract, setDaiContract] = useState()
 
   useEffect(() => {
-    if (!liquidityMining) return
+    if (!liquidityMining || !signerOrProvider) return
 
     liquidityMining.dai().then(dai => {
       setDaiContract(new Contract(dai, ERC20.abi, signerOrProvider))
-    })
+    }).catch(error => console.error(error))
   }, [liquidityMining, signerOrProvider])
 
   return daiContract
@@ -69,11 +69,11 @@ const useSarcoContract = (liquidityMining) => {
   const [sarcoContract, setSarcoContract] = useState()
 
   useEffect(() => {
-    if (!liquidityMining) return
+    if (!liquidityMining || !signerOrProvider) return
 
     liquidityMining.sarco().then(sarco => {
       setSarcoContract(new Contract(sarco, ERC20.abi, signerOrProvider))
-    })
+    }).catch(error => console.error(error))
   }, [liquidityMining, signerOrProvider])
 
   return sarcoContract
@@ -87,7 +87,7 @@ const useDecimals = (contract) => {
 
     contract.decimals().then(decimals => {
       setDecimals(decimals)
-    })
+    }).catch(error => console.error(error))
   }, [contract])
 
   return decimals

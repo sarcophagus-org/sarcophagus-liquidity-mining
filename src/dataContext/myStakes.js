@@ -11,7 +11,7 @@ const useMyStakeUsdc = (liquidityMining) => {
 
     liquidityMining.userStakeUsdc(account).then(usdc => {
       setMyStakeUsdc(usdc)
-    })
+    }).catch(error => console.error(error))
 
     const addUsdc = (_, usdc) => {
       setMyStakeUsdc(_usdc => _usdc.add(usdc))
@@ -42,7 +42,7 @@ const useMyStakeUsdt = (liquidityMining) => {
 
     liquidityMining.userStakeUsdt(account).then(usdt => {
       setMyStakeUsdt(usdt)
-    })
+    }).catch(error => console.error(error))
 
     const addUsdt = (_, __, usdt) => {
       setMyStakeUsdt(_usdt => _usdt.add(usdt))
@@ -73,7 +73,7 @@ const useMyStakeDai = (liquidityMining) => {
 
     liquidityMining.userStakeDai(account).then(dai => {
       setMyStakeDai(dai)
-    })
+    }).catch(error => console.error(error))
 
     const addDai = (_, __, ___, dai) => {
       setMyStakeDai(_dai => _dai.add(dai))

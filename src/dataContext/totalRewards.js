@@ -9,7 +9,7 @@ const useTotalRewards = (liquidityMining) => {
 
     liquidityMining.totalRewards().then(sarco => {
       setTotalSarcoRewards(sarco)
-    })
+    }).catch(error => console.error(error))
 
   }, [liquidityMining])
 
@@ -25,7 +25,7 @@ const useTotalClaimedRewards = (liquidityMining) => {
     const getClaimedRewards = () => {
       liquidityMining.totalClaimedRewards().then(sarco => {
         setTotalClaimedSarcoRewards(sarco)
-      })
+      }).catch(error => console.error(error))
     }
 
     getClaimedRewards()

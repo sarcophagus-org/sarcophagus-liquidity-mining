@@ -5,7 +5,7 @@ const SarcoMock = artifacts.require("SarcoMock")
 const BN = web3.utils.BN
 
 module.exports = async function (_, network) {
-  if (["development", "test"].includes(network)) {
+  if (["develop", "test"].includes(network)) {
     const liquidityMining = await LiquidityMining.deployed()    
     const amount = (new BN(1000000)).mul(new BN(10).pow(new BN(18)))
 

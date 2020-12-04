@@ -1,41 +1,63 @@
 import { useEffect, useState } from 'react'
-import { useNetworkConnect } from './network'
+import { useFallbackConnect } from './fallback'
+import { useLocalConnect } from './local'
 import { useInjectedConnect } from './injected'
-import { supportedChain } from './chains'
+import { supportedChains } from './chains'
 
 const useWeb3 = () => {
-  const network = useNetworkConnect()
+  const { local, pending } = useLocalConnect()
+  const fallback = useFallbackConnect(pending)
   const injected = useInjectedConnect()
 
   const defaultName = "Not connected"
-  const [name, setName] = useState(defaultName)
-  const [account, setAccount] = useState(false)
-  const [chainId, setChainId] = useState(null)
-  const [library, setLibrary] = useState(null)
-  const [signerOrProvider, setSignerOrProvider] = useState(null)
+
+  const [data, setData] = useState({
+    name: defaultName,
+    account: false,
+    chainId: null,
+    provider: null,
+    signerOrProvider: null,
+  })
 
   useEffect(() => {
-    if (injected.active && injected.account && supportedChain(injected.chainId)) {
-      setName("Injected provider")
-      setAccount(injected.account)
-      setChainId(injected.chainId)
-      setLibrary(injected.library)
-      setSignerOrProvider(injected.library.getSigner())
-    } else if (network.active) {
-      setName("Network provider")
-      setAccount(false)
-      setChainId(network.chainId)
-      setLibrary(network.library)
-      setSignerOrProvider(network.library)
+    if (injected.active && injected.account && supportedChains().includes(injected.chainId)) {
+      setData({
+        name: "Injected provider",
+        account: injected.account,
+        chainId: injected.chainId,
+        provider: injected.library,
+        signerOrProvider: injected.library.getSigner(),
+      })
+    } else if (local) {
+      local.detectNetwork().then(network => {
+        setData({
+          name: "Local provider",
+          account: false,
+          chainId: network.chainId,
+          provider: local,
+          signerOrProvider: local,
+        })
+      }).catch(error => console.error(error))
+    } else if (fallback) {
+      setData({
+        name: "Fallback provider",
+        account: false,
+        chainId: fallback.network.chainId,
+        provider: fallback,
+        signerOrProvider: fallback,
+      })
     } else {
-      setName(defaultName)
-      setAccount(false)
-      setLibrary(null)
-      setSignerOrProvider(null)
+      setData({
+        name: defaultName,
+        account: false,
+        chainId: null,
+        provider: null,
+        signerOrProvider: null
+      })
     }
-  }, [network, injected])
+  }, [fallback, local, injected])
 
-  return { name, account, chainId, library, signerOrProvider }
+  return { ...data }
 }
 
 export { useWeb3 }

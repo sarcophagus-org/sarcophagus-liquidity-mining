@@ -1,28 +1,21 @@
 import { useState, useEffect } from 'react'
 
 const supportedChains = () => {
-  const dev = process.env.NODE_ENV !== "production" ? [1337, 5777] : []
-  return [...dev]
-}
-
-const supportedChain = (chainId) => {
-  return supportedChains().includes(chainId)
-}
-
-const chainJsonRpcUrls = () => {
-  return {
-    1337: "http://127.0.0.1:9545",
-    5777: "http://127.0.0.1:9545",
-  }
+  const dev = process.env.NODE_ENV !== "production" ? [parseInt(process.env.REACT_APP_LOCAL_CHAINID, 10)] : []
+  return [...dev, 5]
 }
 
 const useAddresses = chainId => {
   const [addresses, setAddresses] = useState()
 
   useEffect(() => {
-    if (chainId === 1337 || chainId === 5777) {
+    if (chainId === parseInt(process.env.REACT_APP_LOCAL_CHAINID, 10)) {
       setAddresses({
         liquidityMining: process.env.REACT_APP_LOCAL_LIQUIDITY_MINING_ADDRESS
+      })
+    } else if (chainId === 5) {
+      setAddresses({
+        liquidityMining: "0x9F651A051CCa0E8BA93176e5E81014D30EaC1DDB"
       })
     }
   }, [chainId])
@@ -31,8 +24,6 @@ const useAddresses = chainId => {
 }
 
 export {
-  chainJsonRpcUrls,
   supportedChains,
-  supportedChain,
   useAddresses
 }
