@@ -35,11 +35,11 @@ const useMyClaimedRewards = (liquidityMining) => {
       setClaimedRewards(reward)
     }).catch(error => console.error(error))
 
-    const addMyClaimedRewards = (_, __, ___, ____, reward) => {
+    const addMyClaimedRewards = (_, reward) => {
       setClaimedRewards(rewards => rewards.add(reward))
     }
 
-    const myClaimedRewardsFilter = liquidityMining.filters.Withdraw(account, null, null, null, null)
+    const myClaimedRewardsFilter = liquidityMining.filters.Payout(account, null)
     liquidityMining.on(myClaimedRewardsFilter, addMyClaimedRewards)
 
     return () => {

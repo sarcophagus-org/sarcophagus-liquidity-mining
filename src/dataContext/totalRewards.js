@@ -22,18 +22,18 @@ const useTotalClaimedRewards = (liquidityMining) => {
   useEffect(() => {
     if (!liquidityMining) return
 
-    const getClaimedRewards = () => {
-      liquidityMining.totalClaimedRewards().then(sarco => {
+    liquidityMining.totalClaimedRewards().then(sarco => {
         setTotalClaimedSarcoRewards(sarco)
       }).catch(error => console.error(error))
+
+    const getClaimedRewards = (_, _sarco) => {
+      setTotalClaimedSarcoRewards(sarco => sarco.add(_sarco))
     }
 
-    getClaimedRewards()
-
-    liquidityMining.on("Withdraw", getClaimedRewards)
+    liquidityMining.on("Payout", getClaimedRewards)
 
     return () => {
-      liquidityMining.removeListener("Withdraw", getClaimedRewards)
+      liquidityMining.removeListener("Payout", getClaimedRewards)
     }
   }, [liquidityMining])
 

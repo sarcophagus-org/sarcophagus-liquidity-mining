@@ -43,12 +43,12 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         uint256 usdtIn,
         uint256 daiIn
     );
+    event Payout(address indexed staker, uint256 reward);
     event Withdraw(
         address indexed staker,
         uint256 usdcOut,
         uint256 usdtOut,
-        uint256 daiOut,
-        uint256 reward
+        uint256 daiOut
     );
 
     constructor(
@@ -233,6 +233,8 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
             normalize(usdt, usdtIn),
             normalize(dai, daiIn)
         );
+
+        emit Stake(msg.sender, usdcIn, usdtIn, daiIn);
     }
 
     function withdraw()
@@ -252,8 +254,6 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         usdtOut = denormalize(usdt, usdtOut);
         daiOut = denormalize(dai, daiOut);
 
-        emit Withdraw(msg.sender, usdcOut, usdtOut, daiOut, reward);
-
         if (usdcOut > 0) {
             usdc.transfer(msg.sender, usdcOut);
         }
@@ -272,7 +272,11 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
                 reward
             );
             totalClaimedRewards = totalClaimedRewards.add(reward);
+
+            emit Payout(msg.sender, reward);
         }
+
+        emit Withdraw(msg.sender, usdcOut, usdtOut, daiOut);
     }
 
     function payout() public update nonReentrant returns (uint256 reward) {
@@ -283,13 +287,6 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
             uint256 _reward
         ) = _applyReward();
 
-        emit Withdraw(
-            msg.sender,
-            denormalize(usdc, usdcOut),
-            denormalize(usdt, usdtOut),
-            denormalize(dai, daiOut),
-            _reward
-        );
         reward = _reward;
 
         if (reward > 0) {
@@ -301,6 +298,8 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         }
 
         _stake(usdcOut, usdtOut, daiOut);
+
+        emit Payout(msg.sender, _reward);
     }
 
     function _stake(
@@ -352,13 +351,6 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         if (addBackDai > 0) {
             _totalStakeDai = _totalStakeDai.add(addBackDai);
         }
-
-        emit Stake(
-            msg.sender,
-            denormalize(usdc, usdcIn),
-            denormalize(usdt, usdtIn),
-            denormalize(dai, daiIn)
-        );
     }
 
     function _applyReward()
