@@ -15,7 +15,7 @@ const GlobalStats = () => {
 
   const Container = ({ children }) => {
     return (
-      <div className="-mb-4 flex justify-center sm:justify-end -mx-4">
+      <div className="-mb-4 flex justify-center md:justify-end -mx-4">
         {children}
       </div>
     )

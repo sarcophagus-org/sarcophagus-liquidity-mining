@@ -16,7 +16,7 @@ const MyStats = () => {
 
   const Container = ({ children }) => {
     return (
-      <div className="-mb-4 flex justify-center sm:justify-start -mx-4">
+      <div className="-mb-4 flex justify-center md:justify-start -mx-4">
         {children}
       </div>
     )
@@ -48,8 +48,10 @@ const MyStats = () => {
 
   if (!account) {
     return (
-      <div>
-        Connect your Web3 account to play!
+      <div className="h-full flex flex-col justify-center">
+        <div>
+          Connect your Web3 account to play!
+        </div>
       </div>
     )
   }
