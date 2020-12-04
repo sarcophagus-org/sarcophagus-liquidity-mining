@@ -37,6 +37,11 @@ import {
   useMyPendingRewards,
   useMyClaimedRewards,
 } from './myRewards'
+import {
+  useMyUsdcBalance,
+  useMyUsdtBalance,
+  useMyDaiBalance,
+} from './myBalances'
 
 let context
 
@@ -110,6 +115,10 @@ const createDataRoot = () => {
 
     const myTotalRewards = myPendingRewards.add(myClaimedRewards)
 
+    const myUsdcBalance = useMyUsdcBalance(usdcContract, currentBlock)
+    const myUsdtBalance = useMyUsdtBalance(usdtContract, currentBlock)
+    const myDaiBalance = useMyDaiBalance(daiContract, currentBlock)
+
     const dataContext = {
       totalRewards: moneyString(totalRewards, decimalsSarco),
       totalClaimedRewards: moneyString(totalClaimedRewards, decimalsSarco),
@@ -146,6 +155,10 @@ const createDataRoot = () => {
       myPendingRewards: moneyString(myPendingRewards, decimalsSarco),
       myClaimedRewards: moneyString(myClaimedRewards, decimalsSarco),
       myTotalRewards: moneyString(myTotalRewards, decimalsSarco),
+
+      myUsdcBalance: moneyString(myUsdcBalance, decimalsUsdc),
+      myUsdtBalance: moneyString(myUsdtBalance, decimalsUsdt),
+      myDaiBalance: moneyString(myDaiBalance, decimalsDai),
     }
 
     return <Provider value={dataContext}>{children}</Provider>

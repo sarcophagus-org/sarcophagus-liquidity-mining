@@ -16,7 +16,7 @@ const Blocks = () => {
 
   const Container = ({ children }) => {
     return (
-      <div className="flex flex-col items-center text-center mb-6 border-b border-t pt-6 pb-4">
+      <div className="flex flex-col items-center text-center border-b border-t pt-6 pb-4 mb-6">
         {children}
       </div>
     )
