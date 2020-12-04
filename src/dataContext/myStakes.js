@@ -21,12 +21,15 @@ const useMyStakeUsdc = (liquidityMining) => {
       setMyStakeUsdc(_usdc => _usdc.sub(usdc))
     }
 
-    liquidityMining.on('Stake', addUsdc)
-    liquidityMining.on('Withdraw', removeUsdc)
+    const myStakeFilter = liquidityMining.filters.Stake(account, null, null, null)
+    liquidityMining.on(myStakeFilter, addUsdc)
+
+    const myWithdrawFilter = liquidityMining.filters.Withdraw(account, null, null, null, null)
+    liquidityMining.on(myWithdrawFilter, removeUsdc)
 
     return () => {
-      liquidityMining.removeListener('Stake', addUsdc)
-      liquidityMining.removeListener('Withdraw', removeUsdc)
+      liquidityMining.removeListener(myStakeFilter, addUsdc)
+      liquidityMining.removeListener(myWithdrawFilter, removeUsdc)
     }
   }, [liquidityMining, account])
 
@@ -52,12 +55,15 @@ const useMyStakeUsdt = (liquidityMining) => {
       setMyStakeUsdt(_usdt => _usdt.sub(usdt))
     }
 
-    liquidityMining.on('Stake', addUsdt)
-    liquidityMining.on('Withdraw', removeUsdt)
+    const myStakeFilter = liquidityMining.filters.Stake(account, null, null, null)
+    liquidityMining.on(myStakeFilter, addUsdt)
+
+    const myWithdrawFilter = liquidityMining.filters.Withdraw(account, null, null, null, null)
+    liquidityMining.on(myWithdrawFilter, removeUsdt)
 
     return () => {
-      liquidityMining.removeListener('Stake', addUsdt)
-      liquidityMining.removeListener('Withdraw', removeUsdt)
+      liquidityMining.removeListener(myStakeFilter, addUsdt)
+      liquidityMining.removeListener(myWithdrawFilter, removeUsdt)
     }
   }, [liquidityMining, account])
 
@@ -83,12 +89,15 @@ const useMyStakeDai = (liquidityMining) => {
       setMyStakeDai(_dai => _dai.sub(dai))
     }
 
-    liquidityMining.on('Stake', addDai)
-    liquidityMining.on('Withdraw', removeDai)
+    const myStakeFilter = liquidityMining.filters.Stake(account, null, null, null)
+    liquidityMining.on(myStakeFilter, addDai)
+
+    const myWithdrawFilter = liquidityMining.filters.Withdraw(account, null, null, null, null)
+    liquidityMining.on(myWithdrawFilter, removeDai)
 
     return () => {
-      liquidityMining.removeListener('Stake', addDai)
-      liquidityMining.removeListener('Withdraw', removeDai)
+      liquidityMining.removeListener(myStakeFilter, addDai)
+      liquidityMining.removeListener(myWithdrawFilter, removeDai)
     }
   }, [liquidityMining, account])
 
