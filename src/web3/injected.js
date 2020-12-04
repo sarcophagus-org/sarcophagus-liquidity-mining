@@ -56,8 +56,8 @@ const useInjectedConnect = () => {
         }).catch(error => {
           setInjectedNext(true)
           if (error instanceof UnsupportedChainIdError) {
-            toast("Switch MetaMask to a supported network!", {
-              toastId: "switchToSupported"
+            toast('Switch MetaMask to a supported network!', {
+              toastId: 'switchToSupported'
             })
           }
         })
@@ -73,20 +73,20 @@ const useInjectedConnect = () => {
 const manuallyConnect = (web3) => {
   web3.activate(injectedConnector, undefined, true).catch(error => {
     if (error instanceof NoEthereumProviderError) {
-      toast("Install MetaMask to interact!", {
-        toastId: "installMetaMask"
+      toast('Install MetaMask to interact!', {
+        toastId: 'installMetaMask'
       })
     }
 
     if (error instanceof UserRejectedRequestError) {
-      toast("Connect your MetaMask account to interact!", {
-        toastId: "connectMetaMask"
+      toast('Connect your MetaMask account to interact!', {
+        toastId: 'connectMetaMask'
       })
     }
 
     if (error instanceof UnsupportedChainIdError) {
-      toast("Switch MetaMask to a supported network!", {
-        toastId: "switchToSupported"
+      toast('Switch MetaMask to a supported network!', {
+        toastId: 'switchToSupported'
       })
     }
   })

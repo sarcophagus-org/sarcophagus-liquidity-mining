@@ -6,7 +6,7 @@ const useLocalConnect = (next) => {
   const [localNext, setLocalNext] = useState(false)
 
   useEffect(() => {
-    if (local || process.env.NODE_ENV === "production" || !next) return
+    if (local || process.env.NODE_ENV === 'production' || !next) return
 
     const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_LOCAL_PROVIDER_URL)
     provider.detectNetwork()

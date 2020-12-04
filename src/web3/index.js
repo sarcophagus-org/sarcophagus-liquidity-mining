@@ -9,7 +9,7 @@ let context
 const createWeb3Root = () => {
   context = createContext()
 
-  context.displayName = "Web3 Provider"
+  context.displayName = 'Web3 Provider'
   const Provider = context.Provider
 
   return ({ children }) => {
@@ -17,7 +17,7 @@ const createWeb3Root = () => {
     const { local, localNext } = useLocalConnect(injectedNext)
     const fallback = useFallbackConnect(localNext)
 
-    const defaultName = "Not connected"
+    const defaultName = 'Not connected'
 
     const [web3, setWeb3] = useState({
       name: defaultName,
@@ -30,7 +30,7 @@ const createWeb3Root = () => {
     useEffect(() => {
       if (injected.active && injected.account && supportedChains().includes(injected.chainId)) {
         setWeb3({
-          name: "Injected provider",
+          name: 'Injected provider',
           account: injected.account,
           chainId: injected.chainId,
           provider: injected.library,
@@ -39,7 +39,7 @@ const createWeb3Root = () => {
       } else if (local) {
         local.detectNetwork().then(network => {
           setWeb3({
-            name: "Local provider",
+            name: 'Local provider',
             account: false,
             chainId: network.chainId,
             provider: local,
@@ -48,7 +48,7 @@ const createWeb3Root = () => {
         }).catch(error => console.error(error))
       } else if (fallback) {
         setWeb3({
-          name: "Fallback provider",
+          name: 'Fallback provider',
           account: false,
           chainId: fallback.network.chainId,
           provider: fallback,
