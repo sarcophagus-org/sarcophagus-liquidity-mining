@@ -17,13 +17,16 @@ import {
 import {
   useTotalRewards,
   useTotalClaimedRewards,
-  useRewardsPerBlock
+  useRewardsPerBlock,
 } from './totalRewards'
 import {
   useCurrentBlock,
   useStartBlock,
   useFirstStakeBlock,
   useBlockLength,
+  useElapsedBlocks,
+  useRemainingBlocks,
+  useBlocksUntilKickoff,
 } from './blocks'
 import {
   useMyStakeUsdc,
@@ -40,11 +43,27 @@ let context
 const createDataRoot = () => {
   context = createContext()
 
-  context.displayName = "Data Provider"
+  context.displayName = 'Data Provider'
   const Provider = context.Provider
 
   const makeDecimals = decimals => {
     return `0,0.[${Array(decimals).fill(0)}]`
+  }
+
+  const makeNumeral = (bigNumber, decimals) => {
+    return numeral(utils.formatUnits(bigNumber, decimals))
+  }
+
+  const moneyString = (bigNumber, decimals) => {
+    return makeNumeral(bigNumber, decimals).format(makeDecimals(decimals))
+  }
+
+  const blockString = blockNum => {
+    return numeral(blockNum.toString()).format()
+  }
+
+  const getDecimalNumber = (bigNumber, decimals) => {
+    return makeNumeral(bigNumber, decimals).value()
   }
 
   return ({ children }) => {
@@ -71,8 +90,16 @@ const createDataRoot = () => {
     const startBlock = useStartBlock(liquidityMining)
     const firstStakeBlock = useFirstStakeBlock(liquidityMining)
     const blockLength = useBlockLength(liquidityMining)
-
     const rewardsPerBlock = useRewardsPerBlock(totalRewards, blockLength)
+
+    const blocksUntilKickoff = useBlocksUntilKickoff(currentBlock, startBlock)
+    const endingBlock = firstStakeBlock.add(blockLength)
+
+    const elapsedBlocks = useElapsedBlocks(currentBlock, firstStakeBlock, blockLength)
+    const remainingBlocks = useRemainingBlocks(firstStakeBlock, elapsedBlocks, blockLength)
+    const totalEmittedRewards = elapsedBlocks.mul(rewardsPerBlock)
+    const totalUnemittedRewards = remainingBlocks.mul(rewardsPerBlock)
+    const totalUnclaimedRewards = totalEmittedRewards.sub(totalClaimedRewards)
 
     const myStakeUsdc = useMyStakeUsdc(liquidityMining)
     const myStakeUsdt = useMyStakeUsdt(liquidityMining)
@@ -81,39 +108,44 @@ const createDataRoot = () => {
     const myPendingRewards = useMyPendingRewards(liquidityMining, currentBlock)
     const myClaimedRewards = useMyClaimedRewards(liquidityMining)
 
+    const myTotalRewards = myPendingRewards.add(myClaimedRewards)
+
     const dataContext = {
-      totalRewards: numeral(utils.formatUnits(totalRewards, decimalsSarco)).format(makeDecimals(decimalsSarco)),
-      totalClaimedRewards: numeral(utils.formatUnits(totalClaimedRewards, decimalsSarco)).format(makeDecimals(decimalsSarco)),
-      rewardsPerBlock: numeral(utils.formatUnits(rewardsPerBlock, decimalsSarco)).format(makeDecimals(decimalsSarco)),
-      
-      totalStakeUsdc: numeral(utils.formatUnits(totalStakeUsdc, decimalsUsdc)).format(makeDecimals(decimalsUsdc)),
-      totalStakeUsdt: numeral(utils.formatUnits(totalStakeUsdt, decimalsUsdt)).format(makeDecimals(decimalsUsdt)),
-      totalStakeDai: numeral(utils.formatUnits(totalStakeDai, decimalsDai)).format(makeDecimals(decimalsDai)),
+      totalRewards: moneyString(totalRewards, decimalsSarco),
+      totalClaimedRewards: moneyString(totalClaimedRewards, decimalsSarco),
+      rewardsPerBlock: moneyString(rewardsPerBlock, decimalsSarco),
+      totalEmittedRewards: moneyString(totalEmittedRewards, decimalsSarco),
+      totalUnemittedRewards: moneyString(totalUnemittedRewards, decimalsSarco),
+      totalUnclaimedRewards: moneyString(totalUnclaimedRewards, decimalsSarco),
+
+      totalStakeUsdc: moneyString(totalStakeUsdc, decimalsUsdc),
+      totalStakeUsdt: moneyString(totalStakeUsdt, decimalsUsdt),
+      totalStakeDai: moneyString(totalStakeDai, decimalsDai),
       totalStakeStablecoins: numeral(
-        numeral(utils.formatUnits(totalStakeUsdc, decimalsUsdc)).value() +
-        numeral(utils.formatUnits(totalStakeUsdt, decimalsUsdt)).value() +
-        numeral(utils.formatUnits(totalStakeDai, decimalsDai)).value()
-      ).format(`0,0.[${Array(decimalsDai).fill(0)}]`),
+        getDecimalNumber(totalStakeUsdc, decimalsUsdc) +
+        getDecimalNumber(totalStakeUsdt, decimalsUsdt) +
+        getDecimalNumber(totalStakeDai, decimalsDai)
+      ).format(makeDecimals(decimalsDai)),
 
-      currentBlock: numeral(currentBlock.toString()).format(),
-      startBlock: numeral(startBlock.toString()).format(),
-      firstStakeBlock: numeral(firstStakeBlock.toString()).format(),
-      endingBlock: numeral(firstStakeBlock.add(blockLength).toString()).format(),
-      blocksUntilKickoff: numeral(startBlock.sub(currentBlock).toString()).format(),
-      remainingBlocks: numeral(firstStakeBlock.add(blockLength).sub(currentBlock).toString()).format(),
+      currentBlock: blockString(currentBlock),
+      startBlock: blockString(startBlock),
+      firstStakeBlock: blockString(firstStakeBlock),
+      endingBlock: blockString(endingBlock),
+      blocksUntilKickoff: blockString(blocksUntilKickoff),
+      remainingBlocks: blockString(remainingBlocks),
 
-      myStakeUsdc: numeral(utils.formatUnits(myStakeUsdc, decimalsUsdc)).format(makeDecimals(decimalsUsdc)),
-      myStakeUsdt: numeral(utils.formatUnits(myStakeUsdt, decimalsUsdt)).format(makeDecimals(decimalsUsdt)),
-      myStakeDai: numeral(utils.formatUnits(myStakeDai, decimalsDai)).format(makeDecimals(decimalsDai)),
+      myStakeUsdc: moneyString(myStakeUsdc, decimalsUsdc),
+      myStakeUsdt: moneyString(myStakeUsdt, decimalsUsdt),
+      myStakeDai: moneyString(myStakeDai, decimalsDai),
       myStakedStablecoins: numeral(
-        numeral(utils.formatUnits(myStakeUsdc, decimalsUsdc)).value() + 
-        numeral(utils.formatUnits(myStakeUsdt, decimalsUsdt)).value() +
-        numeral(utils.formatUnits(myStakeDai, decimalsDai)).value()
-      ).format(`0,0.[${Array(decimalsDai).fill(0)}]`),
+        getDecimalNumber(myStakeUsdc, decimalsUsdc) +
+        getDecimalNumber(myStakeUsdt, decimalsUsdt) +
+        getDecimalNumber(myStakeDai, decimalsDai)
+      ).format(makeDecimals(decimalsDai)),
 
-      myPendingRewards: numeral(utils.formatUnits(myPendingRewards, decimalsSarco)).format(makeDecimals(decimalsSarco)),
-      myClaimedRewards: numeral(utils.formatUnits(myClaimedRewards, decimalsSarco)).format(makeDecimals(decimalsSarco)),
-      myTotalRewards: numeral(utils.formatUnits(myPendingRewards.add(myClaimedRewards), decimalsSarco)).format(makeDecimals(decimalsSarco)),
+      myPendingRewards: moneyString(myPendingRewards, decimalsSarco),
+      myClaimedRewards: moneyString(myClaimedRewards, decimalsSarco),
+      myTotalRewards: moneyString(myTotalRewards, decimalsSarco),
     }
 
     return <Provider value={dataContext}>{children}</Provider>

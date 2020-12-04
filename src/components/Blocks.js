@@ -9,12 +9,14 @@ const Blocks = () => {
     firstStakeBlock,
     endingBlock,
     blocksUntilKickoff,
-    remainingBlocks
+    remainingBlocks,
+    totalRewards,
+    rewardsPerBlock,
   } = useData()
 
   const Container = ({ children }) => {
     return (
-      <div className="flex flex-col items-center text-center mb-6 border-b border-t py-6">
+      <div className="flex flex-col items-center text-center mb-6 border-b border-t pt-6 pb-4">
         {children}
       </div>
     )
@@ -30,7 +32,7 @@ const Blocks = () => {
 
   const ValueItemContainer = ({ children }) => {
     return (
-      <div className="flex justify-center -mx-2">
+      <div className="flex justify-center -mx-2 mb-2">
         {children}
       </div>
     )
@@ -41,6 +43,15 @@ const Blocks = () => {
       <div className="mx-2">
         {children}: <Value>{value}</Value>
       </div>
+    )
+  }
+
+  const StaticRewardInfo = () => {
+    return (
+      <ValueItemContainer>
+        <ValueItem value={totalRewards}>Total Rewards</ValueItem>
+        <ValueItem value={rewardsPerBlock}>Rewards Per Block</ValueItem>
+      </ValueItemContainer>
     )
   }
 
@@ -64,6 +75,7 @@ const Blocks = () => {
           <ValueItem value={startBlock}>Starting Block</ValueItem>
           <ValueItem value={blocksUntilKickoff}>Blocks until kickoff</ValueItem>
         </ValueItemContainer>
+        <StaticRewardInfo />
       </Container>
     )
   }
@@ -73,9 +85,9 @@ const Blocks = () => {
       <Container>
         <Description>Ready for the first stake!</Description>
         <ValueItemContainer>
-          <ValueItem value={startBlock}>Starting Block</ValueItem>
           <ValueItem value={currentBlock}>Current Block</ValueItem>
         </ValueItemContainer>
+        <StaticRewardInfo />
       </Container>
     )
   }
@@ -90,6 +102,7 @@ const Blocks = () => {
           <ValueItem value={endingBlock}>Ending Block</ValueItem>
           <ValueItem value={remainingBlocks}>Remaining Blocks</ValueItem>
         </ValueItemContainer>
+        <StaticRewardInfo />
       </Container>
     )
   }
@@ -103,6 +116,7 @@ const Blocks = () => {
           <ValueItem value={endingBlock}>Ending Block</ValueItem>
           <ValueItem value={currentBlock}>Current Block</ValueItem>
         </ValueItemContainer>
+        <StaticRewardInfo />
       </Container>
     )
   }
@@ -111,7 +125,7 @@ const Blocks = () => {
     return <NotScheduled />
   } else if (numeral(blocksUntilKickoff).value() > 0) {
     return <Scheduled />
-  } else if (numeral(blocksUntilKickoff).value() <= 0 && numeral(firstStakeBlock).value() === 0) {
+  } else if (numeral(firstStakeBlock).value() === 0) {
     return <Ready />
   } else if (numeral(remainingBlocks).value() > 0) {
     return <Active />

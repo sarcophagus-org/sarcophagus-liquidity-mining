@@ -84,26 +84,72 @@ const useBlockLength = (liquidityMining) => {
   useEffect(() => {
     if (!liquidityMining) return
 
-    const updateBlockLength = () => {
-      liquidityMining.blockLength().then(blockLength => {
-        setBlockLength(blockLength)
-      }).catch(error => console.error(error))
+    liquidityMining.blockLength().then(blockLength => {
+      setBlockLength(blockLength)
+    }).catch(error => console.error(error))
+
+    const updateBlockLength = (_, __, _blockLength) => {
+      setBlockLength(_blockLength)
     }
 
-    updateBlockLength()
-
-    if (firstStakeBlock.eq(0)) {
-      liquidityMining.on('Stake', updateBlockLength)
-    }
+    liquidityMining.on('Deposit', updateBlockLength)
 
     return () => {
-      if (firstStakeBlock.eq(0)) {
-        liquidityMining.removeListener('Stake', updateBlockLength)
-      }
+      liquidityMining.removeListener('Deposit', updateBlockLength)
     }
   }, [liquidityMining, firstStakeBlock])
 
   return blockLength
+}
+
+const useElapsedBlocks = (currentBlock, firstStakeBlock, blockLength) => {
+  const [elapsedBlocks, setElapsedBlocks] = useState(BigNumber.from(0))
+
+  useEffect(() => {
+    if (firstStakeBlock.eq(0)) {
+      setElapsedBlocks(BigNumber.from(0))
+      return
+    }
+
+    if (firstStakeBlock.add(blockLength).lt(currentBlock)) {
+      setElapsedBlocks(blockLength)
+      return
+    }
+
+    setElapsedBlocks(currentBlock.sub(firstStakeBlock))
+  }, [currentBlock, firstStakeBlock, blockLength])
+
+  return elapsedBlocks
+}
+
+const useRemainingBlocks = (firstStakeBlock, elapsedBlocks, blockLength) => {
+  const [remainingBlocks, setRemainingBlocks] = useState(BigNumber.from(0))
+
+  useEffect(() => {
+    if (firstStakeBlock.eq(0)) {
+      setRemainingBlocks(BigNumber.from(0))
+      return
+    }
+
+    setRemainingBlocks(blockLength.sub(elapsedBlocks))
+  }, [firstStakeBlock, elapsedBlocks, blockLength])
+
+  return remainingBlocks 
+}
+
+const useBlocksUntilKickoff = (currentBlock, startBlock) => {
+  const [blocksUntilKickoff, setBlocksUntilKickoff] = useState(BigNumber.from(0))
+
+  useEffect(() => {
+    if (currentBlock.gt(startBlock)) {
+      setBlocksUntilKickoff(BigNumber.from(0))
+      return
+    }
+
+    setBlocksUntilKickoff(startBlock.sub(currentBlock))
+  }, [startBlock, currentBlock])
+
+  return blocksUntilKickoff
 }
 
 export {
@@ -111,4 +157,7 @@ export {
   useStartBlock,
   useFirstStakeBlock,
   useBlockLength,
+  useElapsedBlocks,
+  useRemainingBlocks,
+  useBlocksUntilKickoff,
 }

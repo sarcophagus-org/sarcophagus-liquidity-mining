@@ -11,6 +11,16 @@ const useTotalRewards = (liquidityMining) => {
       setTotalSarcoRewards(sarco)
     }).catch(error => console.error(error))
 
+    const updateTotalRewards = (totalRewards) => {
+      setTotalSarcoRewards(totalRewards)
+    }
+
+    liquidityMining.on('Deposit', updateTotalRewards)
+
+    return () => {
+      liquidityMining.removeListener('Deposit', updateTotalRewards)
+    }
+
   }, [liquidityMining])
 
   return totalSarcoRewards
@@ -30,10 +40,10 @@ const useTotalClaimedRewards = (liquidityMining) => {
       setTotalClaimedSarcoRewards(sarco => sarco.add(_sarco))
     }
 
-    liquidityMining.on("Payout", getClaimedRewards)
+    liquidityMining.on('Payout', getClaimedRewards)
 
     return () => {
-      liquidityMining.removeListener("Payout", getClaimedRewards)
+      liquidityMining.removeListener('Payout', getClaimedRewards)
     }
   }, [liquidityMining])
 
@@ -44,7 +54,10 @@ const useRewardsPerBlock = (totalRewards, blockLength) => {
   const [rewardsPerBlock, setRewardsPerBlock] = useState(BigNumber.from(0))
 
   useEffect(() => {
-    if (blockLength.eq(0)) return
+    if (blockLength.eq(0)) {
+      setRewardsPerBlock(BigNumber.from(0))
+      return
+    }
 
     setRewardsPerBlock(totalRewards.div(blockLength))
   }, [blockLength, totalRewards])
@@ -55,5 +68,5 @@ const useRewardsPerBlock = (totalRewards, blockLength) => {
 export {
   useTotalRewards,
   useTotalClaimedRewards,
-  useRewardsPerBlock
+  useRewardsPerBlock,
 }

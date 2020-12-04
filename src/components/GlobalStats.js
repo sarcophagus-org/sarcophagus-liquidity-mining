@@ -2,7 +2,32 @@ import { useData } from '../dataContext'
 import { Value } from './shared/Value'
 
 const GlobalStats = () => {
-  const data = useData()
+  const {
+    totalEmittedRewards,
+    totalUnemittedRewards,
+    totalClaimedRewards,
+    totalUnclaimedRewards,
+    totalStakeUsdc,
+    totalStakeUsdt,
+    totalStakeDai,
+    totalStakeStablecoins,
+  } = useData()
+
+  const Container = ({ children }) => {
+    return (
+      <div className="-mb-4 flex justify-center sm:justify-end -mx-4">
+        {children}
+      </div>
+    )
+  }
+
+  const SectionContainer = ({ children }) => {
+    return (
+      <div className="mx-4">
+        {children}
+      </div>
+    )
+  }
 
   const Section = ({ children }) => {
     return (
@@ -21,40 +46,44 @@ const GlobalStats = () => {
   }
 
   return (
-    <div className="-mb-4 flex justify-center sm:justify-end -mx-4">
-      <div className="mx-4">
+    <Container>
+      <SectionContainer>
         <Section>
-          <Title>Total Rewards</Title>
-          <Value>{data.totalRewards}</Value>
+          <Title>Emitted Rewards</Title>
+          <Value>{totalEmittedRewards}</Value>
         </Section>
         <Section>
-          <Title>Rewards Per Block</Title>
-          <Value>{data.rewardsPerBlock}</Value>
+          <Title>Unemitted Rewards</Title>
+          <Value>{totalUnemittedRewards}</Value>
         </Section>
         <Section>
           <Title>Total Claimed Rewards</Title>
-          <Value>{data.totalClaimedRewards}</Value>
+          <Value>{totalClaimedRewards}</Value>
         </Section>
-      </div>
-      <div className="mx-4">
+        <Section>
+          <Title>Total Unclaimed Rewards</Title>
+          <Value>{totalUnclaimedRewards}</Value>
+        </Section>
+      </SectionContainer>
+      <SectionContainer>
         <Section>
           <Title>Total Staked USDC</Title>
-          <Value>{data.totalStakeUsdc}</Value>
+          <Value>{totalStakeUsdc}</Value>
         </Section>
         <Section>
           <Title>Total Staked USDT</Title>
-          <Value>{data.totalStakeUsdt}</Value>
+          <Value>{totalStakeUsdt}</Value>
         </Section>
         <Section>
           <Title>Total Staked DAI</Title>
-          <Value>{data.totalStakeDai}</Value>
+          <Value>{totalStakeDai}</Value>
         </Section>
         <Section>
           <Title>Total Staked Stablecoins</Title>
-          <Value>{data.totalStakeStablecoins}</Value>
+          <Value>{totalStakeStablecoins}</Value>
         </Section>
-      </div>
-    </div>
+      </SectionContainer>
+    </Container>
   )
 }
 
