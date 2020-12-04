@@ -3,7 +3,14 @@ import { useData } from '../dataContext'
 import { Value } from './shared/Value'
 
 const Blocks = () => {
-  const { currentBlock, startBlock, firstStakeBlock, endingBlock, blocksUntilKickoff, remainingBlocks } = useData()
+  const {
+    currentBlock,
+    startBlock,
+    firstStakeBlock,
+    endingBlock,
+    blocksUntilKickoff,
+    remainingBlocks
+  } = useData()
 
   const Container = ({ children }) => {
     return (
@@ -37,7 +44,7 @@ const Blocks = () => {
     )
   }
 
-  if (numeral(startBlock).value() === 0) {
+  const NotScheduled = () => {
     return (
       <Container>
         <Description>Liquidity Mining hasn't started or been scheduled yet! Stay tuned...</Description>
@@ -46,7 +53,9 @@ const Blocks = () => {
         </ValueItemContainer>
       </Container>
     )
-  } else if (numeral(blocksUntilKickoff).value() > 0) {
+  }
+
+  const Scheduled = () => {
     return (
       <Container>
         <Description>Liquidity Mining starting block has been scheduled!</Description>
@@ -57,7 +66,9 @@ const Blocks = () => {
         </ValueItemContainer>
       </Container>
     )
-  } else if (numeral(remainingBlocks).value() < 0) {
+  }
+
+  const Ready = () => {
     return (
       <Container>
         <Description>Ready for the first stake!</Description>
@@ -67,7 +78,9 @@ const Blocks = () => {
         </ValueItemContainer>
       </Container>
     )
-  } else if (numeral(remainingBlocks).value () >= 0) {
+  }
+
+  const Active = () => {
     return (
       <Container>
         <Description>Liquidity Mining is active!</Description>
@@ -79,7 +92,9 @@ const Blocks = () => {
         </ValueItemContainer>
       </Container>
     )
-  } else {
+  }
+
+  const Over = () => {
     return (
       <Container>
         <Description>Liquidity Mining is over!</Description>
@@ -90,6 +105,18 @@ const Blocks = () => {
         </ValueItemContainer>
       </Container>
     )
+  }
+
+  if (numeral(startBlock).value() === 0) {
+    return <NotScheduled />
+  } else if (numeral(blocksUntilKickoff).value() > 0) {
+    return <Scheduled />
+  } else if (numeral(blocksUntilKickoff).value() <= 0 && numeral(firstStakeBlock).value() === 0) {
+    return <Ready />
+  } else if (numeral(remainingBlocks).value() > 0) {
+    return <Active />
+  } else {
+    return <Over />
   }
 }
 
