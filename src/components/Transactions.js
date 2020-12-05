@@ -1,5 +1,6 @@
 import { Value } from './shared/Value'
 import { Hidden } from './shared/Hidden'
+import StakeForm from './StakeForm'
 import { useData } from '../dataContext'
 
 const Transactions = () => {
@@ -11,7 +12,7 @@ const Transactions = () => {
 
   const Container = ({ children }) => {
     return (
-      <div className="-mb-4 flex justify-center -mx-4">
+      <div className="-mb-4 flex flex-col items-center -mx-4">
         {children}
       </div>
     )
@@ -55,6 +56,11 @@ const Transactions = () => {
         <Section>
           <Title>My DAI Balance</Title>
           <Hidden><Value>{myDaiBalance}</Value></Hidden>
+        </Section>
+      </SectionContainer>
+      <SectionContainer>
+        <Section>
+          <StakeForm />
         </Section>
       </SectionContainer>
     </Container>

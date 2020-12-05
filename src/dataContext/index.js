@@ -120,6 +120,8 @@ const createDataRoot = () => {
     const myDaiBalance = useMyDaiBalance(daiContract, currentBlock)
 
     const dataContext = {
+      liquidityMining,
+
       totalRewards: moneyString(totalRewards, decimalsSarco),
       totalClaimedRewards: moneyString(totalClaimedRewards, decimalsSarco),
       rewardsPerBlock: moneyString(rewardsPerBlock, decimalsSarco),
