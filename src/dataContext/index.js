@@ -27,6 +27,7 @@ import {
   useElapsedBlocks,
   useRemainingBlocks,
   useBlocksUntilKickoff,
+  useEndingBlock,
 } from './blocks'
 import {
   useMyStakeUsdc,
@@ -41,6 +42,9 @@ import {
   useMyUsdcBalance,
   useMyUsdtBalance,
   useMyDaiBalance,
+  useMyUsdcAllowance,
+  useMyUsdtAllowance,
+  useMyDaiAllowance,
 } from './myBalances'
 
 let context
@@ -98,7 +102,7 @@ const createDataRoot = () => {
     const rewardsPerBlock = useRewardsPerBlock(totalRewards, blockLength)
 
     const blocksUntilKickoff = useBlocksUntilKickoff(currentBlock, startBlock)
-    const endingBlock = firstStakeBlock.add(blockLength)
+    const endingBlock = useEndingBlock(firstStakeBlock, blockLength)
 
     const elapsedBlocks = useElapsedBlocks(currentBlock, firstStakeBlock, blockLength)
     const remainingBlocks = useRemainingBlocks(firstStakeBlock, elapsedBlocks, blockLength)
@@ -119,8 +123,13 @@ const createDataRoot = () => {
     const myUsdtBalance = useMyUsdtBalance(usdtContract, currentBlock)
     const myDaiBalance = useMyDaiBalance(daiContract, currentBlock)
 
+    const myUsdcAllowance = useMyUsdcAllowance(liquidityMining, usdcContract, currentBlock)
+    const myUsdtAllowance = useMyUsdtAllowance(liquidityMining, usdtContract, currentBlock)
+    const myDaiAllowance = useMyDaiAllowance(liquidityMining, daiContract, currentBlock)
+
     const dataContext = {
-      liquidityMining,
+      liquidityMining, usdcContract, usdtContract, daiContract,
+      decimalsUsdc, decimalsUsdt, decimalsDai,
 
       totalRewards: moneyString(totalRewards, decimalsSarco),
       totalClaimedRewards: moneyString(totalClaimedRewards, decimalsSarco),
@@ -161,6 +170,10 @@ const createDataRoot = () => {
       myUsdcBalance: moneyString(myUsdcBalance, decimalsUsdc),
       myUsdtBalance: moneyString(myUsdtBalance, decimalsUsdt),
       myDaiBalance: moneyString(myDaiBalance, decimalsDai),
+
+      myUsdcAllowance,
+      myUsdtAllowance,
+      myDaiAllowance,
     }
 
     return <Provider value={dataContext}>{children}</Provider>

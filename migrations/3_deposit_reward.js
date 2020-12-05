@@ -12,7 +12,7 @@ module.exports = async function (_, network) {
     const sarcoMock = await SarcoMock.deployed()
     await sarcoMock.approve(liquidityMining.address, amount)
 
-    const blockLength = 10
+    const blockLength = 25
     await liquidityMining.deposit(amount, (await web3.eth.getBlock('latest')).number + 8, blockLength)
   } else if (['goerli'].includes(network)) {
     const liquidityMining = await LiquidityMining.deployed()    

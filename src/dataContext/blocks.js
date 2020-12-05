@@ -152,6 +152,21 @@ const useBlocksUntilKickoff = (currentBlock, startBlock) => {
   return blocksUntilKickoff
 }
 
+const useEndingBlock = (firstStakeBlock, blockLength) => {
+  const [endingBlock, setEndingBlock] = useState(BigNumber.from(0))
+
+  useEffect(() => {
+    if (firstStakeBlock.eq(0)) {
+      setEndingBlock(BigNumber.from(0))
+      return
+    }
+
+    setEndingBlock(firstStakeBlock.add(blockLength))
+  }, [firstStakeBlock, blockLength])
+
+  return endingBlock
+}
+
 export {
   useCurrentBlock,
   useStartBlock,
@@ -160,4 +175,5 @@ export {
   useElapsedBlocks,
   useRemainingBlocks,
   useBlocksUntilKickoff,
+  useEndingBlock,
 }
