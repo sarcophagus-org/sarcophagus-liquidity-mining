@@ -46,6 +46,9 @@ import {
   useMyUsdtAllowance,
   useMyDaiAllowance,
 } from './myBalances'
+import {
+  useCanStake,
+} from './abilities'
 
 let context
 
@@ -129,6 +132,8 @@ const createDataRoot = () => {
     const myUsdtAllowance = useMyUsdtAllowance(liquidityMining, usdtContract, currentBlock)
     const myDaiAllowance = useMyDaiAllowance(liquidityMining, daiContract, currentBlock)
 
+    const canStake = useCanStake(blocksUntilKickoff, startBlock, firstStakeBlock, remainingBlocks, endingBlock)
+
     const dataContext = {
       liquidityMining, usdcContract, usdtContract, daiContract,
       decimalsUsdc, decimalsUsdt, decimalsDai,
@@ -176,6 +181,8 @@ const createDataRoot = () => {
       myUsdcAllowance,
       myUsdtAllowance,
       myDaiAllowance,
+
+      canStake,
     }
 
     return <Provider value={dataContext}>{children}</Provider>

@@ -1,5 +1,3 @@
-import { useState, useEffect } from 'react'
-import numeral from 'numeral'
 import { Value } from './shared/Value'
 import { Hidden } from './shared/Hidden'
 import StakeForm from './StakeForm'
@@ -54,35 +52,6 @@ const MyBalances = () => {
   )
 }
 
-const StakeSection = () => {
-  const {
-    blocksUntilKickoff,
-    startBlock,
-    firstStakeBlock,
-    remainingBlocks,
-    endingBlock
-  } = useData()
-
-  const [canStake, setCanStake] = useState(false)
-  useEffect(() => {
-    setCanStake(
-      (
-        numeral(startBlock).value() > 0 &&
-        numeral(blocksUntilKickoff).value() === 0 &&
-        numeral(endingBlock).value() === 0
-      ) || (
-        numeral(firstStakeBlock).value() > 0 &&
-        numeral(remainingBlocks).value() > 0
-      ))
-  }, [blocksUntilKickoff, startBlock, firstStakeBlock, remainingBlocks, endingBlock])
-
-  if (canStake) {
-    return <StakeForm />
-  }
-
-  return <></>
-}
-
 const Transactions = () => {
   const Container = ({ children }) => {
     return (
@@ -97,7 +66,7 @@ const Transactions = () => {
       <MyBalances />
       <SectionContainer>
         <Section>
-          <StakeSection />
+          <StakeForm />
         </Section>
       </SectionContainer>
     </Container>

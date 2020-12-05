@@ -56,7 +56,7 @@ const useMyUsdcAllowance = (liquidityMining, usdcContract, currentBlock) => {
 
     usdcContract.allowance(account, liquidityMining.address).then(allowance => {
       setAllowance(allowance)
-    })
+    }).catch(error => console.error(error))
   }, [account, liquidityMining, usdcContract, currentBlock])
 
   return allowance
@@ -71,7 +71,7 @@ const useMyUsdtAllowance = (liquidityMining, usdtContract, currentBlock) => {
 
     usdtContract.allowance(account, liquidityMining.address).then(allowance => {
       setAllowance(allowance)
-    })
+    }).catch(error => console.error(error))
   }, [account, liquidityMining, usdtContract, currentBlock])
 
   return allowance
@@ -86,7 +86,7 @@ const useMyDaiAllowance = (liquidityMining, daiContract, currentBlock) => {
 
     daiContract.allowance(account, liquidityMining.address).then(allowance => {
       setAllowance(allowance)
-    })
+    }).catch(error => console.error(error))
   }, [account, liquidityMining, daiContract, currentBlock])
 
   return allowance

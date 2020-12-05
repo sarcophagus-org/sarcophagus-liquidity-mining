@@ -3,8 +3,10 @@ import { BigNumber, utils } from 'ethers'
 import numeral from 'numeral'
 import { useData } from '../dataContext'
 import { useTransaction } from '../dataContext/transactions'
+import { useWeb3 } from '../web3'
 
 const StakeForm = () => {
+  const { account } = useWeb3()
   const {
     liquidityMining,
     usdcContract,
@@ -19,6 +21,7 @@ const StakeForm = () => {
     decimalsUsdc,
     decimalsUsdt,
     decimalsDai,
+    canStake,
   } = useData()
 
   const [usdc, setUsdc] = useState(0)
@@ -32,11 +35,20 @@ const StakeForm = () => {
   const [buttonText, setButtonText] = useState("Stake")
   const { contractCall, pending } = useTransaction()
   const [callData, setCallData] = useState([])
-  const [canStake, setCanStake] = useState(false)
+
+  const [buttonEnabled, setButtonEnabled] = useState(false)
 
   useEffect(() => {
-    setCanStake(!pending && (usdcBig.gt(0) || usdtBig.gt(0) || daiBig.gt(0)))
+    setButtonEnabled(!pending && (usdcBig.gt(0) || usdtBig.gt(0) || daiBig.gt(0)))
   }, [pending, usdcBig, usdtBig, daiBig])
+
+  useEffect(() => {
+    if (!account) {
+      setUsdc(0)
+      setUsdt(0)
+      setDai(0)
+    }
+  }, [account])
 
   useEffect(() => {
     setUsdcBig(utils.parseUnits((usdc || 0).toFixed(decimalsUsdc), decimalsUsdc))
@@ -112,16 +124,16 @@ const StakeForm = () => {
 
     return (
       <div className="flex rounded-md mb-2">
-        <span className="uppercase inline-flex items-center justify-start px-2 w-14 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+        <span className="uppercase inline-flex items-center justify-start px-2 w-14 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-sm text-gray-500">
           {currency}
         </span>
-        <input type="number" step={makeStep(decimals)} disabled={pending} required name={currency} id={currency} value={value} onChange={calculateValue(setValue)} min="0" max={balance} className="flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300" placeholder={balance} />
+        <input type="number" step={makeStep(decimals)} disabled={!canStake} required name={currency} id={currency} value={value} onChange={calculateValue(setValue)} min="0" max={balance} className={`flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300 ${canStake ? 'text-black' : 'text-gray-300'}`} placeholder={balance} />
       </div>
     )
-  }, [pending])
+  }, [canStake])
 
   return (
-    <div>
+    <div className="w-60">
       <div className="text-xl">Make a Stake</div>
       <form onSubmit={calls}>
         <div className="mt-2 flex flex-col">
@@ -130,7 +142,7 @@ const StakeForm = () => {
           <Input currency="dai" value={dai} setValue={setDai} balance={myDaiBalance} decimals={decimalsDai} />
         </div>
         <div className="text-right">
-          <button type="submit" disabled={!canStake} className={`bg-gray-400 inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white ${!canStake && "opacity-50 cursor-not-allowed"}`}>
+          <button type="submit" disabled={!buttonEnabled} className={`bg-gray-400 inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white ${!buttonEnabled && "opacity-50 cursor-not-allowed"}`}>
             {buttonText}
           </button>
         </div>
