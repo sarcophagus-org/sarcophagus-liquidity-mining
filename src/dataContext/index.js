@@ -56,7 +56,7 @@ const createDataRoot = () => {
   const Provider = context.Provider
 
   const makeDecimals = decimals => {
-    return `0,0.[${Array(decimals).fill(0)}]`
+    return `0,0.[${Array(decimals).fill(0).join("")}]`
   }
 
   const makeNumeral = (bigNumber, decimals) => {
@@ -64,7 +64,9 @@ const createDataRoot = () => {
   }
 
   const moneyString = (bigNumber, decimals) => {
-    return makeNumeral(bigNumber, decimals).format(makeDecimals(decimals))
+    const money = makeNumeral(bigNumber, decimals).format(makeDecimals(decimals))
+    if (money === "NaN") return "0"
+    return money
   }
 
   const blockString = blockNum => {
