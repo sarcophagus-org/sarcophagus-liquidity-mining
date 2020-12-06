@@ -1,11 +1,20 @@
 import { Value } from './shared/Value'
 import { Hidden } from './shared/Hidden'
 import StakeForm from './StakeForm'
+import PayoutWithdraw from './PayoutWithdraw'
 import { useData } from '../dataContext'
 
 const SectionContainer = ({ children }) => {
   return (
-    <div className="mb-4 flex">
+    <div className="mb-4 flex flex-col sm:flex-row">
+      {children}
+    </div>
+  )
+}
+
+const SectionContainerAlt = ({ children }) => {
+  return (
+    <div className="mb-4 flex flex-wrap justify-center">
       {children}
     </div>
   )
@@ -13,7 +22,7 @@ const SectionContainer = ({ children }) => {
 
 const Section = ({ children }) => {
   return (
-    <div className="mx-4">
+    <div className="mx-4 mb-4">
       {children}
     </div>
   )
@@ -35,7 +44,7 @@ const MyBalances = () => {
   }
 
   return (
-    <SectionContainer>
+    <SectionContainerAlt>
       <Section>
         <Title>My USDC Balance</Title>
         <Hidden><Value>{myUsdcBalance}</Value></Hidden>
@@ -48,7 +57,7 @@ const MyBalances = () => {
         <Title>My DAI Balance</Title>
         <Hidden><Value>{myDaiBalance}</Value></Hidden>
       </Section>
-    </SectionContainer>
+    </SectionContainerAlt>
   )
 }
 
@@ -67,6 +76,9 @@ const Transactions = () => {
       <SectionContainer>
         <Section>
           <StakeForm />
+        </Section>
+        <Section>
+          <PayoutWithdraw />
         </Section>
       </SectionContainer>
     </Container>

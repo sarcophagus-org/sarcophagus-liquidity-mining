@@ -48,6 +48,8 @@ import {
 } from './myBalances'
 import {
   useCanStake,
+  useCanPayout,
+  useCanWithdraw,
 } from './abilities'
 
 let context
@@ -133,6 +135,8 @@ const createDataRoot = () => {
     const myDaiAllowance = useMyDaiAllowance(liquidityMining, daiContract, currentBlock)
 
     const canStake = useCanStake(blocksUntilKickoff, startBlock, firstStakeBlock, remainingBlocks, endingBlock)
+    const canPayout = useCanPayout(myPendingRewards)
+    const canWithdraw = useCanWithdraw(myStakeUsdc, myStakeUsdt, myStakeDai)
 
     const dataContext = {
       liquidityMining, usdcContract, usdtContract, daiContract,
@@ -183,6 +187,8 @@ const createDataRoot = () => {
       myDaiAllowance,
 
       canStake,
+      canPayout,
+      canWithdraw,
     }
 
     return <Provider value={dataContext}>{children}</Provider>

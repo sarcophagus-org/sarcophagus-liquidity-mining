@@ -11,7 +11,7 @@ const useMyUsdcBalance = (usdcContract, currentBlock) => {
 
     usdcContract.balanceOf(account).then(balance => {
       setBalance(balance)
-    })
+    }).catch(error => console.error(error))
   }, [account, usdcContract, currentBlock])
 
   return balance
@@ -26,7 +26,7 @@ const useMyUsdtBalance = (usdtContract, currentBlock) => {
 
     usdtContract.balanceOf(account).then(balance => {
       setBalance(balance)
-    })
+    }).catch(error => console.error(error))
   }, [account, usdtContract, currentBlock])
 
   return balance
@@ -41,7 +41,7 @@ const useMyDaiBalance = (daiContract, currentBlock) => {
 
     daiContract.balanceOf(account).then(balance => {
       setBalance(balance)
-    })
+    }).catch(error => console.error(error))
   }, [account, daiContract, currentBlock])
 
   return balance
