@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/liquidity-mining/static/css/main.2c178f87.chunk.css",
+    "main.js": "/liquidity-mining/static/js/main.f4fe330f.chunk.js",
+    "main.js.map": "/liquidity-mining/static/js/main.f4fe330f.chunk.js.map",
+    "runtime-main.js": "/liquidity-mining/static/js/runtime-main.2cdce1c2.js",
+    "runtime-main.js.map": "/liquidity-mining/static/js/runtime-main.2cdce1c2.js.map",
+    "static/css/2.45b55a49.chunk.css": "/liquidity-mining/static/css/2.45b55a49.chunk.css",
+    "static/js/2.c19da40d.chunk.js": "/liquidity-mining/static/js/2.c19da40d.chunk.js",
+    "static/js/2.c19da40d.chunk.js.map": "/liquidity-mining/static/js/2.c19da40d.chunk.js.map",
+    "static/js/3.32f4cdcb.chunk.js": "/liquidity-mining/static/js/3.32f4cdcb.chunk.js",
+    "static/js/3.32f4cdcb.chunk.js.map": "/liquidity-mining/static/js/3.32f4cdcb.chunk.js.map",
+    "index.html": "/liquidity-mining/index.html",
+    "static/css/2.45b55a49.chunk.css.map": "/liquidity-mining/static/css/2.45b55a49.chunk.css.map",
+    "static/css/main.2c178f87.chunk.css.map": "/liquidity-mining/static/css/main.2c178f87.chunk.css.map",
+    "static/js/2.c19da40d.chunk.js.LICENSE.txt": "/liquidity-mining/static/js/2.c19da40d.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.2cdce1c2.js",
+    "static/css/2.45b55a49.chunk.css",
+    "static/js/2.c19da40d.chunk.js",
+    "static/css/main.2c178f87.chunk.css",
+    "static/js/main.f4fe330f.chunk.js"
+  ]
+}
