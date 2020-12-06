@@ -44,7 +44,7 @@ const PayoutWithdraw = () => {
   }
 
   return (
-    <div className="w-60">
+    <div>
       <div className="mb-4">
         <div className="text-xl">Payout My Rewards</div>
         <div className="">

@@ -133,7 +133,7 @@ const StakeForm = () => {
   }, [canStake])
 
   return (
-    <div className="w-60">
+    <div>
       <div className="text-xl">Make a Stake</div>
       <form onSubmit={calls}>
         <div className="mt-2 flex flex-col">
