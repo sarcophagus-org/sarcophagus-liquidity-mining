@@ -17,6 +17,15 @@ module.exports = async function (deployer, network, accounts) {
     ownerAddress = ''
     console.error('SARCO token and Owner DAO not deployed yet')
     process.exit(1)
+  } else if (['goerli', 'goerli-fork'].includes(network)) {
+    await deployer.deploy(SarcoMock)
+    sarcoAddress = (await SarcoMock.deployed()).address
+
+    usdcAddress = '0x92321c730f047bb289c2b37e5a5fdd891e660f0b'
+    usdtAddress = '0x479051fecbf65b3a1ecab1d01f200c88fc83cc41'
+    daiAddress = '0xb174bfb76d9b5b3b394d33057fd08f84151047b4'
+
+    ownerAddress = accounts[0]
   } else {
     await deployer.deploy(UsdcMock)
     await deployer.deploy(UsdtMock)
@@ -27,7 +36,7 @@ module.exports = async function (deployer, network, accounts) {
     usdtAddress = (await UsdtMock.deployed()).address
     daiAddress = (await DaiMock.deployed()).address
     sarcoAddress = (await SarcoMock.deployed()).address
-    
+
     ownerAddress = accounts[0]
   }
 

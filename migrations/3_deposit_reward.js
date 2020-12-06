@@ -14,14 +14,14 @@ module.exports = async function (_, network) {
 
     const blockLength = 25
     await liquidityMining.deposit(amount, (await web3.eth.getBlock('latest')).number + 8, blockLength)
-  } else if (['goerli'].includes(network)) {
+  } else if (['goerli', 'goerli-fork'].includes(network)) {
     const liquidityMining = await LiquidityMining.deployed()    
     const amount = (new BN(1000000)).mul(new BN(10).pow(new BN(18)))
 
     const sarcoMock = await SarcoMock.deployed()
     await sarcoMock.approve(liquidityMining.address, amount)
 
-    const blockLength = 50000
-    await liquidityMining.deposit(amount, (await web3.eth.getBlock('latest')).number + 100, blockLength)
+    const blockLength = 250000
+    await liquidityMining.deposit(amount, (await web3.eth.getBlock('latest')).number + 6300, blockLength)
   }
 }
