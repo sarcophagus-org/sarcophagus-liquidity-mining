@@ -122,12 +122,14 @@ const StakeForm = () => {
       return `0.${Array(decimals).fill(0).join('')}`.slice(0, -1) + '1'
     }
 
+    const inputDisable = !(canStake && numeral(balance).value() > 0)
+
     return (
       <div className="flex rounded-md mb-2">
         <span className="uppercase inline-flex items-center justify-start px-2 w-14 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-sm text-gray-500">
           {currency}
         </span>
-        <input type="number" step={makeStep(decimals)} disabled={!canStake} required name={currency} id={currency} value={value} onChange={calculateValue(setValue)} min="0" max={balance} className={`flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300 ${canStake ? 'text-black' : 'text-gray-300'}`} placeholder={balance} />
+        <input type="number" step={makeStep(decimals)} disabled={inputDisable} required name={currency} id={currency} value={value} onChange={calculateValue(setValue)} min="0" max={balance} className={`flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300 ${inputDisable ? 'text-gray-300' : 'text-black'}`} placeholder={balance} />
       </div>
     )
   }, [canStake])
