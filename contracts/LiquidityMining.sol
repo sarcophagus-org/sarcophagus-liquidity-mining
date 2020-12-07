@@ -16,27 +16,28 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
     ERC20 public immutable dai;
     ERC20 public immutable sarco;
 
+    uint256 public totalStakers;
     uint256 public totalRewards;
     uint256 public totalClaimedRewards;
-    uint256 public startBlock;
-    uint256 public firstStakeBlock;
-    uint256 public blockLength;
+    uint256 public startTime;
+    uint256 public firstStakeTime;
+    uint256 public endTime;
 
     uint256 private _totalStakeUsdc;
     uint256 private _totalStakeUsdt;
     uint256 private _totalStakeDai;
     uint256 private _totalWeight;
-    uint256 private _mostRecentValueCalcBlock;
+    uint256 private _mostRecentValueCalcTime;
 
-    mapping(address => uint256) private _stakedUsdc;
-    mapping(address => uint256) private _stakedUsdt;
-    mapping(address => uint256) private _stakedDai;
     mapping(address => uint256) public userClaimedRewards;
 
-    mapping(address => uint256) private _weighted;
-    mapping(address => uint256) private _accumulated;
+    mapping(address => uint256) private _userStakedUsdc;
+    mapping(address => uint256) private _userStakedUsdt;
+    mapping(address => uint256) private _userStakedDai;
+    mapping(address => uint256) private _userWeighted;
+    mapping(address => uint256) private _userAccumulated;
 
-    event Deposit(uint256 amount, uint256 startBlock, uint256 blockLength);
+    event Deposit(uint256 totalRewards, uint256 startTime, uint256 endTime);
     event Stake(
         address indexed staker,
         uint256 usdcIn,
@@ -83,7 +84,7 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         view
         returns (uint256 usdcStake)
     {
-        usdcStake = denormalize(usdc, _stakedUsdc[user]);
+        usdcStake = denormalize(usdc, _userStakedUsdc[user]);
     }
 
     function userStakeUsdt(address user)
@@ -91,41 +92,41 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         view
         returns (uint256 usdtStake)
     {
-        usdtStake = denormalize(usdt, _stakedUsdt[user]);
+        usdtStake = denormalize(usdt, _userStakedUsdt[user]);
     }
 
     function userStakeDai(address user) public view returns (uint256 daiStake) {
-        daiStake = denormalize(dai, _stakedDai[user]);
+        daiStake = denormalize(dai, _userStakedDai[user]);
     }
 
     function deposit(
-        uint256 _amount,
-        uint256 _startBlock,
-        uint256 _blockLength
+        uint256 _totalRewards,
+        uint256 _startTime,
+        uint256 _endTime
     ) public onlyOwner {
         require(
-            startBlock == 0,
+            startTime == 0,
             "LiquidityMining::deposit: already received deposit"
         );
 
         require(
-            _startBlock >= block.number,
-            "LiquidityMining::deposit: start block must be in future"
+            _startTime >= block.timestamp,
+            "LiquidityMining::deposit: start time must be in future"
         );
 
         require(
-            _amount.mod(_blockLength) == 0,
-            "LiquidityMining::deposit: rewards mod length must be zero"
+            _endTime > _startTime,
+            "LiquidityMining::deposit: end time must after start time"
         );
 
-        totalRewards = _amount;
+        totalRewards = _totalRewards;
 
-        sarco.transferFrom(msg.sender, address(this), _amount);
+        sarco.transferFrom(msg.sender, address(this), _totalRewards);
 
-        startBlock = _startBlock;
-        blockLength = _blockLength;
+        startTime = _startTime;
+        endTime = _endTime;
 
-        emit Deposit(_amount, _startBlock, _blockLength);
+        emit Deposit(_totalRewards, _startTime, _endTime);
     }
 
     function totalStake() private view returns (uint256 total) {
@@ -133,34 +134,39 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
     }
 
     function totalUserStake(address user) public view returns (uint256 total) {
-        total = _stakedUsdc[user].add(_stakedUsdt[user]).add(_stakedDai[user]);
+        total = _userStakedUsdc[user].add(_userStakedUsdt[user]).add(
+            _userStakedDai[user]
+        );
     }
 
     modifier update() {
-        if (_mostRecentValueCalcBlock == 0) {
-            _mostRecentValueCalcBlock = firstStakeBlock;
+        if (_mostRecentValueCalcTime == 0) {
+            _mostRecentValueCalcTime = firstStakeTime;
         }
 
-        uint256 lastBlock = firstStakeBlock.add(blockLength);
         uint256 totalCurrentStake = totalStake();
 
-        if (totalCurrentStake > 0 && _mostRecentValueCalcBlock < lastBlock) {
+        if (totalCurrentStake > 0 && _mostRecentValueCalcTime < endTime) {
             uint256 value = 0;
-            uint256 sinceLastCalc = block.number.sub(_mostRecentValueCalcBlock);
-            uint256 perBlockReward = totalRewards.div(blockLength);
+            uint256 sinceLastCalc = block.timestamp.sub(
+                _mostRecentValueCalcTime
+            );
+            uint256 perSecondReward = totalRewards.div(
+                endTime.sub(firstStakeTime)
+            );
 
-            if (block.number < lastBlock) {
-                value = sinceLastCalc.mul(perBlockReward);
+            if (block.timestamp < endTime) {
+                value = sinceLastCalc.mul(perSecondReward);
             } else {
-                uint256 sinceLastBlock = block.number.sub(lastBlock);
-                value = (sinceLastCalc.sub(sinceLastBlock)).mul(perBlockReward);
+                uint256 sinceEndTime = block.timestamp.sub(endTime);
+                value = (sinceLastCalc.sub(sinceEndTime)).mul(perSecondReward);
             }
 
             _totalWeight = _totalWeight.add(
                 value.mul(10**18).div(totalCurrentStake)
             );
 
-            _mostRecentValueCalcBlock = block.number;
+            _mostRecentValueCalcTime = block.timestamp;
         }
 
         _;
@@ -199,7 +205,7 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
             "LiquidityMining::stake: missing stablecoin"
         );
         require(
-            block.number >= startBlock,
+            block.timestamp >= startTime,
             "LiquidityMining::stake: staking isn't live yet"
         );
         require(
@@ -207,11 +213,11 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
             "LiquidityMining::stake: no sarco balance"
         );
 
-        if (firstStakeBlock == 0) {
-            firstStakeBlock = block.number;
+        if (firstStakeTime == 0) {
+            firstStakeTime = block.timestamp;
         } else {
             require(
-                block.number < firstStakeBlock.add(blockLength),
+                block.timestamp < endTime,
                 "LiquidityMining::stake: staking is over"
             );
         }
@@ -226,6 +232,10 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
 
         if (daiIn > 0) {
             dai.transferFrom(msg.sender, address(this), daiIn);
+        }
+
+        if (totalUserStake(msg.sender) == 0) {
+            totalStakers = totalStakers.add(1);
         }
 
         _stake(
@@ -248,6 +258,8 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
             uint256 reward
         )
     {
+        totalStakers = totalStakers.sub(1);
+
         (usdcOut, usdtOut, daiOut, reward) = _applyReward();
 
         usdcOut = denormalize(usdc, usdcOut);
@@ -323,18 +335,18 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
             addBackUsdt = usdtOut;
             addBackDai = daiOut;
 
-            _stakedUsdc[msg.sender] = usdcOut;
-            _stakedUsdt[msg.sender] = usdtOut;
-            _stakedDai[msg.sender] = daiOut;
+            _userStakedUsdc[msg.sender] = usdcOut;
+            _userStakedUsdt[msg.sender] = usdtOut;
+            _userStakedDai[msg.sender] = daiOut;
 
-            _accumulated[msg.sender] = reward;
+            _userAccumulated[msg.sender] = reward;
         }
 
-        _stakedUsdc[msg.sender] = _stakedUsdc[msg.sender].add(usdcIn);
-        _stakedUsdt[msg.sender] = _stakedUsdt[msg.sender].add(usdtIn);
-        _stakedDai[msg.sender] = _stakedDai[msg.sender].add(daiIn);
+        _userStakedUsdc[msg.sender] = _userStakedUsdc[msg.sender].add(usdcIn);
+        _userStakedUsdt[msg.sender] = _userStakedUsdt[msg.sender].add(usdtIn);
+        _userStakedDai[msg.sender] = _userStakedDai[msg.sender].add(daiIn);
 
-        _weighted[msg.sender] = _totalWeight;
+        _userWeighted[msg.sender] = _totalWeight;
 
         _totalStakeUsdc = _totalStakeUsdc.add(usdcIn);
         _totalStakeUsdt = _totalStakeUsdt.add(usdtIn);
@@ -368,24 +380,24 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
             "LiquidityMining::_applyReward: no stablecoins staked"
         );
 
-        usdcOut = _stakedUsdc[msg.sender];
-        usdtOut = _stakedUsdt[msg.sender];
-        daiOut = _stakedDai[msg.sender];
+        usdcOut = _userStakedUsdc[msg.sender];
+        usdtOut = _userStakedUsdt[msg.sender];
+        daiOut = _userStakedDai[msg.sender];
 
         reward = _totalUserStake
-            .mul(_totalWeight.sub(_weighted[msg.sender]))
+            .mul(_totalWeight.sub(_userWeighted[msg.sender]))
             .div(10**18)
-            .add(_accumulated[msg.sender]);
+            .add(_userAccumulated[msg.sender]);
 
         _totalStakeUsdc = _totalStakeUsdc.sub(usdcOut);
         _totalStakeUsdt = _totalStakeUsdt.sub(usdtOut);
         _totalStakeDai = _totalStakeDai.sub(daiOut);
 
-        _stakedUsdc[msg.sender] = 0;
-        _stakedUsdt[msg.sender] = 0;
-        _stakedDai[msg.sender] = 0;
+        _userStakedUsdc[msg.sender] = 0;
+        _userStakedUsdt[msg.sender] = 0;
+        _userStakedDai[msg.sender] = 0;
 
-        _accumulated[msg.sender] = 0;
+        _userAccumulated[msg.sender] = 0;
     }
 
     function rescueTokens(
@@ -409,13 +421,15 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
                 "LiquidityMining::rescueTokens: that dai belongs to stakers"
             );
         } else if (tokenToRescue == address(sarco)) {
-            require(
-                amount <=
-                    sarco.balanceOf(address(this)).sub(
-                        totalRewards.sub(totalClaimedRewards)
-                    ),
-                "LiquidityMining::rescueTokens: that sarco belongs to stakers"
-            );
+            if (totalStakers > 0) {
+                require(
+                    amount <=
+                        sarco.balanceOf(address(this)).sub(
+                            totalRewards.sub(totalClaimedRewards)
+                        ),
+                    "LiquidityMining::rescueTokens: that sarco belongs to stakers"
+                );
+            }
         }
 
         return IERC20(tokenToRescue).transfer(to, amount);
