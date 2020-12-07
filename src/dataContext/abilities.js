@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useWeb3 } from '../web3'
 
-const useCanStake = (blocksUntilKickoff, startBlock, firstStakeBlock, remainingBlocks, endingBlock) => {
+const useCanStake = (timeUntilKickoff, startTime, endTime, firstStakeTime, remainingTime, currentTime) => {
   const { account } = useWeb3()
   const [canStake, setCanStake] = useState(false)
 
@@ -9,16 +9,19 @@ const useCanStake = (blocksUntilKickoff, startBlock, firstStakeBlock, remainingB
     setCanStake(
       account && (
         (
-          startBlock.gt(0) &&
-          blocksUntilKickoff.eq(0) &&
-          endingBlock.eq(0)
+          // waiting for first stake
+          timeUntilKickoff.eq(0) &&
+          startTime.gt(0) &&
+          endTime.gt(0) &&
+          currentTime.lt(endTime)
         ) || (
-          firstStakeBlock.gt(0) &&
-          remainingBlocks.gt(0)
+          // staking active
+          firstStakeTime.gt(0) &&
+          remainingTime.gt(0)
         )
       )
     )
-  }, [account, blocksUntilKickoff, startBlock, firstStakeBlock, remainingBlocks, endingBlock])
+  }, [account, timeUntilKickoff, startTime, endTime, firstStakeTime, remainingTime, currentTime])
 
   return canStake
 }

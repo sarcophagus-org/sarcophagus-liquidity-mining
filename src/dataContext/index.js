@@ -17,17 +17,16 @@ import {
 import {
   useTotalRewards,
   useTotalClaimedRewards,
-  useRewardsPerBlock,
+  useRewardsPerTime,
 } from './totalRewards'
 import {
-  useCurrentBlock,
-  useStartBlock,
-  useFirstStakeBlock,
-  useBlockLength,
-  useElapsedBlocks,
-  useRemainingBlocks,
-  useBlocksUntilKickoff,
-  useEndingBlock,
+  useCurrentTime,
+  useStartTime,
+  useFirstStakeTime,
+  useEndTime,
+  useElapsedTime,
+  useRemainingTime,
+  useTimeUntilKickoff,
 } from './blocks'
 import {
   useMyStakeUsdc,
@@ -102,39 +101,38 @@ const createDataRoot = () => {
     const totalStakeUsdt = useTotalStakeUsdt(liquidityMining)
     const totalStakeDai = useTotalStakeDai(liquidityMining)
 
-    const currentBlock = useCurrentBlock()
-    const startBlock = useStartBlock(liquidityMining)
-    const firstStakeBlock = useFirstStakeBlock(liquidityMining)
-    const blockLength = useBlockLength(liquidityMining)
-    const rewardsPerBlock = useRewardsPerBlock(totalRewards, blockLength)
+    const currentTime = useCurrentTime()
+    const startTime = useStartTime(liquidityMining)
+    const firstStakeTime = useFirstStakeTime(liquidityMining)
+    const endTime = useEndTime(liquidityMining)
+    const rewardsPerTime = useRewardsPerTime(totalRewards, startTime, firstStakeTime, endTime)
 
-    const blocksUntilKickoff = useBlocksUntilKickoff(currentBlock, startBlock)
-    const endingBlock = useEndingBlock(firstStakeBlock, blockLength)
+    const timeUntilKickoff = useTimeUntilKickoff(currentTime, startTime)
 
-    const elapsedBlocks = useElapsedBlocks(currentBlock, firstStakeBlock, blockLength)
-    const remainingBlocks = useRemainingBlocks(firstStakeBlock, elapsedBlocks, blockLength)
-    const totalEmittedRewards = elapsedBlocks.mul(rewardsPerBlock)
-    const totalUnemittedRewards = remainingBlocks.mul(rewardsPerBlock)
+    const elapsedTime = useElapsedTime(currentTime, firstStakeTime, endTime)
+    const remainingTime = useRemainingTime(firstStakeTime, elapsedTime, endTime)
+    const totalEmittedRewards = elapsedTime.mul(rewardsPerTime)
+    const totalUnemittedRewards = remainingTime.mul(rewardsPerTime)
     const totalUnclaimedRewards = totalEmittedRewards.sub(totalClaimedRewards)
 
     const myStakeUsdc = useMyStakeUsdc(liquidityMining)
     const myStakeUsdt = useMyStakeUsdt(liquidityMining)
     const myStakeDai = useMyStakeDai(liquidityMining)
 
-    const myPendingRewards = useMyPendingRewards(liquidityMining, currentBlock)
+    const myPendingRewards = useMyPendingRewards(liquidityMining, currentTime)
     const myClaimedRewards = useMyClaimedRewards(liquidityMining)
 
     const myTotalRewards = myPendingRewards.add(myClaimedRewards)
 
-    const myUsdcBalance = useMyUsdcBalance(usdcContract, currentBlock)
-    const myUsdtBalance = useMyUsdtBalance(usdtContract, currentBlock)
-    const myDaiBalance = useMyDaiBalance(daiContract, currentBlock)
+    const myUsdcBalance = useMyUsdcBalance(usdcContract, currentTime)
+    const myUsdtBalance = useMyUsdtBalance(usdtContract, currentTime)
+    const myDaiBalance = useMyDaiBalance(daiContract, currentTime)
 
-    const myUsdcAllowance = useMyUsdcAllowance(liquidityMining, usdcContract, currentBlock)
-    const myUsdtAllowance = useMyUsdtAllowance(liquidityMining, usdtContract, currentBlock)
-    const myDaiAllowance = useMyDaiAllowance(liquidityMining, daiContract, currentBlock)
+    const myUsdcAllowance = useMyUsdcAllowance(liquidityMining, usdcContract, currentTime)
+    const myUsdtAllowance = useMyUsdtAllowance(liquidityMining, usdtContract, currentTime)
+    const myDaiAllowance = useMyDaiAllowance(liquidityMining, daiContract, currentTime)
 
-    const canStake = useCanStake(blocksUntilKickoff, startBlock, firstStakeBlock, remainingBlocks, endingBlock)
+    const canStake = useCanStake(timeUntilKickoff, startTime, endTime, firstStakeTime, remainingTime, currentTime)
     const canPayout = useCanPayout(myPendingRewards)
     const canWithdraw = useCanWithdraw(myStakeUsdc, myStakeUsdt, myStakeDai)
 
@@ -144,7 +142,7 @@ const createDataRoot = () => {
 
       totalRewards: moneyString(totalRewards, decimalsSarco),
       totalClaimedRewards: moneyString(totalClaimedRewards, decimalsSarco),
-      rewardsPerBlock: moneyString(rewardsPerBlock, decimalsSarco),
+      rewardsPerTime: moneyString(rewardsPerTime, decimalsSarco),
       totalEmittedRewards: moneyString(totalEmittedRewards, decimalsSarco),
       totalUnemittedRewards: moneyString(totalUnemittedRewards, decimalsSarco),
       totalUnclaimedRewards: moneyString(totalUnclaimedRewards, decimalsSarco),
@@ -158,12 +156,12 @@ const createDataRoot = () => {
         getDecimalNumber(totalStakeDai, decimalsDai)
       ).format(makeDecimals(decimalsDai)),
 
-      currentBlock: blockString(currentBlock),
-      startBlock: blockString(startBlock),
-      firstStakeBlock: blockString(firstStakeBlock),
-      endingBlock: blockString(endingBlock),
-      blocksUntilKickoff: blockString(blocksUntilKickoff),
-      remainingBlocks: blockString(remainingBlocks),
+      currentTime: blockString(currentTime),
+      startTime: blockString(startTime),
+      firstStakeTime: blockString(firstStakeTime),
+      endTime: blockString(endTime),
+      timeUntilKickoff: blockString(timeUntilKickoff),
+      remainingTime: blockString(remainingTime),
 
       myStakeUsdc: moneyString(myStakeUsdc, decimalsUsdc),
       myStakeUsdt: moneyString(myStakeUsdt, decimalsUsdt),

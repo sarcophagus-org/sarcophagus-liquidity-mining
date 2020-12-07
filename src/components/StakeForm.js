@@ -43,11 +43,9 @@ const StakeForm = () => {
   }, [pending, usdcBig, usdtBig, daiBig])
 
   useEffect(() => {
-    if (!account) {
-      setUsdc(0)
-      setUsdt(0)
-      setDai(0)
-    }
+    setUsdc(0)
+    setUsdt(0)
+    setDai(0)
   }, [account])
 
   useEffect(() => {

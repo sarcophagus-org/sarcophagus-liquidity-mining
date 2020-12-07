@@ -2,65 +2,69 @@ import { useState, useEffect } from 'react'
 import { BigNumber } from 'ethers'
 import { useWeb3 } from '../web3'
 
-const useCurrentBlock = () => {
-  const [currentBlock, setCurrentBlock] = useState(BigNumber.from(0))
+const useCurrentTime = () => {
+  const [currentTime, setCurrentTime] = useState(BigNumber.from(0))
   const { provider } = useWeb3()
 
   useEffect(() => {
     if (!provider) return
 
     provider.getBlockNumber().then(blockNumber => {
-      setCurrentBlock(BigNumber.from(blockNumber))
+      return provider.getBlock(blockNumber)
+    }).then(block => {
+      setCurrentTime(BigNumber.from(block.timestamp))
     }).catch(error => console.error(error))
 
-    const updateBlockNumber = (blockNumber) => {
-      setCurrentBlock(BigNumber.from(blockNumber))
+    const updateBlockTime = (blockNumber) => {
+      provider.getBlock(blockNumber).then(block => {
+        setCurrentTime(BigNumber.from(block.timestamp))
+      }).catch(error => console.error(error))
     }
 
-    provider.on('block', updateBlockNumber)
+    provider.on('block', updateBlockTime)
 
     return () => {
-      provider.removeListener('block', updateBlockNumber)
+      provider.removeListener('block', updateBlockTime)
     }
   }, [provider])
 
-  return currentBlock
+  return currentTime
 }
 
-const useStartBlock = (liquidityMining) => {
-  const [startBlock, setStartBlock] = useState(BigNumber.from(0))
+const useStartTime = (liquidityMining) => {
+  const [startTime, setStartTime] = useState(BigNumber.from(0))
 
   useEffect(() => {
     if (!liquidityMining) return
 
-    liquidityMining.startBlock().then(startBlock => {
-      setStartBlock(startBlock)
+    liquidityMining.startTime().then(startTime => {
+      setStartTime(startTime)
     }).catch(error => console.error(error))
 
-    const updateStartBlock = (_, startBlock) => {
-      setStartBlock(startBlock)
+    const updateStartTime = (_, startTime) => {
+      setStartTime(startTime)
     }
 
-    liquidityMining.on('Deposit', updateStartBlock)
+    liquidityMining.on('Deposit', updateStartTime)
 
     return () => {
-      liquidityMining.removeListener('Deposit', updateStartBlock)
+      liquidityMining.removeListener('Deposit', updateStartTime)
     }
 
   }, [liquidityMining])
 
-  return startBlock
+  return startTime
 }
 
-const useFirstStakeBlock = (liquidityMining) => {
-  const [firstStakeBlock, setFirstStakeBlock] = useState(BigNumber.from(0))
+const useFirstStakeTime = (liquidityMining) => {
+  const [firstStakeTime, setFirstStakeTime] = useState(BigNumber.from(0))
 
   useEffect(() => {
     if (!liquidityMining) return
 
     const updateFirstStake = () => {
-      liquidityMining.firstStakeBlock().then(firstStakeBlock => {
-        setFirstStakeBlock(firstStakeBlock)
+      liquidityMining.firstStakeTime().then(firstStakeTime => {
+        setFirstStakeTime(firstStakeTime)
       }).catch(error => console.error(error))
     }
 
@@ -74,106 +78,89 @@ const useFirstStakeBlock = (liquidityMining) => {
 
   }, [liquidityMining])
 
-  return firstStakeBlock
+  return firstStakeTime
 }
 
-const useBlockLength = (liquidityMining) => {
-  const [blockLength, setBlockLength] = useState(BigNumber.from(0))
-  const firstStakeBlock = useFirstStakeBlock(liquidityMining)
+const useEndTime = (liquidityMining) => {
+  const [endTime, setEndTime] = useState(BigNumber.from(0))
 
   useEffect(() => {
     if (!liquidityMining) return
 
-    liquidityMining.blockLength().then(blockLength => {
-      setBlockLength(blockLength)
+    liquidityMining.endTime().then(endTime => {
+      setEndTime(endTime)
     }).catch(error => console.error(error))
 
-    const updateBlockLength = (_, __, _blockLength) => {
-      setBlockLength(_blockLength)
+    const updateEndTime = (_, __, _endTime) => {
+      setEndTime(_endTime)
     }
 
-    liquidityMining.on('Deposit', updateBlockLength)
+    liquidityMining.on('Deposit', updateEndTime)
 
     return () => {
-      liquidityMining.removeListener('Deposit', updateBlockLength)
+      liquidityMining.removeListener('Deposit', updateEndTime)
     }
-  }, [liquidityMining, firstStakeBlock])
+  }, [liquidityMining])
 
-  return blockLength
+  return endTime
 }
 
-const useElapsedBlocks = (currentBlock, firstStakeBlock, blockLength) => {
-  const [elapsedBlocks, setElapsedBlocks] = useState(BigNumber.from(0))
+const useElapsedTime = (currentTime, firstStakeTime, endTime) => {
+  const [elapsedTime, setElapsedTime] = useState(BigNumber.from(0))
 
   useEffect(() => {
-    if (firstStakeBlock.eq(0)) {
-      setElapsedBlocks(BigNumber.from(0))
+    if (firstStakeTime.eq(0)) {
+      setElapsedTime(BigNumber.from(0))
       return
     }
 
-    if (firstStakeBlock.add(blockLength).lt(currentBlock)) {
-      setElapsedBlocks(blockLength)
+    if (endTime.lt(currentTime)) {
+      setElapsedTime(endTime.sub(firstStakeTime))
       return
     }
 
-    setElapsedBlocks(currentBlock.sub(firstStakeBlock))
-  }, [currentBlock, firstStakeBlock, blockLength])
+    setElapsedTime(currentTime.sub(firstStakeTime))
+  }, [currentTime, firstStakeTime, endTime])
 
-  return elapsedBlocks
+  return elapsedTime
 }
 
-const useRemainingBlocks = (firstStakeBlock, elapsedBlocks, blockLength) => {
-  const [remainingBlocks, setRemainingBlocks] = useState(BigNumber.from(0))
+const useRemainingTime = (firstStakeTime, elapsedTime, endTime) => {
+  const [remainingTime, setRemainingTime] = useState(BigNumber.from(0))
 
   useEffect(() => {
-    if (firstStakeBlock.eq(0)) {
-      setRemainingBlocks(BigNumber.from(0))
+    if (firstStakeTime.eq(0)) {
+      setRemainingTime(BigNumber.from(0))
       return
     }
 
-    setRemainingBlocks(blockLength.sub(elapsedBlocks))
-  }, [firstStakeBlock, elapsedBlocks, blockLength])
+    setRemainingTime(endTime.sub(firstStakeTime.add(elapsedTime)))
+  }, [firstStakeTime, elapsedTime, endTime])
 
-  return remainingBlocks 
+  return remainingTime 
 }
 
-const useBlocksUntilKickoff = (currentBlock, startBlock) => {
-  const [blocksUntilKickoff, setBlocksUntilKickoff] = useState(BigNumber.from(0))
+const useTimeUntilKickoff = (currentTime, startTime) => {
+  const [timeUntilKickoff, setTimeUntilKickoff] = useState(BigNumber.from(0))
 
   useEffect(() => {
-    if (currentBlock.gt(startBlock)) {
-      setBlocksUntilKickoff(BigNumber.from(0))
+    if (currentTime.gt(startTime)) {
+      setTimeUntilKickoff(BigNumber.from(0))
       return
     }
 
-    setBlocksUntilKickoff(startBlock.sub(currentBlock))
-  }, [startBlock, currentBlock])
+    setTimeUntilKickoff(startTime.sub(currentTime))
+  }, [currentTime, startTime])
 
-  return blocksUntilKickoff
-}
-
-const useEndingBlock = (firstStakeBlock, blockLength) => {
-  const [endingBlock, setEndingBlock] = useState(BigNumber.from(0))
-
-  useEffect(() => {
-    if (firstStakeBlock.eq(0)) {
-      setEndingBlock(BigNumber.from(0))
-      return
-    }
-
-    setEndingBlock(firstStakeBlock.add(blockLength))
-  }, [firstStakeBlock, blockLength])
-
-  return endingBlock
+  return timeUntilKickoff
 }
 
 export {
-  useCurrentBlock,
-  useStartBlock,
-  useFirstStakeBlock,
-  useBlockLength,
-  useElapsedBlocks,
-  useRemainingBlocks,
-  useBlocksUntilKickoff,
-  useEndingBlock,
+  useCurrentTime,
+  useStartTime,
+  useFirstStakeTime,
+  useEndTime,
+  useElapsedTime,
+  useRemainingTime,
+  useTimeUntilKickoff,
 }

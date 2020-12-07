@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { BigNumber } from 'ethers'
 import { useWeb3 } from '../web3'
 
-const useMyPendingRewards = (liquidityMining, currentBlock) => {
+const useMyPendingRewards = (liquidityMining, currentTime) => {
   const [pendingRewards, setPendingRewards] = useState(BigNumber.from(0))
   const { account } = useWeb3()
 
@@ -19,7 +19,7 @@ const useMyPendingRewards = (liquidityMining, currentBlock) => {
       }
     }).catch(error => console.error(error))
     
-  }, [liquidityMining, currentBlock, account])
+  }, [liquidityMining, currentTime, account])
 
   return pendingRewards
 }

@@ -50,23 +50,28 @@ const useTotalClaimedRewards = (liquidityMining) => {
   return totalClaimedSarcoRewards
 }
 
-const useRewardsPerBlock = (totalRewards, blockLength) => {
-  const [rewardsPerBlock, setRewardsPerBlock] = useState(BigNumber.from(0))
+const useRewardsPerTime = (totalRewards, startTime, firstStakeTime, endTime) => {
+  const [rewardsPerTime, setRewardsPerTime] = useState(BigNumber.from(0))
 
   useEffect(() => {
-    if (blockLength.eq(0)) {
-      setRewardsPerBlock(BigNumber.from(0))
+    if (startTime.eq(0)) {
+      setRewardsPerTime(BigNumber.from(0))
       return
     }
 
-    setRewardsPerBlock(totalRewards.div(blockLength))
-  }, [blockLength, totalRewards])
+    if (firstStakeTime.eq(0)) {
+      setRewardsPerTime(totalRewards.div(endTime.sub(startTime)))
+      return
+    }
 
-  return rewardsPerBlock
+    setRewardsPerTime(totalRewards.div(endTime.sub(firstStakeTime)))
+  }, [totalRewards, startTime, firstStakeTime, endTime])
+
+  return rewardsPerTime
 }
 
 export {
   useTotalRewards,
   useTotalClaimedRewards,
-  useRewardsPerBlock,
+  useRewardsPerTime,
 }
