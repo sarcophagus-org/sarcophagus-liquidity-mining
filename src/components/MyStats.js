@@ -2,6 +2,38 @@ import { useData } from '../dataContext'
 import { Value } from './shared/Value'
 import { Hidden } from './shared/Hidden'
 
+const Container = ({ children }) => {
+  return (
+    <div className="-mb-4 flex justify-center md:justify-start -mx-4">
+      {children}
+    </div>
+  )
+}
+
+const SectionContainer = ({ children }) => {
+  return (
+    <div className="mx-4">
+      {children}
+    </div>
+  )
+}
+
+const Section = ({ children }) => {
+  return (
+    <div className="mb-4">
+      {children}
+    </div>
+  )
+}
+
+const Title = ({ children }) => {
+  return (
+    <div className="text-xl">
+      {children}
+    </div>
+  )
+}
+
 const MyStats = () => {
   const {
     myStakeUsdc,
@@ -13,38 +45,6 @@ const MyStats = () => {
     myClaimedRewards,
     myTotalRewards,
   } = useData()
-
-  const Container = ({ children }) => {
-    return (
-      <div className="-mb-4 flex justify-center md:justify-start -mx-4">
-        {children}
-      </div>
-    )
-  }
-
-  const SectionContainer = ({ children }) => {
-    return (
-      <div className="mx-4">
-        {children}
-      </div>
-    )
-  }
-
-  const Section = ({ children }) => {
-    return (
-      <div className="mb-4">
-        {children}
-      </div>
-    )
-  }
-
-  const Title = ({ children }) => {
-    return (
-      <div className="text-xl">
-        {children}
-      </div>
-    )
-  }
 
   return (
     <Container>
