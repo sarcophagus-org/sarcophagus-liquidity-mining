@@ -13,8 +13,8 @@ module.exports = async function (_, network) {
     await sarcoMock.approve(liquidityMining.address, amount)
 
     const currentTime = (await web3.eth.getBlock('latest')).timestamp
-    const startTime = currentTime + 60 * 2
-    const endTime = currentTime + 60 * 10
+    const startTime = currentTime + 30
+    const endTime = currentTime + 60 * 8
     await liquidityMining.deposit(amount, startTime, endTime)
   } else if (['goerli', 'goerli-fork'].includes(network)) {
     const liquidityMining = await LiquidityMining.deployed()
@@ -23,9 +23,8 @@ module.exports = async function (_, network) {
     const sarcoMock = await SarcoMock.deployed()
     await sarcoMock.approve(liquidityMining.address, amount)
 
-    const currentTime = (await web3.eth.getBlock('latest')).timestamp
-    const startTime = currentTime + 60 * 10
-    const endTime = currentTime + 60 * 60 * 24 * 30
+    const startTime = 1607698800
+    const endTime = 1610118000
     await liquidityMining.deposit(amount, startTime, endTime)
   }
 }
