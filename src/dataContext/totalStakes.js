@@ -9,7 +9,7 @@ const useTotalStakeUsdc = (liquidityMining) => {
 
     liquidityMining.totalStakeUsdc().then(usdc => {
       setTotalStakeUsdc(usdc)
-    }).catch(error => console.error(error))
+    }).catch(console.error)
 
     const addUsdc = (_, usdc) => {
       setTotalStakeUsdc(_usdc => _usdc.add(usdc))
@@ -39,7 +39,7 @@ const useTotalStakeUsdt = (liquidityMining) => {
 
     liquidityMining.totalStakeUsdt().then(usdt => {
       setTotalStakeUsdt(usdt)
-    }).catch(error => console.error(error))
+    }).catch(console.error)
 
     const addUsdt = (_, __, usdt) => {
       setTotalStakeUsdt(_usdt => _usdt.add(usdt))
@@ -69,7 +69,7 @@ const useTotalStakeDai = (liquidityMining) => {
 
     liquidityMining.totalStakeDai().then(dai => {
       setTotalStakeDai(dai)
-    }).catch(error => console.error(error))
+    }).catch(console.error)
 
     const addDai = (_, __, ___, dai) => {
       setTotalStakeDai(_dai => _dai.add(dai))

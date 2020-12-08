@@ -20,7 +20,7 @@ const useInactiveListener = () => {
         if (isAuthorized) {
           activate(injectedConnector)
         }
-      }).catch(error => console.error(error))
+      }).catch(console.error)
     }
 
     ethereum.on('chainChanged', handleChainChanged)

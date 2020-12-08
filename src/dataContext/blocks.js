@@ -36,7 +36,7 @@ const useCurrentTime = (blockNumber) => {
 
     provider.getBlock(blockNumber).then(block => {
       setCurrentTime(BigNumber.from(block.timestamp))
-    }).catch(error => console.error(error))
+    }).catch(console.error)
 
     const timer = setInterval(() => {
       setCurrentTime(currentTime => currentTime.add(BigNumber.from(1)))
@@ -58,7 +58,7 @@ const useStartTime = (liquidityMining) => {
 
     liquidityMining.startTime().then(startTime => {
       setStartTime(startTime)
-    }).catch(error => console.error(error))
+    }).catch(console.error)
 
     const updateStartTime = (_, startTime) => {
       setStartTime(startTime)
@@ -84,7 +84,7 @@ const useFirstStakeTime = (liquidityMining) => {
     const updateFirstStake = () => {
       liquidityMining.firstStakeTime().then(firstStakeTime => {
         setFirstStakeTime(firstStakeTime)
-      }).catch(error => console.error(error))
+      }).catch(console.error)
     }
 
     updateFirstStake()
@@ -108,7 +108,7 @@ const useEndTime = (liquidityMining) => {
 
     liquidityMining.endTime().then(endTime => {
       setEndTime(endTime)
-    }).catch(error => console.error(error))
+    }).catch(console.error)
 
     const updateEndTime = (_, __, _endTime) => {
       setEndTime(_endTime)

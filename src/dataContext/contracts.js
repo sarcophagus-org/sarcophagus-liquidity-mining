@@ -28,7 +28,7 @@ const useUsdcContract = (liquidityMining) => {
 
     liquidityMining.usdc().then(usdc => {
       setUsdcContract(new Contract(usdc, ERC20.abi, signerOrProvider))
-    }).catch(error => console.error(error))
+    }).catch(console.error)
   }, [liquidityMining, signerOrProvider])
 
   return usdcContract
@@ -43,7 +43,7 @@ const useUsdtContract = (liquidityMining) => {
 
     liquidityMining.usdt().then(usdt => {
       setUsdtContract(new Contract(usdt, ERC20.abi, signerOrProvider))
-    }).catch(error => console.error(error))
+    }).catch(console.error)
   }, [liquidityMining, signerOrProvider])
 
   return usdtContract
@@ -58,7 +58,7 @@ const useDaiContract = (liquidityMining) => {
 
     liquidityMining.dai().then(dai => {
       setDaiContract(new Contract(dai, ERC20.abi, signerOrProvider))
-    }).catch(error => console.error(error))
+    }).catch(console.error)
   }, [liquidityMining, signerOrProvider])
 
   return daiContract
@@ -73,7 +73,7 @@ const useSarcoContract = (liquidityMining) => {
 
     liquidityMining.sarco().then(sarco => {
       setSarcoContract(new Contract(sarco, ERC20.abi, signerOrProvider))
-    }).catch(error => console.error(error))
+    }).catch(console.error)
   }, [liquidityMining, signerOrProvider])
 
   return sarcoContract
@@ -87,7 +87,7 @@ const useDecimals = (contract) => {
 
     contract.decimals().then(decimals => {
       setDecimals(decimals)
-    }).catch(error => console.error(error))
+    }).catch(console.error)
   }, [contract])
 
   return decimals

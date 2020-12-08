@@ -11,7 +11,7 @@ const useMyUsdcBalance = (usdcContract, currentTime) => {
 
     usdcContract.balanceOf(account).then(balance => {
       setBalance(balance)
-    }).catch(error => console.error(error))
+    }).catch(console.error)
   }, [account, usdcContract, currentTime])
 
   return balance
@@ -26,7 +26,7 @@ const useMyUsdtBalance = (usdtContract, currentTime) => {
 
     usdtContract.balanceOf(account).then(balance => {
       setBalance(balance)
-    }).catch(error => console.error(error))
+    }).catch(console.error)
   }, [account, usdtContract, currentTime])
 
   return balance
@@ -41,7 +41,7 @@ const useMyDaiBalance = (daiContract, currentTime) => {
 
     daiContract.balanceOf(account).then(balance => {
       setBalance(balance)
-    }).catch(error => console.error(error))
+    }).catch(console.error)
   }, [account, daiContract, currentTime])
 
   return balance
@@ -56,7 +56,7 @@ const useMyUsdcAllowance = (liquidityMining, usdcContract, currentTime) => {
 
     usdcContract.allowance(account, liquidityMining.address).then(allowance => {
       setAllowance(allowance)
-    }).catch(error => console.error(error))
+    }).catch(console.error)
   }, [account, liquidityMining, usdcContract, currentTime])
 
   return allowance
@@ -71,7 +71,7 @@ const useMyUsdtAllowance = (liquidityMining, usdtContract, currentTime) => {
 
     usdtContract.allowance(account, liquidityMining.address).then(allowance => {
       setAllowance(allowance)
-    }).catch(error => console.error(error))
+    }).catch(console.error)
   }, [account, liquidityMining, usdtContract, currentTime])
 
   return allowance
@@ -86,7 +86,7 @@ const useMyDaiAllowance = (liquidityMining, daiContract, currentTime) => {
 
     daiContract.allowance(account, liquidityMining.address).then(allowance => {
       setAllowance(allowance)
-    }).catch(error => console.error(error))
+    }).catch(console.error)
   }, [account, liquidityMining, daiContract, currentTime])
 
   return allowance
