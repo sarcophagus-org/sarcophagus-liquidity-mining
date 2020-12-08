@@ -174,13 +174,13 @@ const createDataRoot = () => {
 
     const myTotalRewards = myPendingRewards.add(myClaimedRewards)
 
-    const myUsdcBalance = useMyUsdcBalance(usdcContract, currentTime)
-    const myUsdtBalance = useMyUsdtBalance(usdtContract, currentTime)
-    const myDaiBalance = useMyDaiBalance(daiContract, currentTime)
+    const myUsdcBalance = useMyUsdcBalance(usdcContract, currentBlock)
+    const myUsdtBalance = useMyUsdtBalance(usdtContract, currentBlock)
+    const myDaiBalance = useMyDaiBalance(daiContract, currentBlock)
 
-    const myUsdcAllowance = useMyUsdcAllowance(liquidityMining, usdcContract, currentTime)
-    const myUsdtAllowance = useMyUsdtAllowance(liquidityMining, usdtContract, currentTime)
-    const myDaiAllowance = useMyDaiAllowance(liquidityMining, daiContract, currentTime)
+    const myUsdcAllowance = useMyUsdcAllowance(liquidityMining, usdcContract, currentBlock)
+    const myUsdtAllowance = useMyUsdtAllowance(liquidityMining, usdtContract, currentBlock)
+    const myDaiAllowance = useMyDaiAllowance(liquidityMining, daiContract, currentBlock)
 
     const systemState = useSystemState(startTime, timeUntilKickoff, firstStakeTime, remainingTime)
 

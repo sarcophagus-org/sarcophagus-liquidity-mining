@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { BigNumber } from 'ethers'
 import { useWeb3 } from '../web3'
 
-const useMyUsdcBalance = (usdcContract, currentTime) => {
+const useMyUsdcBalance = (usdcContract, currentBlock) => {
   const { account } = useWeb3()
   const [balance, setBalance] = useState(BigNumber.from(0))
 
@@ -12,12 +12,12 @@ const useMyUsdcBalance = (usdcContract, currentTime) => {
     usdcContract.balanceOf(account).then(balance => {
       setBalance(balance)
     }).catch(console.error)
-  }, [account, usdcContract, currentTime])
+  }, [account, usdcContract, currentBlock])
 
   return balance
 }
 
-const useMyUsdtBalance = (usdtContract, currentTime) => {
+const useMyUsdtBalance = (usdtContract, currentBlock) => {
   const { account } = useWeb3()
   const [balance, setBalance] = useState(BigNumber.from(0))
 
@@ -27,12 +27,12 @@ const useMyUsdtBalance = (usdtContract, currentTime) => {
     usdtContract.balanceOf(account).then(balance => {
       setBalance(balance)
     }).catch(console.error)
-  }, [account, usdtContract, currentTime])
+  }, [account, usdtContract, currentBlock])
 
   return balance
 }
 
-const useMyDaiBalance = (daiContract, currentTime) => {
+const useMyDaiBalance = (daiContract, currentBlock) => {
   const { account } = useWeb3()
   const [balance, setBalance] = useState(BigNumber.from(0))
 
@@ -42,12 +42,12 @@ const useMyDaiBalance = (daiContract, currentTime) => {
     daiContract.balanceOf(account).then(balance => {
       setBalance(balance)
     }).catch(console.error)
-  }, [account, daiContract, currentTime])
+  }, [account, daiContract, currentBlock])
 
   return balance
 }
 
-const useMyUsdcAllowance = (liquidityMining, usdcContract, currentTime) => {
+const useMyUsdcAllowance = (liquidityMining, usdcContract, currentBlock) => {
   const { account } = useWeb3()
   const [allowance, setAllowance] = useState(BigNumber.from(0))
 
@@ -57,12 +57,12 @@ const useMyUsdcAllowance = (liquidityMining, usdcContract, currentTime) => {
     usdcContract.allowance(account, liquidityMining.address).then(allowance => {
       setAllowance(allowance)
     }).catch(console.error)
-  }, [account, liquidityMining, usdcContract, currentTime])
+  }, [account, liquidityMining, usdcContract, currentBlock])
 
   return allowance
 }
 
-const useMyUsdtAllowance = (liquidityMining, usdtContract, currentTime) => {
+const useMyUsdtAllowance = (liquidityMining, usdtContract, currentBlock) => {
   const { account } = useWeb3()
   const [allowance, setAllowance] = useState(BigNumber.from(0))
 
@@ -72,12 +72,12 @@ const useMyUsdtAllowance = (liquidityMining, usdtContract, currentTime) => {
     usdtContract.allowance(account, liquidityMining.address).then(allowance => {
       setAllowance(allowance)
     }).catch(console.error)
-  }, [account, liquidityMining, usdtContract, currentTime])
+  }, [account, liquidityMining, usdtContract, currentBlock])
 
   return allowance
 }
 
-const useMyDaiAllowance = (liquidityMining, daiContract, currentTime) => {
+const useMyDaiAllowance = (liquidityMining, daiContract, currentBlock) => {
   const { account } = useWeb3()
   const [allowance, setAllowance] = useState(BigNumber.from(0))
 
@@ -87,7 +87,7 @@ const useMyDaiAllowance = (liquidityMining, daiContract, currentTime) => {
     daiContract.allowance(account, liquidityMining.address).then(allowance => {
       setAllowance(allowance)
     }).catch(console.error)
-  }, [account, liquidityMining, daiContract, currentTime])
+  }, [account, liquidityMining, daiContract, currentBlock])
 
   return allowance
 }
