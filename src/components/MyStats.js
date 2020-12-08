@@ -8,6 +8,7 @@ const MyStats = () => {
     myStakeUsdt,
     myStakeDai,
     myStakedStablecoins,
+    myRewardsPerTime,
     myPendingRewards,
     myClaimedRewards,
     myTotalRewards,
@@ -66,6 +67,10 @@ const MyStats = () => {
         </Section>
       </SectionContainer>
       <SectionContainer>
+        <Section>
+          <Title>My Rewards Per Second</Title>
+          <Hidden><Value>{myRewardsPerTime}</Value></Hidden>
+        </Section>
         <Section>
           <Title>My Pending Rewards</Title>
           <Hidden><Value>{myPendingRewards}</Value></Hidden>

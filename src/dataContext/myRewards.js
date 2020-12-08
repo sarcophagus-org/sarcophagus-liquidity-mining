@@ -2,9 +2,15 @@ import { useState, useEffect } from 'react'
 import { BigNumber } from 'ethers'
 import { useWeb3 } from '../web3'
 
-const useMyPendingRewards = (liquidityMining, currentTime) => {
+const useMyPendingRewards = (liquidityMining, currentBlock, currentTime, rewardIncrement, isActive) => {
   const [pendingRewards, setPendingRewards] = useState(BigNumber.from(0))
   const { account } = useWeb3()
+
+  useEffect(() => {
+    if (isActive) {
+      setPendingRewards(pendingRewards => pendingRewards.add(rewardIncrement))
+    }
+  }, [currentTime, rewardIncrement, isActive])
 
   useEffect(() => {
     if (!liquidityMining || !account) return
@@ -19,7 +25,7 @@ const useMyPendingRewards = (liquidityMining, currentTime) => {
       }
     }).catch(error => console.error(error))
     
-  }, [liquidityMining, currentTime, account])
+  }, [liquidityMining, currentBlock, account])
 
   return pendingRewards
 }
@@ -50,7 +56,33 @@ const useMyClaimedRewards = (liquidityMining) => {
   return claimedRewards
 }
 
+const useMyRewardsPerTime = (liquidityMining, currentBlock, rewardPerTime, isActive) => {
+  const [rewardIncrement, setRewardIncrement] = useState(BigNumber.from(0))
+  const { account } = useWeb3()
+
+  useEffect(() => {
+    if (!liquidityMining || !account) return
+
+    if (!isActive) {
+      setRewardIncrement(BigNumber.from(0))
+      return
+    }
+
+    Promise.all([liquidityMining.totalStake(), liquidityMining.totalUserStake(account)])
+      .then(([total, user]) => {
+        if (total.eq(0)) {
+          setRewardIncrement(BigNumber.from(0))
+        } else {
+          setRewardIncrement(rewardPerTime.mul(user).div(total))
+        }
+      }).catch(error => console.error(error))
+  }, [liquidityMining, account, currentBlock, rewardPerTime, isActive])
+
+  return rewardIncrement
+}
+
 export {
   useMyPendingRewards,
-  useMyClaimedRewards
+  useMyClaimedRewards,
+  useMyRewardsPerTime,
 }

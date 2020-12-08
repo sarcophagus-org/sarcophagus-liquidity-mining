@@ -129,7 +129,7 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         emit Deposit(_totalRewards, _startTime, _endTime);
     }
 
-    function totalStake() private view returns (uint256 total) {
+    function totalStake() public view returns (uint256 total) {
         total = _totalStakeUsdc.add(_totalStakeUsdt).add(_totalStakeDai);
     }
 

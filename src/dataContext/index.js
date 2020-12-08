@@ -20,6 +20,7 @@ import {
   useRewardsPerTime,
 } from './totalRewards'
 import {
+  useCurrentBlock,
   useCurrentTime,
   useStartTime,
   useFirstStakeTime,
@@ -36,6 +37,7 @@ import {
 import {
   useMyPendingRewards,
   useMyClaimedRewards,
+  useMyRewardsPerTime,
 } from './myRewards'
 import {
   useMyUsdcBalance,
@@ -101,7 +103,8 @@ const createDataRoot = () => {
     const totalStakeUsdt = useTotalStakeUsdt(liquidityMining)
     const totalStakeDai = useTotalStakeDai(liquidityMining)
 
-    const currentTime = useCurrentTime()
+    const currentBlock = useCurrentBlock()
+    const currentTime = useCurrentTime(currentBlock)
     const startTime = useStartTime(liquidityMining)
     const firstStakeTime = useFirstStakeTime(liquidityMining)
     const endTime = useEndTime(liquidityMining)
@@ -119,7 +122,9 @@ const createDataRoot = () => {
     const myStakeUsdt = useMyStakeUsdt(liquidityMining)
     const myStakeDai = useMyStakeDai(liquidityMining)
 
-    const myPendingRewards = useMyPendingRewards(liquidityMining, currentTime)
+    const isActive = startTime.gt(0) && timeUntilKickoff.eq(0) && firstStakeTime.gt(0) && remainingTime.gt(0) && (myStakeUsdc.add(myStakeUsdt).add(myStakeDai).gt(0))
+    const myRewardsPerTime = useMyRewardsPerTime(liquidityMining, currentBlock, rewardsPerTime, isActive)
+    const myPendingRewards = useMyPendingRewards(liquidityMining, currentBlock, currentTime, myRewardsPerTime, isActive)
     const myClaimedRewards = useMyClaimedRewards(liquidityMining)
 
     const myTotalRewards = myPendingRewards.add(myClaimedRewards)
@@ -175,6 +180,7 @@ const createDataRoot = () => {
       myPendingRewards: moneyString(myPendingRewards, decimalsSarco),
       myClaimedRewards: moneyString(myClaimedRewards, decimalsSarco),
       myTotalRewards: moneyString(myTotalRewards, decimalsSarco),
+      myRewardsPerTime: moneyString(myRewardsPerTime, decimalsSarco),
 
       myUsdcBalance: moneyString(myUsdcBalance, decimalsUsdc),
       myUsdtBalance: moneyString(myUsdtBalance, decimalsUsdt),

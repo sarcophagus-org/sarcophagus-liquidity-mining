@@ -2,31 +2,50 @@ import { useState, useEffect } from 'react'
 import { BigNumber } from 'ethers'
 import { useWeb3 } from '../web3'
 
-const useCurrentTime = () => {
-  const [currentTime, setCurrentTime] = useState(BigNumber.from(0))
+const useCurrentBlock = () => {
+  const [currentBlock, setCurrentBlock] = useState(0)
   const { provider } = useWeb3()
 
   useEffect(() => {
     if (!provider) return
 
     provider.getBlockNumber().then(blockNumber => {
-      return provider.getBlock(blockNumber)
-    }).then(block => {
+      setCurrentBlock(blockNumber)
+    })
+
+    const getBlockNumber = blockNumber => {
+      setCurrentBlock(blockNumber)
+    }
+
+    provider.on('block', getBlockNumber)
+
+    return () => {
+      provider.removeListener('block', getBlockNumber)
+    }
+  }, [provider])
+
+  return currentBlock
+}
+
+const useCurrentTime = (blockNumber) => {
+  const [currentTime, setCurrentTime] = useState(BigNumber.from(0))
+  const { provider } = useWeb3()
+
+  useEffect(() => {
+    if (!provider) return
+
+    provider.getBlock(blockNumber).then(block => {
       setCurrentTime(BigNumber.from(block.timestamp))
     }).catch(error => console.error(error))
 
-    const updateBlockTime = (blockNumber) => {
-      provider.getBlock(blockNumber).then(block => {
-        setCurrentTime(BigNumber.from(block.timestamp))
-      }).catch(error => console.error(error))
-    }
-
-    provider.on('block', updateBlockTime)
+    const timer = setInterval(() => {
+      setCurrentTime(currentTime => currentTime.add(BigNumber.from(1)))
+    }, 1000)
 
     return () => {
-      provider.removeListener('block', updateBlockTime)
+      clearInterval(timer)
     }
-  }, [provider])
+  }, [provider, blockNumber])
 
   return currentTime
 }
@@ -137,7 +156,7 @@ const useRemainingTime = (firstStakeTime, elapsedTime, endTime) => {
     setRemainingTime(endTime.sub(firstStakeTime.add(elapsedTime)))
   }, [firstStakeTime, elapsedTime, endTime])
 
-  return remainingTime 
+  return remainingTime
 }
 
 const useTimeUntilKickoff = (currentTime, startTime) => {
@@ -156,6 +175,7 @@ const useTimeUntilKickoff = (currentTime, startTime) => {
 }
 
 export {
+  useCurrentBlock,
   useCurrentTime,
   useStartTime,
   useFirstStakeTime,
