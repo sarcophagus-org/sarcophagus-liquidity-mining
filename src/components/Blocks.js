@@ -1,4 +1,3 @@
-import numeral from 'numeral'
 import { useData } from '../dataContext'
 import { Value } from './shared/Value'
 
@@ -12,6 +11,8 @@ const Blocks = () => {
     remainingTime,
     totalRewards,
     rewardsPerTime,
+    systemState,
+    StateEnum
   } = useData()
 
   const Container = ({ children }) => {
@@ -121,16 +122,18 @@ const Blocks = () => {
     )
   }
 
-  if (numeral(startTime).value() === 0) {
+  if (systemState === StateEnum.NotScheduled) {
     return <NotScheduled />
-  } else if (numeral(timeUntilKickoff).value() > 0) {
+  } else if (systemState === StateEnum.Scheduled) {
     return <Scheduled />
-  } else if (numeral(firstStakeTime).value() === 0) {
+  } else if (systemState === StateEnum.Ready) {
     return <Ready />
-  } else if (numeral(remainingTime).value() > 0) {
+  } else if (systemState === StateEnum.Active) {
     return <Active />
-  } else {
+  } else if (systemState === StateEnum.Over) {
     return <Over />
+  } else {
+    return <></>
   }
 }
 
