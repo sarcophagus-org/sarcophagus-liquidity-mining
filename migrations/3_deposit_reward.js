@@ -24,7 +24,7 @@ module.exports = async function (_, network) {
     await sarcoMock.approve(liquidityMining.address, amount)
 
     const startTime = 1607698800
-    const endTime = 1610118000
+    const endTime = 1608303600
     await liquidityMining.deposit(amount, startTime, endTime)
   }
 }
