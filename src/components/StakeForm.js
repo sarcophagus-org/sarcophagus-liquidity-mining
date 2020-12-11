@@ -139,7 +139,7 @@ const StakeForm = () => {
         <div className="mt-2 flex flex-col">
           <Input currency="usdc" value={usdc} setValue={setUsdc} balance={myUsdcBalance} decimals={decimalsUsdc} />
           <Input currency="usdt" value={usdt} setValue={setUsdt} balance={myUsdtBalance} decimals={decimalsUsdt} />
-          <Input currency="dai" value={dai} setValue={setDai} balance={myDaiBalance} decimals={decimalsDai} />
+          <Input currency="dai" value={dai} setValue={setDai} balance={myDaiBalance} decimals={6} />
         </div>
         <div className="text-right">
           <button type="submit" disabled={!buttonEnabled} className={`bg-gray-400 inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white ${!buttonEnabled && "opacity-50 cursor-not-allowed"}`}>
