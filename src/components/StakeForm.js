@@ -90,7 +90,7 @@ const StakeForm = () => {
       if (!liquidityMining) return
       setCallData([
         liquidityMining.stake,
-        [usdcBig, usdtBig, daiBig],
+        [usdcBig, usdtBig, daiBig, { gasLimit: 400000 }],
         "Making stake...", "Stake failed!", "Stake made!",
         () => {
           setUsdc(0)
