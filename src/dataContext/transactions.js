@@ -7,9 +7,10 @@ const useTransaction = () => {
   const contractCall = useCallback(
     (contractFn, parameters, pendingMessage, failedMessage, successMessage, successCallback, completedCallback) => {
       setPending(true)
+      let toastId
       contractFn(...parameters)
         .then(txResponse => {
-          const toastId = toast(pendingMessage, {
+          toastId = toast(pendingMessage, {
             autoClose: false,
             closeOnClick: false,
             draggable: false
@@ -32,6 +33,7 @@ const useTransaction = () => {
         .catch(error => {
           console.error(error)
           setPending(false)
+          toast.dismiss(toastId)
           toast("There was an error! Check your browser's console logs for more details.")
         })
     }, [])
