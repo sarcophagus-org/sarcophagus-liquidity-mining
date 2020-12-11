@@ -38,7 +38,7 @@ const PayoutWithdraw = () => {
 
   const withdraw = () => {
     contractCall(
-      liquidityMining.withdraw, [{ gasLimit: 200000 }],
+      liquidityMining.withdraw, [{ gasLimit: 300000 }],
       "Withdrawing stake...", "Withdraw failed!", "Withdraw successful!"
     )
   }
