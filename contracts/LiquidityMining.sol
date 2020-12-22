@@ -242,7 +242,8 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         _stake(
             normalize(usdc, usdcIn),
             normalize(usdt, usdtIn),
-            normalize(dai, daiIn)
+            normalize(dai, daiIn),
+            msg.sender
         );
 
         emit Stake(msg.sender, usdcIn, usdtIn, daiIn);
@@ -315,7 +316,7 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
             totalClaimedRewards = totalClaimedRewards.add(reward);
         }
 
-        _stake(usdcOut, usdtOut, daiOut);
+        _stake(usdcOut, usdtOut, daiOut, msg.sender);
 
         emit Payout(msg.sender, _reward, to);
     }
@@ -323,36 +324,37 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
     function _stake(
         uint256 usdcIn,
         uint256 usdtIn,
-        uint256 daiIn
+        uint256 daiIn,
+        address account
     ) private {
         uint256 addBackUsdc;
         uint256 addBackUsdt;
         uint256 addBackDai;
 
-        if (totalUserStake(msg.sender) > 0) {
+        if (totalUserStake(account) > 0) {
             (
                 uint256 usdcOut,
                 uint256 usdtOut,
                 uint256 daiOut,
                 uint256 reward
-            ) = _applyReward(msg.sender);
+            ) = _applyReward(account);
 
             addBackUsdc = usdcOut;
             addBackUsdt = usdtOut;
             addBackDai = daiOut;
 
-            _userStakedUsdc[msg.sender] = usdcOut;
-            _userStakedUsdt[msg.sender] = usdtOut;
-            _userStakedDai[msg.sender] = daiOut;
+            _userStakedUsdc[account] = usdcOut;
+            _userStakedUsdt[account] = usdtOut;
+            _userStakedDai[account] = daiOut;
 
-            _userAccumulated[msg.sender] = reward;
+            _userAccumulated[account] = reward;
         }
 
-        _userStakedUsdc[msg.sender] = _userStakedUsdc[msg.sender].add(usdcIn);
-        _userStakedUsdt[msg.sender] = _userStakedUsdt[msg.sender].add(usdtIn);
-        _userStakedDai[msg.sender] = _userStakedDai[msg.sender].add(daiIn);
+        _userStakedUsdc[account] = _userStakedUsdc[account].add(usdcIn);
+        _userStakedUsdt[account] = _userStakedUsdt[account].add(usdtIn);
+        _userStakedDai[account] = _userStakedDai[account].add(daiIn);
 
-        _userWeighted[msg.sender] = _totalWeight;
+        _userWeighted[account] = _totalWeight;
 
         _totalStakeUsdc = _totalStakeUsdc.add(usdcIn);
         _totalStakeUsdt = _totalStakeUsdt.add(usdtIn);
