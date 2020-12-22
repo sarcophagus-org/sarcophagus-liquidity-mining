@@ -17,7 +17,7 @@ const useMyPendingRewards = (liquidityMining, currentBlock, currentTime, rewardI
 
     liquidityMining.totalUserStake(account).then(stake => {
       if (stake.gt(0)) {
-        liquidityMining.callStatic.payout().then(reward => {
+        liquidityMining.callStatic.payout(account).then(reward => {
           setPendingRewards(reward)
         }).catch(console.error)
       } else {

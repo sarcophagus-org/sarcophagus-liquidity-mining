@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useData } from '../dataContext'
 import { useTransaction } from '../dataContext/transactions'
+import { useWeb3 } from '../web3'
 
 const PayoutWithdraw = () => {
+  const { account } = useWeb3()
   const {
     liquidityMining,
     canPayout,
@@ -31,14 +33,14 @@ const PayoutWithdraw = () => {
 
   const payout = () => {
     contractCall(
-      liquidityMining.payout, [{ gasLimit: 200000 }],
+      liquidityMining.payout, [account, { gasLimit: 200000 }],
       "Paying out rewards...", "Payout failed!", "Payout successful!"
     )
   }
 
   const withdraw = () => {
     contractCall(
-      liquidityMining.withdraw, [{ gasLimit: 300000 }],
+      liquidityMining.withdraw, [account, { gasLimit: 300000 }],
       "Withdrawing stake...", "Withdraw failed!", "Withdraw successful!"
     )
   }
