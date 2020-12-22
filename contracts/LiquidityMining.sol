@@ -44,12 +44,13 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         uint256 usdtIn,
         uint256 daiIn
     );
-    event Payout(address indexed staker, uint256 reward);
+    event Payout(address indexed staker, uint256 reward, address to);
     event Withdraw(
         address indexed staker,
         uint256 usdcOut,
         uint256 usdtOut,
-        uint256 daiOut
+        uint256 daiOut,
+        address to
     );
 
     constructor(
@@ -247,7 +248,7 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         emit Stake(msg.sender, usdcIn, usdtIn, daiIn);
     }
 
-    function withdraw()
+    function withdraw(address to)
         public
         update
         nonReentrant
@@ -267,31 +268,36 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         daiOut = denormalize(dai, daiOut);
 
         if (usdcOut > 0) {
-            usdc.transfer(msg.sender, usdcOut);
+            usdc.transfer(to, usdcOut);
         }
 
         if (usdtOut > 0) {
-            usdt.transfer(msg.sender, usdtOut);
+            usdt.transfer(to, usdtOut);
         }
 
         if (daiOut > 0) {
-            dai.transfer(msg.sender, daiOut);
+            dai.transfer(to, daiOut);
         }
 
         if (reward > 0) {
-            sarco.transfer(msg.sender, reward);
+            sarco.transfer(to, reward);
             userClaimedRewards[msg.sender] = userClaimedRewards[msg.sender].add(
                 reward
             );
             totalClaimedRewards = totalClaimedRewards.add(reward);
 
-            emit Payout(msg.sender, reward);
+            emit Payout(msg.sender, reward, to);
         }
 
-        emit Withdraw(msg.sender, usdcOut, usdtOut, daiOut);
+        emit Withdraw(msg.sender, usdcOut, usdtOut, daiOut, to);
     }
 
-    function payout() public update nonReentrant returns (uint256 reward) {
+    function payout(address to)
+        public
+        update
+        nonReentrant
+        returns (uint256 reward)
+    {
         (
             uint256 usdcOut,
             uint256 usdtOut,
@@ -302,7 +308,7 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         reward = _reward;
 
         if (reward > 0) {
-            sarco.transfer(msg.sender, reward);
+            sarco.transfer(to, reward);
             userClaimedRewards[msg.sender] = userClaimedRewards[msg.sender].add(
                 reward
             );
@@ -311,7 +317,7 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
 
         _stake(usdcOut, usdtOut, daiOut);
 
-        emit Payout(msg.sender, _reward);
+        emit Payout(msg.sender, _reward, to);
     }
 
     function _stake(
