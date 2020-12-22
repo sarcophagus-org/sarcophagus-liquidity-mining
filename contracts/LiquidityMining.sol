@@ -261,7 +261,7 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
     {
         totalStakers = totalStakers.sub(1);
 
-        (usdcOut, usdtOut, daiOut, reward) = _applyReward();
+        (usdcOut, usdtOut, daiOut, reward) = _applyReward(msg.sender);
 
         usdcOut = denormalize(usdc, usdcOut);
         usdtOut = denormalize(usdt, usdtOut);
@@ -303,7 +303,7 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
             uint256 usdtOut,
             uint256 daiOut,
             uint256 _reward
-        ) = _applyReward();
+        ) = _applyReward(msg.sender);
 
         reward = _reward;
 
@@ -335,7 +335,7 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
                 uint256 usdtOut,
                 uint256 daiOut,
                 uint256 reward
-            ) = _applyReward();
+            ) = _applyReward(msg.sender);
 
             addBackUsdc = usdcOut;
             addBackUsdt = usdtOut;
@@ -371,7 +371,7 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         }
     }
 
-    function _applyReward()
+    function _applyReward(address account)
         private
         returns (
             uint256 usdcOut,
@@ -380,30 +380,30 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
             uint256 reward
         )
     {
-        uint256 _totalUserStake = totalUserStake(msg.sender);
+        uint256 _totalUserStake = totalUserStake(account);
         require(
             _totalUserStake > 0,
             "LiquidityMining::_applyReward: no stablecoins staked"
         );
 
-        usdcOut = _userStakedUsdc[msg.sender];
-        usdtOut = _userStakedUsdt[msg.sender];
-        daiOut = _userStakedDai[msg.sender];
+        usdcOut = _userStakedUsdc[account];
+        usdtOut = _userStakedUsdt[account];
+        daiOut = _userStakedDai[account];
 
         reward = _totalUserStake
-            .mul(_totalWeight.sub(_userWeighted[msg.sender]))
+            .mul(_totalWeight.sub(_userWeighted[account]))
             .div(10**18)
-            .add(_userAccumulated[msg.sender]);
+            .add(_userAccumulated[account]);
 
         _totalStakeUsdc = _totalStakeUsdc.sub(usdcOut);
         _totalStakeUsdt = _totalStakeUsdt.sub(usdtOut);
         _totalStakeDai = _totalStakeDai.sub(daiOut);
 
-        _userStakedUsdc[msg.sender] = 0;
-        _userStakedUsdt[msg.sender] = 0;
-        _userStakedDai[msg.sender] = 0;
+        _userStakedUsdc[account] = 0;
+        _userStakedUsdt[account] = 0;
+        _userStakedDai[account] = 0;
 
-        _userAccumulated[msg.sender] = 0;
+        _userAccumulated[account] = 0;
     }
 
     function rescueTokens(
