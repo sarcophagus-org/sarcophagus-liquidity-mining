@@ -53,7 +53,8 @@ const useInjectedConnect = () => {
       activate(injectedConnector, undefined, true)
         .then(() => {
           setInjectedNext(true)
-        }).catch(error => {
+        })
+        .catch(error => {
           setInjectedNext(true)
           if (error instanceof UnsupportedChainIdError) {
             toast.info('Switch MetaMask to a supported network!', {
