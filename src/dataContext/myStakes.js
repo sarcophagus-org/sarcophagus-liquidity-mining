@@ -24,7 +24,7 @@ const useMyStakeUsdc = (liquidityMining) => {
     const myStakeFilter = liquidityMining.filters.Stake(account, null, null, null)
     liquidityMining.on(myStakeFilter, addUsdc)
 
-    const myWithdrawFilter = liquidityMining.filters.Withdraw(account, null, null, null)
+    const myWithdrawFilter = liquidityMining.filters.Withdraw(account, null, null, null, null)
     liquidityMining.on(myWithdrawFilter, removeUsdc)
 
     return () => {
@@ -58,7 +58,7 @@ const useMyStakeUsdt = (liquidityMining) => {
     const myStakeFilter = liquidityMining.filters.Stake(account, null, null, null)
     liquidityMining.on(myStakeFilter, addUsdt)
 
-    const myWithdrawFilter = liquidityMining.filters.Withdraw(account, null, null, null)
+    const myWithdrawFilter = liquidityMining.filters.Withdraw(account, null, null, null, null)
     liquidityMining.on(myWithdrawFilter, removeUsdt)
 
     return () => {
@@ -92,7 +92,7 @@ const useMyStakeDai = (liquidityMining) => {
     const myStakeFilter = liquidityMining.filters.Stake(account, null, null, null)
     liquidityMining.on(myStakeFilter, addDai)
 
-    const myWithdrawFilter = liquidityMining.filters.Withdraw(account, null, null, null)
+    const myWithdrawFilter = liquidityMining.filters.Withdraw(account, null, null, null, null)
     liquidityMining.on(myWithdrawFilter, removeDai)
 
     return () => {

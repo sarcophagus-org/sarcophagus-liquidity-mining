@@ -45,7 +45,7 @@ const useMyClaimedRewards = (liquidityMining) => {
       setClaimedRewards(rewards => rewards.add(reward))
     }
 
-    const myClaimedRewardsFilter = liquidityMining.filters.Payout(account, null)
+    const myClaimedRewardsFilter = liquidityMining.filters.Payout(account, null, null)
     liquidityMining.on(myClaimedRewardsFilter, addMyClaimedRewards)
 
     return () => {
