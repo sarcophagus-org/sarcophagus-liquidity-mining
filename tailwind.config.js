@@ -11,6 +11,15 @@ module.exports = {
     'public/**/*.html',
   ],
   theme: {
+    colors: {
+      gray: {
+        400: '#888293',
+        500: '#29262F',
+        900: '#060706',
+      },
+      green: '#4ECE3D',
+      white: '#ffffff',
+    },
     container: {
       center: true,
       padding: {

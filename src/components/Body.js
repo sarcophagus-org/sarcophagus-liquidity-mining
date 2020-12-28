@@ -12,12 +12,12 @@ const Body = () => {
           <div className="flex-auto text-center md:text-right">
             <GlobalStats />
           </div>
-          <div className="my-6 md:my-0 md:mx-4 border-b border-r border-grey-300" />
+          <div className="my-6 md:my-0 md:mx-4 border-b border-r border-gray-300" />
           <div className="flex-auto text-center md:text-left">
             <MyStats />
           </div>
         </div>
-        <div className="mt-6 py-6 border-t border-grey-300 text-center">
+        <div className="mt-6 py-6 border-t border-gray-300 text-center">
           <Transactions />
         </div>
       </div>
