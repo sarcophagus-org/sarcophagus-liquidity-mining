@@ -44,12 +44,13 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         uint256 usdtIn,
         uint256 daiIn
     );
-    event Payout(address indexed staker, uint256 reward);
+    event Payout(address indexed staker, uint256 reward, address to);
     event Withdraw(
         address indexed staker,
         uint256 usdcOut,
         uint256 usdtOut,
-        uint256 daiOut
+        uint256 daiOut,
+        address to
     );
 
     constructor(
@@ -241,13 +242,14 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         _stake(
             normalize(usdc, usdcIn),
             normalize(usdt, usdtIn),
-            normalize(dai, daiIn)
+            normalize(dai, daiIn),
+            msg.sender
         );
 
         emit Stake(msg.sender, usdcIn, usdtIn, daiIn);
     }
 
-    function withdraw()
+    function withdraw(address to)
         public
         update
         nonReentrant
@@ -260,93 +262,99 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
     {
         totalStakers = totalStakers.sub(1);
 
-        (usdcOut, usdtOut, daiOut, reward) = _applyReward();
+        (usdcOut, usdtOut, daiOut, reward) = _applyReward(msg.sender);
 
         usdcOut = denormalize(usdc, usdcOut);
         usdtOut = denormalize(usdt, usdtOut);
         daiOut = denormalize(dai, daiOut);
 
         if (usdcOut > 0) {
-            usdc.transfer(msg.sender, usdcOut);
+            usdc.transfer(to, usdcOut);
         }
 
         if (usdtOut > 0) {
-            usdt.transfer(msg.sender, usdtOut);
+            usdt.transfer(to, usdtOut);
         }
 
         if (daiOut > 0) {
-            dai.transfer(msg.sender, daiOut);
+            dai.transfer(to, daiOut);
         }
 
         if (reward > 0) {
-            sarco.transfer(msg.sender, reward);
+            sarco.transfer(to, reward);
             userClaimedRewards[msg.sender] = userClaimedRewards[msg.sender].add(
                 reward
             );
             totalClaimedRewards = totalClaimedRewards.add(reward);
 
-            emit Payout(msg.sender, reward);
+            emit Payout(msg.sender, reward, to);
         }
 
-        emit Withdraw(msg.sender, usdcOut, usdtOut, daiOut);
+        emit Withdraw(msg.sender, usdcOut, usdtOut, daiOut, to);
     }
 
-    function payout() public update nonReentrant returns (uint256 reward) {
+    function payout(address to)
+        public
+        update
+        nonReentrant
+        returns (uint256 reward)
+    {
         (
             uint256 usdcOut,
             uint256 usdtOut,
             uint256 daiOut,
             uint256 _reward
-        ) = _applyReward();
+        ) = _applyReward(msg.sender);
 
         reward = _reward;
 
         if (reward > 0) {
-            sarco.transfer(msg.sender, reward);
+            sarco.transfer(to, reward);
             userClaimedRewards[msg.sender] = userClaimedRewards[msg.sender].add(
                 reward
             );
             totalClaimedRewards = totalClaimedRewards.add(reward);
         }
 
-        _stake(usdcOut, usdtOut, daiOut);
+        _stake(usdcOut, usdtOut, daiOut, msg.sender);
 
-        emit Payout(msg.sender, _reward);
+        emit Payout(msg.sender, _reward, to);
     }
 
     function _stake(
         uint256 usdcIn,
         uint256 usdtIn,
-        uint256 daiIn
+        uint256 daiIn,
+        address account
     ) private {
         uint256 addBackUsdc;
         uint256 addBackUsdt;
         uint256 addBackDai;
 
-        if (totalUserStake(msg.sender) > 0) {
+        if (totalUserStake(account) > 0) {
             (
                 uint256 usdcOut,
                 uint256 usdtOut,
                 uint256 daiOut,
                 uint256 reward
-            ) = _applyReward();
+            ) = _applyReward(account);
 
             addBackUsdc = usdcOut;
             addBackUsdt = usdtOut;
             addBackDai = daiOut;
 
-            _userStakedUsdc[msg.sender] = usdcOut;
-            _userStakedUsdt[msg.sender] = usdtOut;
-            _userStakedDai[msg.sender] = daiOut;
+            _userStakedUsdc[account] = usdcOut;
+            _userStakedUsdt[account] = usdtOut;
+            _userStakedDai[account] = daiOut;
 
-            _userAccumulated[msg.sender] = reward;
+            _userAccumulated[account] = reward;
         }
 
-        _userStakedUsdc[msg.sender] = _userStakedUsdc[msg.sender].add(usdcIn);
-        _userStakedUsdt[msg.sender] = _userStakedUsdt[msg.sender].add(usdtIn);
-        _userStakedDai[msg.sender] = _userStakedDai[msg.sender].add(daiIn);
+        _userStakedUsdc[account] = _userStakedUsdc[account].add(usdcIn);
+        _userStakedUsdt[account] = _userStakedUsdt[account].add(usdtIn);
+        _userStakedDai[account] = _userStakedDai[account].add(daiIn);
 
-        _userWeighted[msg.sender] = _totalWeight;
+        _userWeighted[account] = _totalWeight;
 
         _totalStakeUsdc = _totalStakeUsdc.add(usdcIn);
         _totalStakeUsdt = _totalStakeUsdt.add(usdtIn);
@@ -365,7 +373,7 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         }
     }
 
-    function _applyReward()
+    function _applyReward(address account)
         private
         returns (
             uint256 usdcOut,
@@ -374,30 +382,30 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
             uint256 reward
         )
     {
-        uint256 _totalUserStake = totalUserStake(msg.sender);
+        uint256 _totalUserStake = totalUserStake(account);
         require(
             _totalUserStake > 0,
             "LiquidityMining::_applyReward: no stablecoins staked"
         );
 
-        usdcOut = _userStakedUsdc[msg.sender];
-        usdtOut = _userStakedUsdt[msg.sender];
-        daiOut = _userStakedDai[msg.sender];
+        usdcOut = _userStakedUsdc[account];
+        usdtOut = _userStakedUsdt[account];
+        daiOut = _userStakedDai[account];
 
         reward = _totalUserStake
-            .mul(_totalWeight.sub(_userWeighted[msg.sender]))
+            .mul(_totalWeight.sub(_userWeighted[account]))
             .div(10**18)
-            .add(_userAccumulated[msg.sender]);
+            .add(_userAccumulated[account]);
 
         _totalStakeUsdc = _totalStakeUsdc.sub(usdcOut);
         _totalStakeUsdt = _totalStakeUsdt.sub(usdtOut);
         _totalStakeDai = _totalStakeDai.sub(daiOut);
 
-        _userStakedUsdc[msg.sender] = 0;
-        _userStakedUsdt[msg.sender] = 0;
-        _userStakedDai[msg.sender] = 0;
+        _userStakedUsdc[account] = 0;
+        _userStakedUsdt[account] = 0;
+        _userStakedDai[account] = 0;
 
-        _userAccumulated[msg.sender] = 0;
+        _userAccumulated[account] = 0;
     }
 
     function rescueTokens(

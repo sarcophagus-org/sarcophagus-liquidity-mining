@@ -7,7 +7,7 @@ const useFallbackConnect = (next) => {
   useEffect(() => {
     if (provider || !next) return
 
-    setProvider(getDefaultProvider(parseInt(process.env.REACT_APP_DEFAULT_CHAIN_ID, 10)))      
+    setProvider(getDefaultProvider(parseInt(process.env.REACT_APP_DEFAULT_CHAIN_ID, 10)))
   }, [provider, next])
 
   return provider

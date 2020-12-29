@@ -17,7 +17,7 @@ const useMyPendingRewards = (liquidityMining, currentBlock, currentTime, rewardI
 
     liquidityMining.totalUserStake(account).then(stake => {
       if (stake.gt(0)) {
-        liquidityMining.callStatic.payout().then(reward => {
+        liquidityMining.callStatic.payout(account).then(reward => {
           setPendingRewards(reward)
         }).catch(console.error)
       } else {
@@ -45,7 +45,7 @@ const useMyClaimedRewards = (liquidityMining) => {
       setClaimedRewards(rewards => rewards.add(reward))
     }
 
-    const myClaimedRewardsFilter = liquidityMining.filters.Payout(account, null)
+    const myClaimedRewardsFilter = liquidityMining.filters.Payout(account, null, null)
     liquidityMining.on(myClaimedRewardsFilter, addMyClaimedRewards)
 
     return () => {
