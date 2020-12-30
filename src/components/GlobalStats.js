@@ -1,5 +1,24 @@
 import { useData } from '../dataContext'
-import { Value } from './shared/Value'
+import { ValueItem } from './shared/Value'
+import usdc from '../assets/images/usdc-small.svg'
+import usdt from '../assets/images/usdt-small.svg'
+import dai from '../assets/images/dai-small.svg'
+
+const Container = ({ children }) => {
+  return (
+    <div className="flex flex-col text-center">
+      {children}
+    </div>
+  )
+}
+
+const SectionContainer = ({ children, topBorder = false }) => {
+  return (
+    <div className={`flex flex-col sm:flex-row flex-wrap justify-center ${topBorder ? "pt-6 sm:pt-0 border-t border-gray-500 sm:border-none" : "border-none"}`}>
+      {children}
+    </div>
+  )
+}
 
 const GlobalStats = () => {
   const {
@@ -13,75 +32,19 @@ const GlobalStats = () => {
     totalStakeStablecoins,
   } = useData()
 
-  const Container = ({ children }) => {
-    return (
-      <div className="-mb-4 flex justify-center md:justify-end -mx-4">
-        {children}
-      </div>
-    )
-  }
-
-  const SectionContainer = ({ children }) => {
-    return (
-      <div className="mx-4">
-        {children}
-      </div>
-    )
-  }
-
-  const Section = ({ children }) => {
-    return (
-      <div className="mb-4">
-        {children}
-      </div>
-    )
-  }
-
-  const Title = ({ children }) => {
-    return (
-      <div className="text-xl">
-        {children}
-      </div>
-    )
-  }
-
   return (
     <Container>
       <SectionContainer>
-        <Section>
-          <Title>Emitted Rewards</Title>
-          <Value>{totalEmittedRewards}</Value>
-        </Section>
-        <Section>
-          <Title>Unemitted Rewards</Title>
-          <Value>{totalUnemittedRewards}</Value>
-        </Section>
-        <Section>
-          <Title>Total Claimed Rewards</Title>
-          <Value>{totalClaimedRewards}</Value>
-        </Section>
-        <Section>
-          <Title>Total Unclaimed Rewards</Title>
-          <Value>{totalUnclaimedRewards}</Value>
-        </Section>
+        <ValueItem bigValue value={totalEmittedRewards}>Emitted SARCO</ValueItem>
+        <ValueItem bigValue value={totalUnemittedRewards}>Unemitted SARCO</ValueItem>
+        <ValueItem bigValue value={totalClaimedRewards}>Total Claimed SARCO</ValueItem>
+        <ValueItem bigValue bold value={totalUnclaimedRewards}>Total Unclaimed SARCO</ValueItem>
       </SectionContainer>
-      <SectionContainer>
-        <Section>
-          <Title>Total Staked USDC</Title>
-          <Value>{totalStakeUsdc}</Value>
-        </Section>
-        <Section>
-          <Title>Total Staked USDT</Title>
-          <Value>{totalStakeUsdt}</Value>
-        </Section>
-        <Section>
-          <Title>Total Staked DAI</Title>
-          <Value>{totalStakeDai}</Value>
-        </Section>
-        <Section>
-          <Title>Total Staked Stablecoins</Title>
-          <Value>{totalStakeStablecoins}</Value>
-        </Section>
+      <SectionContainer topBorder>
+        <ValueItem bigValue icon={usdc} value={totalStakeUsdc}>Total Locked USDC</ValueItem>
+        <ValueItem bigValue icon={usdt} value={totalStakeUsdt}>Total Locked USDT</ValueItem>
+        <ValueItem bigValue icon={dai} value={totalStakeDai}>Total Locked DAI</ValueItem>
+        <ValueItem bigValue bold value={totalStakeStablecoins}>Total Locked Stablecoins</ValueItem>
       </SectionContainer>
     </Container>
   )
