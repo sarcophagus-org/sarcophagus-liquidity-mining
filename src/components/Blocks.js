@@ -1,22 +1,10 @@
 import { useData } from '../dataContext'
+import { ValueItem } from './shared/Value'
 
 const Container = ({ children }) => {
   return (
     <div className="flex flex-wrap justify-center text-center border-b border-t pt-6 mb-6 border-gray-500">
       {children}
-    </div>
-  )
-}
-
-const ValueItem = ({ children, value }) => {
-  return (
-    <div className="mx-4 mb-6 text-sm">
-      <div className="text-gray-400 mb-2">
-        {children}
-      </div>
-      <div>
-        {value}
-      </div>
     </div>
   )
 }
