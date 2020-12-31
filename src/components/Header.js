@@ -3,7 +3,6 @@ import { useInjectedConnect, manuallyConnect } from '../web3/injected'
 import { useData } from '../dataContext'
 import logo from '../assets/images/logo.png'
 import wallet from '../assets/images/wallet.svg'
-import pyramid from '../assets/images/pyramid.png'
 
 const AccountDisplay = ({ account }) => {
   const { injected } = useInjectedConnect()
@@ -48,9 +47,6 @@ const Top = () => {
         </div>
         <div className="ml-3 text-gray-400 text-sm">
           <AccountDisplay account={injected.account} />
-        </div>
-        <div className="ml-6">
-          <img src={pyramid} alt="pyramid" />
         </div>
       </div>
     </div>
