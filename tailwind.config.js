@@ -18,7 +18,9 @@ module.exports = {
         900: '#060706',
       },
       green: '#4ECE3D',
+      red: '#CA3737',
       white: '#ffffff',
+      yellow: '#FACA00',
     },
     container: {
       center: true,

@@ -57,20 +57,27 @@ const Title = () => {
   const { systemState, StateEnum } = useData()
 
   const [liquidityMiningState, setLiquidityMiningState] = useState("Not Scheduled")
+  const [badgeColor, setBadgeColor] = useState("bg-red")
 
   useEffect(() => {
     if (systemState === StateEnum.NotScheduled) {
       setLiquidityMiningState("Not Scheduled")
+      setBadgeColor("bg-red")
     } else if (systemState === StateEnum.Scheduled) {
       setLiquidityMiningState("Scheduled")
+      setBadgeColor("bg-yellow")
     } else if (systemState === StateEnum.Ready) {
       setLiquidityMiningState("Ready")
+      setBadgeColor("bg-green")
     } else if (systemState === StateEnum.Active) {
       setLiquidityMiningState("Active")
+      setBadgeColor("bg-green")
     } else if (systemState === StateEnum.Over) {
       setLiquidityMiningState("Over")
+      setBadgeColor("bg-red")
     } else {
       setLiquidityMiningState("Not Scheduled")
+      setBadgeColor("bg-red")
     }
   }, [systemState, StateEnum])
 
@@ -79,7 +86,7 @@ const Title = () => {
       <h1 className="text-xl">
         Liquidity Mining
       </h1>
-      <div className="ml-3 py-1 px-2 bg-green text-gray-900 text-xs rounded">
+      <div className={`ml-3 py-1 px-2 ${badgeColor} text-gray-900 text-xs rounded`}>
         {liquidityMiningState}
       </div>
     </div>
