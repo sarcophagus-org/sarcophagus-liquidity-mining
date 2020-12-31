@@ -1,14 +1,18 @@
 import Blocks from './Blocks'
 import GlobalStats from './GlobalStats'
-import Transactions from './Transactions'
+import StakeForm from './StakeForm'
+import Claim from './Claim'
+import Unlock from './Unlock'
 
 const Body = () => {
   return (
     <div>
       <Blocks />
       <GlobalStats />
-      <div className="py-6 border-t border-gray-500 text-center">
-        <Transactions />
+      <div className="border-2 border-gray-500 mb-6 py-6 px-4">
+        <StakeForm />
+        <Claim />
+        <Unlock />
       </div>
     </div>
   )

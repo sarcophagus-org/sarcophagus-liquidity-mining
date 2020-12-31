@@ -1,11 +1,3 @@
-const Value = ({ children }) => {
-  return (
-    <div className="font-mono bg-gray-300 px-2 inline">
-      {children}
-    </div>
-  )
-}
-
 const ValueItem = ({ children, value, bigValue = false, bold = false, icon }) => {
   return (
     <div className="mx-4 mb-6 text-sm">
@@ -27,4 +19,17 @@ const ValueItem = ({ children, value, bigValue = false, bold = false, icon }) =>
   )
 }
 
-export { Value, ValueItem }
+const Row = ({ children, value, total }) => {
+  return (
+    <div className="flex mb-1">
+      <div className="w-3/5 text-right text-gray-400">
+        {children}
+      </div>
+      <div className={`w-2/5 text-right ${total ? "font-bold": ""}`}>
+        {value}
+      </div>
+    </div>
+  )
+}
+
+export { ValueItem, Row }
