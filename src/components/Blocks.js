@@ -9,17 +9,6 @@ const Container = ({ children }) => {
   )
 }
 
-const StaticRewardInfo = ({ rate = true }) => {
-  const { totalRewards, rewardsPerTime } = useData()
-
-  return (
-    <>
-      <ValueItem value={totalRewards}>Total SARCO</ValueItem>
-      {rate && <ValueItem value={rewardsPerTime}>SARCO Per Second</ValueItem>}
-    </>
-  )
-}
-
 const NotScheduled = () => {
   const { currentTime } = useData()
 
@@ -38,24 +27,23 @@ const Scheduled = () => {
       <ValueItem value={currentTime}>Current Time</ValueItem>
       <ValueItem value={startTime}>Start Time</ValueItem>
       <ValueItem value={timeUntilKickoff}>Time Until Kickoff</ValueItem>
-      <StaticRewardInfo rate={false} />
     </Container>
   )
 }
 
 const Ready = () => {
-  const { currentTime } = useData()
+  const { currentTime, rewardsPerTime } = useData()
 
   return (
     <Container>
       <ValueItem value={currentTime}>Current Time</ValueItem>
-      <StaticRewardInfo />
+      <ValueItem value={rewardsPerTime}>SARCO Per Second</ValueItem>
     </Container>
   )
 }
 
 const Active = () => {
-  const { currentTime, firstStakeTime, endTime, remainingTime } = useData()
+  const { currentTime, firstStakeTime, endTime, remainingTime, rewardsPerTime } = useData()
 
   return (
     <Container>
@@ -63,20 +51,20 @@ const Active = () => {
       <ValueItem value={currentTime}>Current Time</ValueItem>
       <ValueItem value={endTime}>End Time</ValueItem>
       <ValueItem value={remainingTime}>Remaining Time</ValueItem>
-      <StaticRewardInfo />
+      <ValueItem value={rewardsPerTime}>SARCO Per Second</ValueItem>
     </Container>
   )
 }
 
 const Over = () => {
-  const { currentTime, firstStakeTime, endTime } = useData()
+  const { currentTime, firstStakeTime, endTime, rewardsPerTime } = useData()
 
   return (
     <Container>
       <ValueItem value={firstStakeTime}>Start Time</ValueItem>
       <ValueItem value={endTime}>End Time</ValueItem>
       <ValueItem value={currentTime}>Current Time</ValueItem>
-      <StaticRewardInfo />
+      <ValueItem value={rewardsPerTime}>SARCO Per Second</ValueItem>
     </Container>
   )
 }

@@ -24,8 +24,9 @@ const GlobalStats = () => {
   const {
     totalEmittedRewards,
     totalUnemittedRewards,
-    totalClaimedRewards,
-    totalUnclaimedRewards,
+    // totalClaimedRewards,
+    // totalUnclaimedRewards,
+    totalRewards,
     totalStakeUsdc,
     totalStakeUsdt,
     totalStakeDai,
@@ -37,9 +38,12 @@ const GlobalStats = () => {
       <SectionContainer>
         <ValueItem bigValue value={totalEmittedRewards}>Emitted SARCO</ValueItem>
         <ValueItem bigValue value={totalUnemittedRewards}>Unemitted SARCO</ValueItem>
-        <ValueItem bigValue value={totalClaimedRewards}>Total Claimed SARCO</ValueItem>
-        <ValueItem bigValue bold value={totalUnclaimedRewards}>Total Unclaimed SARCO</ValueItem>
+        <ValueItem bigValue bold value={totalRewards}>Total SARCO</ValueItem>
       </SectionContainer>
+      {/* <SectionContainer topBorder>
+        <ValueItem bigValue value={totalClaimedRewards}>Total Claimed SARCO</ValueItem>
+        <ValueItem bigValue value={totalUnclaimedRewards}>Total Unclaimed SARCO</ValueItem>
+      </SectionContainer> */}
       <SectionContainer topBorder>
         <ValueItem bigValue icon={usdc} value={totalStakeUsdc}>Total Locked USDC</ValueItem>
         <ValueItem bigValue icon={usdt} value={totalStakeUsdt}>Total Locked USDT</ValueItem>
