@@ -31,17 +31,17 @@ const Claim = () => {
   }
 
   return (
-    <div className="mx-8 mb-12 text-sm">
+    <div>
       <div className="mx-4 mb-4">
         <div className="mb-3">
-          <Row value={myRewardsPerTime}>My SARCO Per Second</Row>
+          <Row value={myRewardsPerTime}>SARCO / second</Row>
         </div>
-        <Row value={myPendingRewards}>My SARCO Pending</Row>
-        <Row value={myClaimedRewards}>My SARCO Claimed</Row>
-        <Row value={myTotalRewards} total>My SARCO Total</Row>
+        <Row value={myPendingRewards}>SARCO Pending</Row>
+        <Row value={myClaimedRewards}>SARCO Claimed</Row>
+        <Row value={myTotalRewards} total>SARCO Total</Row>
       </div>
       <Button disabled={!payoutEnabled} onClick={payout}>
-        Claim My SARCO
+        Claim my SARCO
       </Button>
     </div>
   )

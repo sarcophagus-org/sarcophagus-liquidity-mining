@@ -21,11 +21,11 @@ const ValueItem = ({ children, value, bigValue = false, bold = false, icon }) =>
 
 const Row = ({ children, value, total }) => {
   return (
-    <div className="flex mb-1">
-      <div className="w-3/5 text-right text-gray-400">
+    <div className="flex mb-1 items-center">
+      <div className="w-1/2 text-right text-gray-400">
         {children}
       </div>
-      <div className={`w-2/5 text-right ${total ? "font-bold": ""}`}>
+      <div className={`w-1/2 ml-2 text-right truncate ${total ? "font-bold": ""}`}>
         {value}
       </div>
     </div>

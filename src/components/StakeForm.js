@@ -129,7 +129,7 @@ const StakeForm = () => {
 
     return (
       <div className="flex mb-4 text-sm">
-        <div className="mr-6 flex flex-col items-center w-10">
+        <div className="mr-4 flex flex-col items-center w-10">
           <div className="uppercase mb-2">{currency}</div>
           <div>
             <img src={icon} alt="icon" />
@@ -137,8 +137,8 @@ const StakeForm = () => {
         </div>
         <div className="w-full">
           <div className="flex justify-between mb-2 text-gray-400">
-            <div className="">Amount *</div>
-            <div className="">Balance: {balance}</div>
+            <div className="mr-2">Amount*</div>
+            <div>Balance: {balance}</div>
           </div>
           <input type="number" step={makeStep(decimals)} disabled={inputDisable} required name={currency} id={currency} value={value} onChange={calculateValue(setValue)} min="0" max={balance} className={`w-full border-2 border-gray-500 ${inputDisable ? 'text-gray-400' : 'text-white'} bg-gray-900`} placeholder={balance} />
         </div>
@@ -147,14 +147,14 @@ const StakeForm = () => {
   }, [canStake])
 
   return (
-    <div className="mb-12">
+    <div>
       <form onSubmit={calls}>
-        <div className="mt-2 flex flex-col">
+        <div className="mt-2 flex flex-col w-full">
           <Input currency="usdc" value={usdc} setValue={setUsdc} balance={myUsdcBalance} decimals={decimalsUsdc} icon={usdcIcon} />
           <Input currency="usdt" value={usdt} setValue={setUsdt} balance={myUsdtBalance} decimals={decimalsUsdt} icon={usdtIcon} />
           <Input currency="dai" value={dai} setValue={setDai} balance={myDaiBalance} decimals={6} icon={daiIcon} />
         </div>
-        <div className="mx-8">
+        <div className="mx-6">
           <div className="mb-4 text-center text-gray-400 text-2xs">
             Helper text here can explain something and have space for a link to <a href="/#" className="underline">learn more</a>
           </div>

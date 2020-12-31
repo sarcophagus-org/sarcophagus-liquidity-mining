@@ -34,12 +34,12 @@ const Unlock = () => {
   }
 
   return (
-    <div className="mx-8 mb-8 text-sm">
+    <div>
       <div className="mx-4 mb-4">
-        <Row value={myStakeUsdc}>My USDC Locked</Row>
-        <Row value={myStakeUsdt}>My USDT Locked</Row>
-        <Row value={myStakeDai}>My DAI Locked</Row>
-        <Row value={myStakedStablecoins} total>My Total Locked</Row>
+        <Row value={myStakeUsdc}>USDC Locked</Row>
+        <Row value={myStakeUsdt}>USDT Locked</Row>
+        <Row value={myStakeDai}>DAI Locked</Row>
+        <Row value={myStakedStablecoins} total>Total Locked</Row>
       </div>
       <Button disabled={!withdrawEnabled} onClick={withdraw} icon={unlock}>
         Unlock my Stablecoins
