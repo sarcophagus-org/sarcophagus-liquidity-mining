@@ -24,8 +24,8 @@ const GlobalStats = () => {
   const {
     totalEmittedRewards,
     totalUnemittedRewards,
-    // totalClaimedRewards,
-    // totalUnclaimedRewards,
+    totalClaimedRewards,
+    totalUnclaimedRewards,
     totalRewards,
     totalStakeUsdc,
     totalStakeUsdt,
@@ -38,17 +38,25 @@ const GlobalStats = () => {
       <SectionContainer>
         <ValueItem bigValue value={totalEmittedRewards}>Emitted SARCO</ValueItem>
         <ValueItem bigValue value={totalUnemittedRewards}>Unemitted SARCO</ValueItem>
-        <ValueItem bigValue bold value={totalRewards}>Total SARCO</ValueItem>
+        <ValueItem bigValue bold value={totalRewards}
+          tooltipText="&quot;Total SARCO&quot; is the sum of Emitted SARCO and Unemitted SARCO, which shows the total number of SARCO that liquidity mining will produce"
+        >Total SARCO</ValueItem>
       </SectionContainer>
-      {/* <SectionContainer topBorder>
-        <ValueItem bigValue value={totalClaimedRewards}>Total Claimed SARCO</ValueItem>
-        <ValueItem bigValue value={totalUnclaimedRewards}>Total Unclaimed SARCO</ValueItem>
-      </SectionContainer> */}
+      <SectionContainer topBorder>
+        <ValueItem bigValue value={totalClaimedRewards}
+          tooltipText="&quot;Total Claimed SARCO&quot; is the sum of all SARCO which have been claimed (via transactions to own wallets) from liquidity mining, by all participants"
+        >Total Claimed SARCO</ValueItem>
+        <ValueItem bigValue value={totalUnclaimedRewards}
+          tooltipText="&quot;Total Unclaimed SARCO&quot; is calculated as as &quot;Emitted SARCO&quot; minus &quot;Total Claimed SARCO&quot;"
+        >Total Unclaimed SARCO</ValueItem>
+      </SectionContainer>
       <SectionContainer topBorder>
         <ValueItem bigValue icon={usdc} value={totalStakeUsdc}>Total Locked USDC</ValueItem>
         <ValueItem bigValue icon={usdt} value={totalStakeUsdt}>Total Locked USDT</ValueItem>
         <ValueItem bigValue icon={dai} value={totalStakeDai}>Total Locked DAI</ValueItem>
-        <ValueItem bigValue bold value={totalStakeStablecoins}>Total Locked Stablecoins</ValueItem>
+        <ValueItem bigValue bold value={totalStakeStablecoins}
+          tooltipText="&quot;Total Locked Stablecoins&quot; refers to the sum of all stablecoins that have been locked by everyone participating in liquidity mining"
+        >Total Locked Stablecoins</ValueItem>
       </SectionContainer>
     </Container>
   )
