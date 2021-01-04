@@ -1,126 +1,76 @@
 import { useData } from '../dataContext'
-import { Value } from './shared/Value'
+import { ValueItem } from './shared/Value'
+
+const Container = ({ children }) => {
+  return (
+    <div className="flex flex-wrap justify-center text-center border-b border-t pt-6 mb-6 border-gray-500">
+      {children}
+    </div>
+  )
+}
+
+const NotScheduled = () => {
+  const { currentTime } = useData()
+
+  return (
+    <Container>
+      <ValueItem value={currentTime}>Current Time</ValueItem>
+    </Container>
+  )
+}
+
+const Scheduled = () => {
+  const { currentTime, startTime, timeUntilKickoff } = useData()
+
+  return (
+    <Container>
+      <ValueItem value={currentTime}>Current Time</ValueItem>
+      <ValueItem value={startTime}>Start Time</ValueItem>
+      <ValueItem value={timeUntilKickoff}>Time Until Kickoff</ValueItem>
+    </Container>
+  )
+}
+
+const Ready = () => {
+  const { currentTime, rewardsPerTime } = useData()
+
+  return (
+    <Container>
+      <ValueItem value={currentTime}>Current Time</ValueItem>
+      <ValueItem value={rewardsPerTime}>SARCO Per Second</ValueItem>
+    </Container>
+  )
+}
+
+const Active = () => {
+  const { currentTime, firstStakeTime, endTime, remainingTime, rewardsPerTime } = useData()
+
+  return (
+    <Container>
+      <ValueItem value={firstStakeTime}>Start Time</ValueItem>
+      <ValueItem value={currentTime}>Current Time</ValueItem>
+      <ValueItem value={endTime}>End Time</ValueItem>
+      <ValueItem value={remainingTime}>Remaining Time</ValueItem>
+      <ValueItem value={rewardsPerTime}>SARCO Per Second</ValueItem>
+    </Container>
+  )
+}
+
+const Over = () => {
+  const { currentTime, firstStakeTime, endTime, rewardsPerTime } = useData()
+
+  return (
+    <Container>
+      <ValueItem value={firstStakeTime}>Start Time</ValueItem>
+      <ValueItem value={endTime}>End Time</ValueItem>
+      <ValueItem value={currentTime}>Current Time</ValueItem>
+      <ValueItem value={rewardsPerTime}>SARCO Per Second</ValueItem>
+    </Container>
+  )
+}
 
 const Blocks = () => {
-  const {
-    currentTime,
-    startTime,
-    firstStakeTime,
-    endTime,
-    timeUntilKickoff,
-    remainingTime,
-    totalRewards,
-    rewardsPerTime,
-    systemState,
-    StateEnum
-  } = useData()
-
-  const Container = ({ children }) => {
-    return (
-      <div className="flex flex-col items-center text-center border-b border-t pt-6 pb-4 mb-6">
-        {children}
-      </div>
-    )
-  }
-
-  const Description = ({ children }) => {
-    return (
-      <div className="mb-2 italic">
-        {children}
-      </div>
-    )
-  }
-
-  const ValueItemContainer = ({ children }) => {
-    return (
-      <div className="flex justify-center -mx-2 mb-2">
-        {children}
-      </div>
-    )
-  }
-
-  const ValueItem = ({ children, value }) => {
-    return (
-      <div className="mx-2">
-        {children}: <Value>{value}</Value>
-      </div>
-    )
-  }
-
-  const StaticRewardInfo = ({ rate = true }) => {
-    return (
-      <ValueItemContainer>
-        <ValueItem value={totalRewards}>Total Rewards</ValueItem>
-        {rate && <ValueItem value={rewardsPerTime}>Rewards Per Second</ValueItem>}
-      </ValueItemContainer>
-    )
-  }
-
-  const NotScheduled = () => {
-    return (
-      <Container>
-        <Description>Liquidity Mining hasn't started or been scheduled yet! Stay tuned...</Description>
-        <ValueItemContainer>
-          <ValueItem value={currentTime}>Current Time</ValueItem>
-        </ValueItemContainer>
-      </Container>
-    )
-  }
-
-  const Scheduled = () => {
-    return (
-      <Container>
-        <Description>Liquidity Mining starting block has been scheduled!</Description>
-        <ValueItemContainer>
-          <ValueItem value={currentTime}>Current Time</ValueItem>
-          <ValueItem value={startTime}>Start Time</ValueItem>
-          <ValueItem value={timeUntilKickoff}>Time Until Kickoff</ValueItem>
-        </ValueItemContainer>
-        <StaticRewardInfo rate={false} />
-      </Container>
-    )
-  }
-
-  const Ready = () => {
-    return (
-      <Container>
-        <Description>Ready for the first stake!</Description>
-        <ValueItemContainer>
-          <ValueItem value={currentTime}>Current Time</ValueItem>
-        </ValueItemContainer>
-        <StaticRewardInfo />
-      </Container>
-    )
-  }
-
-  const Active = () => {
-    return (
-      <Container>
-        <Description>Liquidity Mining is active!</Description>
-        <ValueItemContainer>
-          <ValueItem value={firstStakeTime}>Start Time</ValueItem>
-          <ValueItem value={currentTime}>Current Time</ValueItem>
-          <ValueItem value={endTime}>End Time</ValueItem>
-          <ValueItem value={remainingTime}>Remaining Time</ValueItem>
-        </ValueItemContainer>
-        <StaticRewardInfo />
-      </Container>
-    )
-  }
-
-  const Over = () => {
-    return (
-      <Container>
-        <Description>Liquidity Mining is over!</Description>
-        <ValueItemContainer>
-          <ValueItem value={firstStakeTime}>Start Time</ValueItem>
-          <ValueItem value={endTime}>End Time</ValueItem>
-          <ValueItem value={currentTime}>Current Time</ValueItem>
-        </ValueItemContainer>
-        <StaticRewardInfo />
-      </Container>
-    )
-  }
+  const { systemState, StateEnum } = useData()
 
   if (systemState === StateEnum.NotScheduled) {
     return <NotScheduled />

@@ -5,8 +5,8 @@ const Footer = () => {
   const { name } = useWeb3()
 
   return (
-    <div className="text-gray-400 text-xs">
-      <div className="border-t flex justify-between py-2">
+    <div className="text-gray-400 text-xs my-4">
+      <div className="flex justify-between pb-6">
         <div>v{packageJson.version + '+' + process.env.REACT_APP_GIT_HASH}</div>
         <div>{name}</div>
       </div>

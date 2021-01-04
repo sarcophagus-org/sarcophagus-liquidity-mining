@@ -4,6 +4,11 @@ import numeral from 'numeral'
 import { useData } from '../dataContext'
 import { useTransaction } from '../dataContext/transactions'
 import { useWeb3 } from '../web3'
+import { Button } from './shared/Button'
+import usdcIcon from '../assets/images/usdc.svg'
+import usdtIcon from '../assets/images/usdt.svg'
+import daiIcon from '../assets/images/dai.svg'
+import lock from '../assets/images/lock.svg'
 
 const StakeForm = () => {
   const { account } = useWeb3()
@@ -86,12 +91,12 @@ const StakeForm = () => {
         "Approving DAI...", "DAI approval failed!", "DAI approval made!"
       ])
     } else {
-      setButtonText("Stake")
+      setButtonText("Lock my Stablecoins")
       if (!liquidityMining) return
       setCallData([
         liquidityMining.stake,
         [usdcBig, usdtBig, daiBig, { gasLimit: 400000 }],
-        "Making stake...", "Stake failed!", "Stake made!",
+        "Locking coins...", "Lock failed!", "Lock made!",
         () => {
           setUsdc(0)
           setUsdt(0)
@@ -106,7 +111,7 @@ const StakeForm = () => {
     contractCall(...callData)
   }
 
-  const Input = useCallback(({ currency, value, setValue, balance, decimals }) => {
+  const Input = useCallback(({ currency, value, setValue, balance, decimals, icon }) => {
     const calculateValue = setValue => {
       return e => {
         let normalizedValue = ""
@@ -123,28 +128,39 @@ const StakeForm = () => {
     const inputDisable = !(canStake && numeral(balance).value() > 0)
 
     return (
-      <div className="flex rounded-md mb-2">
-        <span className="uppercase inline-flex items-center justify-start px-2 w-14 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-sm text-gray-500">
-          {currency}
-        </span>
-        <input type="number" step={makeStep(decimals)} disabled={inputDisable} required name={currency} id={currency} value={value} onChange={calculateValue(setValue)} min="0" max={balance} className={`flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300 ${inputDisable ? 'text-gray-300' : 'text-black'}`} placeholder={balance} />
+      <div className="flex mb-4 text-sm">
+        <div className="mr-4 flex flex-col items-center w-10">
+          <div className="uppercase mb-2">{currency}</div>
+          <div>
+            <img src={icon} alt="icon" />
+          </div>
+        </div>
+        <div className="w-full">
+          <div className="flex justify-between mb-2 text-gray-400">
+            <div className="mr-2">Amount*</div>
+            <div>Balance: {balance}</div>
+          </div>
+          <input type="number" step={makeStep(decimals)} disabled={inputDisable} required name={currency} id={currency} value={value} onChange={calculateValue(setValue)} min="0" max={balance} className={`w-full border-2 border-gray-500 ${inputDisable ? 'text-gray-400' : 'text-white'} bg-gray-900`} placeholder={balance} />
+        </div>
       </div>
     )
   }, [canStake])
 
   return (
     <div>
-      <div className="text-xl">Make a Stake</div>
       <form onSubmit={calls}>
-        <div className="mt-2 flex flex-col">
-          <Input currency="usdc" value={usdc} setValue={setUsdc} balance={myUsdcBalance} decimals={decimalsUsdc} />
-          <Input currency="usdt" value={usdt} setValue={setUsdt} balance={myUsdtBalance} decimals={decimalsUsdt} />
-          <Input currency="dai" value={dai} setValue={setDai} balance={myDaiBalance} decimals={6} />
+        <div className="mt-2 flex flex-col w-full">
+          <Input currency="usdc" value={usdc} setValue={setUsdc} balance={myUsdcBalance} decimals={decimalsUsdc} icon={usdcIcon} />
+          <Input currency="usdt" value={usdt} setValue={setUsdt} balance={myUsdtBalance} decimals={decimalsUsdt} icon={usdtIcon} />
+          <Input currency="dai" value={dai} setValue={setDai} balance={myDaiBalance} decimals={6} icon={daiIcon} />
         </div>
-        <div className="text-right">
-          <button type="submit" disabled={!buttonEnabled} className={`bg-gray-400 inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white ${!buttonEnabled && "opacity-50 cursor-not-allowed"}`}>
+        <div className="mx-6">
+          <div className="mb-4 text-center text-gray-400 text-2xs">
+            Helper text here can explain something and have space for a link to <a href="/#" className="underline">learn more</a>
+          </div>
+          <Button type="submit" disabled={!buttonEnabled} icon={lock}>
             {buttonText}
-          </button>
+          </Button>
         </div>
       </form>
     </div>
