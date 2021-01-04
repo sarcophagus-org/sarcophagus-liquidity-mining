@@ -40,7 +40,9 @@ const Top = () => {
 
   return (
     <div className="flex justify-between mb-16">
-      <img src={logo} alt="logo" />
+      <div className="w-24 p-1">
+        <img src={logo} alt="logo" />
+      </div>
       <div className="flex items-center">
         <div>
           <img src={wallet} alt="wallet" />
@@ -95,7 +97,7 @@ const Title = () => {
 
 const Header = () => {
   return (
-    <div className="py-6">
+    <div className="pt-2 pb-6">
       <Top />
       <Title />
     </div>
