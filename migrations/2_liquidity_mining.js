@@ -25,7 +25,16 @@ module.exports = async function (deployer, network, accounts) {
     usdtAddress = '0x479051fecbf65b3a1ecab1d01f200c88fc83cc41'
     daiAddress = '0xb174bfb76d9b5b3b394d33057fd08f84151047b4'
 
-    ownerAddress = accounts[0]
+    // yikes, what is this all about
+    // c'mon truffle
+    if (network === 'goerli-fork') {
+      ownerAddress = deployer.provider.options.unlocked_accounts[0]
+    } else if (network === 'goerli') {
+      ownerAddress = accounts[0]
+    } else {
+      console.error('which network are we on?', network)
+      process.exit(1)
+    }
   } else {
     await deployer.deploy(UsdcMock)
     await deployer.deploy(UsdtMock)
