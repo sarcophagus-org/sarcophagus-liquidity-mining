@@ -32,6 +32,11 @@ module.exports = {
         '2xl': '6rem',
       },
     },
+    screens: {
+      sm: '640px',
+      md: '768px',
+      lg: '1024px',
+    },
     extend: {
       fontFamily: {
         sans: ['Roboto Mono'],
