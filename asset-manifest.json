@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/liquidity-mining/static/css/main.40629b1c.chunk.css",
-    "main.js": "/liquidity-mining/static/js/main.54b114e0.chunk.js",
-    "main.js.map": "/liquidity-mining/static/js/main.54b114e0.chunk.js.map",
+    "main.js": "/liquidity-mining/static/js/main.d50190d4.chunk.js",
+    "main.js.map": "/liquidity-mining/static/js/main.d50190d4.chunk.js.map",
     "runtime-main.js": "/liquidity-mining/static/js/runtime-main.1d95fcc5.js",
     "runtime-main.js.map": "/liquidity-mining/static/js/runtime-main.1d95fcc5.js.map",
     "static/css/2.45b55a49.chunk.css": "/liquidity-mining/static/css/2.45b55a49.chunk.css",
@@ -31,6 +31,6 @@
     "static/css/2.45b55a49.chunk.css",
     "static/js/2.0592c69a.chunk.js",
     "static/css/main.40629b1c.chunk.css",
-    "static/js/main.54b114e0.chunk.js"
+    "static/js/main.d50190d4.chunk.js"
   ]
 }
