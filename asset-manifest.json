@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "/liquidity-mining/static/css/main.123402f4.chunk.css",
-    "main.js": "/liquidity-mining/static/js/main.f318afee.chunk.js",
-    "main.js.map": "/liquidity-mining/static/js/main.f318afee.chunk.js.map",
-    "runtime-main.js": "/liquidity-mining/static/js/runtime-main.1d95fcc5.js",
-    "runtime-main.js.map": "/liquidity-mining/static/js/runtime-main.1d95fcc5.js.map",
+    "main.css": "/liquidity-mining/static/css/main.b92b7c8c.chunk.css",
+    "main.js": "/liquidity-mining/static/js/main.eaa53bf0.chunk.js",
+    "main.js.map": "/liquidity-mining/static/js/main.eaa53bf0.chunk.js.map",
+    "runtime-main.js": "/liquidity-mining/static/js/runtime-main.29f72087.js",
+    "runtime-main.js.map": "/liquidity-mining/static/js/runtime-main.29f72087.js.map",
     "static/css/2.45b55a49.chunk.css": "/liquidity-mining/static/css/2.45b55a49.chunk.css",
-    "static/js/2.0592c69a.chunk.js": "/liquidity-mining/static/js/2.0592c69a.chunk.js",
-    "static/js/2.0592c69a.chunk.js.map": "/liquidity-mining/static/js/2.0592c69a.chunk.js.map",
-    "static/js/3.1812a9bc.chunk.js": "/liquidity-mining/static/js/3.1812a9bc.chunk.js",
-    "static/js/3.1812a9bc.chunk.js.map": "/liquidity-mining/static/js/3.1812a9bc.chunk.js.map",
+    "static/js/2.025e36f0.chunk.js": "/liquidity-mining/static/js/2.025e36f0.chunk.js",
+    "static/js/2.025e36f0.chunk.js.map": "/liquidity-mining/static/js/2.025e36f0.chunk.js.map",
+    "static/js/3.bab48716.chunk.js": "/liquidity-mining/static/js/3.bab48716.chunk.js",
+    "static/js/3.bab48716.chunk.js.map": "/liquidity-mining/static/js/3.bab48716.chunk.js.map",
     "index.html": "/liquidity-mining/index.html",
     "static/css/2.45b55a49.chunk.css.map": "/liquidity-mining/static/css/2.45b55a49.chunk.css.map",
-    "static/css/main.123402f4.chunk.css.map": "/liquidity-mining/static/css/main.123402f4.chunk.css.map",
-    "static/js/2.0592c69a.chunk.js.LICENSE.txt": "/liquidity-mining/static/js/2.0592c69a.chunk.js.LICENSE.txt",
+    "static/css/main.b92b7c8c.chunk.css.map": "/liquidity-mining/static/css/main.b92b7c8c.chunk.css.map",
+    "static/js/2.025e36f0.chunk.js.LICENSE.txt": "/liquidity-mining/static/js/2.025e36f0.chunk.js.LICENSE.txt",
     "static/media/dai-small.102cb29e.svg": "/liquidity-mining/static/media/dai-small.102cb29e.svg",
     "static/media/dai.a8d8a983.svg": "/liquidity-mining/static/media/dai.a8d8a983.svg",
     "static/media/lock.0df973d1.svg": "/liquidity-mining/static/media/lock.0df973d1.svg",
@@ -28,10 +28,10 @@
     "static/media/wallet.7d4fae45.svg": "/liquidity-mining/static/media/wallet.7d4fae45.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.1d95fcc5.js",
+    "static/js/runtime-main.29f72087.js",
     "static/css/2.45b55a49.chunk.css",
-    "static/js/2.0592c69a.chunk.js",
-    "static/css/main.123402f4.chunk.css",
-    "static/js/main.f318afee.chunk.js"
+    "static/js/2.025e36f0.chunk.js",
+    "static/css/main.b92b7c8c.chunk.css",
+    "static/js/main.eaa53bf0.chunk.js"
   ]
 }
