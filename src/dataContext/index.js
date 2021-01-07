@@ -189,7 +189,7 @@ const createDataRoot = () => {
     const canWithdraw = useCanWithdraw(myStakeUsdc, myStakeUsdt, myStakeDai)
 
     const dataContext = {
-      liquidityMining, usdcContract, usdtContract, daiContract,
+      liquidityMining, usdcContract, usdtContract, daiContract, sarcoContract,
       decimalsUsdc, decimalsUsdt, decimalsDai,
 
       totalRewards: moneyString(totalRewards, decimalsSarco),

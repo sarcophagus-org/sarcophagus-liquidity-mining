@@ -156,7 +156,7 @@ const StakeForm = () => {
         </div>
         <div className="mx-6">
           <div className="mb-4 text-center text-gray-400 text-2xs">
-            Helper text here can explain something and have space for a link to <a href="/#" className="underline">learn more</a>
+            Please see the documentation below for more info.
           </div>
           <Button type="submit" disabled={!buttonEnabled} icon={lock}>
             {buttonText}
