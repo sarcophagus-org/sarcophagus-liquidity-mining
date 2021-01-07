@@ -2,7 +2,7 @@
   "name": "liquidity-mining",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://sarcophagus-org.github.io/liquidity-mining",
+  "homepage": "https://mining.sarcophagus.io",
   "dependencies": {
     "@craco/craco": "^5.9.0",
     "@testing-library/jest-dom": "^5.11.6",
