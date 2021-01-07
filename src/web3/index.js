@@ -1,7 +1,7 @@
 import { useEffect, useState, createContext, useContext } from 'react'
 import { useFallbackConnect } from './fallback'
 import { useLocalConnect } from './local'
-import { useInjectedConnect } from './injected'
+import { useUserSuppliedConnect } from './userSupplied'
 import { supportedChains } from './chains'
 
 let context
@@ -13,9 +13,9 @@ const createWeb3Root = () => {
   const Provider = context.Provider
 
   return ({ children }) => {
-    const { injected, injectedNext } = useInjectedConnect()
-    const { local, localNext } = useLocalConnect(injectedNext)
-    const fallback = useFallbackConnect(localNext)
+    const userSupplied = useUserSuppliedConnect()
+    const local = useLocalConnect(!!userSupplied)
+    const fallback = useFallbackConnect(!!local)
 
     const defaultName = 'Not connected'
 
@@ -28,13 +28,13 @@ const createWeb3Root = () => {
     })
 
     useEffect(() => {
-      if (injected.active && injected.account && supportedChains().includes(injected.chainId)) {
+      if (userSupplied?.provider && userSupplied.provider.selectedAddress && supportedChains().includes(parseInt(userSupplied.provider.chainId))) {
         setWeb3({
           name: 'Injected provider',
-          account: injected.account,
-          chainId: injected.chainId,
-          provider: injected.library,
-          signerOrProvider: injected.library.getSigner(),
+          account: userSupplied.provider.selectedAddress,
+          chainId: userSupplied.provider.chainId,
+          provider: userSupplied,
+          signerOrProvider: userSupplied,
         })
       } else if (local) {
         local.detectNetwork().then(network => {
@@ -63,7 +63,7 @@ const createWeb3Root = () => {
           signerOrProvider: null
         })
       }
-    }, [injected, local, fallback])
+    }, [userSupplied, local, fallback])
 
     return <Provider value={web3}>{children}</Provider>
   }

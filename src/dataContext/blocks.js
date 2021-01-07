@@ -11,7 +11,7 @@ const useCurrentBlock = () => {
 
     provider.getBlockNumber().then(blockNumber => {
       setCurrentBlock(blockNumber)
-    })
+    }).catch(console.error)
 
     const getBlockNumber = blockNumber => {
       setCurrentBlock(blockNumber)

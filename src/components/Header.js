@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react'
-import { useInjectedConnect, manuallyConnect } from '../web3/injected'
 import { useData } from '../dataContext'
+import { useWeb3 } from '../web3'
 import logo from '../assets/images/logo.png'
 import wallet from '../assets/images/wallet.svg'
+import { useUserSuppliedConnect, connect } from '../web3/userSupplied'
 
-const AccountDisplay = ({ account }) => {
-  const { injected } = useInjectedConnect()
-
+const AccountDisplay = () => {
   const truncate = (fullStr, strLen, separator) => {
     if (fullStr.length <= strLen) return fullStr;
 
@@ -20,6 +19,8 @@ const AccountDisplay = ({ account }) => {
     return fullStr.substr(0, frontChars) + separator + fullStr.substr(fullStr.length - backChars);
   }
 
+  const { account } = useWeb3()
+
   if (account) {
     return (
       <div>
@@ -28,7 +29,7 @@ const AccountDisplay = ({ account }) => {
     )
   } else {
     return (
-      <button className="underline" onClick={() => manuallyConnect(injected)}>
+      <button className="underline" onClick={() => connect()}>
         Connect Web3 Account
       </button>
     )
@@ -36,8 +37,6 @@ const AccountDisplay = ({ account }) => {
 }
 
 const Top = () => {
-  const { injected } = useInjectedConnect()
-
   return (
     <div className="flex justify-between mb-16">
       <div className="w-24 p-1">
@@ -48,7 +47,7 @@ const Top = () => {
           <img src={wallet} alt="wallet" />
         </div>
         <div className="ml-3 text-gray-400 text-sm">
-          <AccountDisplay account={injected.account} />
+          <AccountDisplay />
         </div>
       </div>
     </div>
