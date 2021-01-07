@@ -15,8 +15,8 @@ const Question = ({ children }) => {
 }
 
 const Answer = ({ children }) => {
-return (
-    <div className="text-xs mb-4">
+  return (
+    <div className="text-xs mb-4 text-gray-400">
       {children}
     </div>
   )
@@ -65,6 +65,8 @@ const FAQ = () => {
       <Question>Why do some of the metrics displayed not add up or not make sense?</Question>
       <Answer>This frontend is pulling directly from the Ethereum blockchain, please give it a few seconds to fully update and you will be able to see the correct metrics.</Answer>
       
+      <div className="border-b border-gray-500 mb-6 pt-6" />
+
       <Title>Definitions</Title>
 
       <Question>Locker</Question>
