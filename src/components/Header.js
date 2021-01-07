@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useData } from '../dataContext'
+import { useWeb3 } from '../web3'
 import logo from '../assets/images/logo.png'
 import wallet from '../assets/images/wallet.svg'
 import { useUserSuppliedConnect, connect } from '../web3/userSupplied'
 
-const AccountDisplay = ({ account }) => {
-  const { userSupplied } = useUserSuppliedConnect()
-
+const AccountDisplay = () => {
   const truncate = (fullStr, strLen, separator) => {
     if (fullStr.length <= strLen) return fullStr;
 
@@ -19,6 +18,8 @@ const AccountDisplay = ({ account }) => {
 
     return fullStr.substr(0, frontChars) + separator + fullStr.substr(fullStr.length - backChars);
   }
+
+  const { account } = useWeb3()
 
   if (account) {
     return (
@@ -36,8 +37,6 @@ const AccountDisplay = ({ account }) => {
 }
 
 const Top = () => {
-  const { userSupplied } = useUserSuppliedConnect()
-
   return (
     <div className="flex justify-between mb-16">
       <div className="w-24 p-1">
@@ -48,7 +47,7 @@ const Top = () => {
           <img src={wallet} alt="wallet" />
         </div>
         <div className="ml-3 text-gray-400 text-sm">
-          <AccountDisplay account={userSupplied.account} />
+          <AccountDisplay />
         </div>
       </div>
     </div>
