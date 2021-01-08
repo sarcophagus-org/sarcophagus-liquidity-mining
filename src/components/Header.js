@@ -3,7 +3,7 @@ import { useData } from '../dataContext'
 import { useWeb3 } from '../web3'
 import logo from '../assets/images/logo.png'
 import wallet from '../assets/images/wallet.svg'
-import { useUserSuppliedConnect, connect } from '../web3/userSupplied'
+import { connect } from '../web3/userSupplied'
 
 const AccountDisplay = () => {
   const truncate = (fullStr, strLen, separator) => {
