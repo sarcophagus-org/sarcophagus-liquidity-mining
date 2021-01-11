@@ -14,8 +14,19 @@ module.exports = async function (deployer, network, accounts) {
     usdtAddress = '0xdac17f958d2ee523a2206206994597c13d831ec7'
     daiAddress = '0x6b175474e89094c44da98b954eedeac495271d0f'
     sarcoAddress = ''
-    ownerAddress = ''
-    console.error('SARCO token and Owner DAO not deployed yet')
+    
+    // yikes, what is this all about
+    // c'mon truffle
+    if (network === 'mainnet-fork') {
+      ownerAddress = deployer.provider.options.unlocked_accounts[0]
+    } else if (network === 'mainnet') {
+      ownerAddress = accounts[0]
+    } else {
+      console.error('which network are we on?', network)
+      process.exit(1)
+    }
+
+    console.error('SARCO token not deployed yet')
     process.exit(1)
   } else if (['goerli', 'goerli-fork'].includes(network)) {
     await deployer.deploy(SarcoMock)

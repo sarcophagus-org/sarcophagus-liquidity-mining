@@ -26,5 +26,14 @@ module.exports = async function (_, network) {
     const startTime = 1609786800
     const endTime = 1609873200
     await liquidityMining.deposit(amount, startTime, endTime)
+  } else if (['mainnet', 'mainnet-fork'].includes(network)) {
+    const liquidityMining = await LiquidityMining.deployed()
+    const amount = (new BN(1000000)).mul(new BN(10).pow(new BN(18)))
+
+    // tokens will be sent to the Liquidity Mining contract, outside of this migration
+
+    const startTime = 1610496000 // Jan 13 2021 00:00:00 GMT
+    const endTime = startTime + (60 * 60 * 24 * 365) // 1 year
+    await liquidityMining.deposit(amount, startTime, endTime)
   }
 }
