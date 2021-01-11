@@ -120,10 +120,12 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
             "LiquidityMining::deposit: end time must after start time"
         );
 
+        require(
+            sarco.balanceOf(address(this)) == _totalRewards,
+            "LiquidityMining::deposit: contract balance does not equal expected _totalRewards"
+        );
+
         totalRewards = _totalRewards;
-
-        sarco.transferFrom(msg.sender, address(this), _totalRewards);
-
         startTime = _startTime;
         endTime = _endTime;
 

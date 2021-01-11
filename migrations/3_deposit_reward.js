@@ -10,7 +10,7 @@ module.exports = async function (_, network) {
     const amount = (new BN(1000000)).mul(new BN(10).pow(new BN(18)))
 
     const sarcoMock = await SarcoMock.deployed()
-    await sarcoMock.approve(liquidityMining.address, amount)
+    await sarcoMock.transfer(liquidityMining.address, amount)
 
     const currentTime = (await web3.eth.getBlock('latest')).timestamp
     const startTime = currentTime + 60 * 1
@@ -21,7 +21,7 @@ module.exports = async function (_, network) {
     const amount = (new BN(1000000)).mul(new BN(10).pow(new BN(18)))
 
     const sarcoMock = await SarcoMock.deployed()
-    await sarcoMock.approve(liquidityMining.address, amount)
+    await sarcoMock.transfer(liquidityMining.address, amount)
 
     const startTime = 1609786800
     const endTime = 1609873200
