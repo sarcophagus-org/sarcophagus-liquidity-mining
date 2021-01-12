@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 
 const supportedChains = () => {
   const dev = process.env.NODE_ENV !== 'production' ? [parseInt(process.env.REACT_APP_LOCAL_CHAINID, 10)] : []
-  return [...dev, 5]
+  return [...dev, 1]
 }
 
 const useAddresses = chainId => {
@@ -13,9 +13,9 @@ const useAddresses = chainId => {
       setAddresses({
         liquidityMining: process.env.REACT_APP_LOCAL_LIQUIDITY_MINING_ADDRESS
       })
-    } else if (chainId === 5) {
+    } else if (chainId === 1) {
       setAddresses({
-        liquidityMining: '0xD980618Cd84300e95F6692a8f5B002c6784b512c'
+        liquidityMining: '0xF6eaD7c9Bc26b7641B7310EB7Ef6C2040f16ADEf'
       })
     }
   }, [chainId])

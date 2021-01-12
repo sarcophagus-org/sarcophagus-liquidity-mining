@@ -13,7 +13,7 @@ module.exports = async function (deployer, network, accounts) {
     usdcAddress = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
     usdtAddress = '0xdac17f958d2ee523a2206206994597c13d831ec7'
     daiAddress = '0x6b175474e89094c44da98b954eedeac495271d0f'
-    sarcoAddress = ''
+    sarcoAddress = '0x7697b462a7c4ff5f8b55bdbc2f4076c2af9cf51a'
     
     // yikes, what is this all about
     // c'mon truffle
@@ -25,9 +25,6 @@ module.exports = async function (deployer, network, accounts) {
       console.error('which network are we on?', network)
       process.exit(1)
     }
-
-    console.error('SARCO token not deployed yet')
-    process.exit(1)
   } else if (['goerli', 'goerli-fork'].includes(network)) {
     await deployer.deploy(SarcoMock)
     sarcoAddress = (await SarcoMock.deployed()).address
