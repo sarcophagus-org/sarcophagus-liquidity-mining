@@ -20,8 +20,10 @@
     "web3modal": "^1.9.2"
   },
   "devDependencies": {
+    "@openzeppelin/contract-loader": "^0.6.2",
     "@openzeppelin/contracts": "^3.3.0",
     "@tailwindcss/forms": "^0.2.1",
+    "@truffle/contract": "^4.3.5",
     "@truffle/hdwallet-provider": "^1.2.0",
     "autoprefixer": "^9.8.6",
     "dotenv": "^8.2.0",

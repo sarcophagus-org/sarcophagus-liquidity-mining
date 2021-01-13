@@ -15,7 +15,7 @@ const useAddresses = chainId => {
       })
     } else if (chainId === 1) {
       setAddresses({
-        liquidityMining: '0xF6eaD7c9Bc26b7641B7310EB7Ef6C2040f16ADEf'
+        liquidityMining: '0x7A9A0d2ae824Ba57a5FE7DabAF7E6846021D4e8e'
       })
     }
   }, [chainId])
