@@ -5,11 +5,13 @@ pragma solidity ^0.6.12;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
-contract LiquidityMining is Ownable, ReentrancyGuard {
+contract LiquidityMining2 is Ownable, ReentrancyGuard {
     using SafeMath for uint256;
     using SafeMath for uint8;
+    using SafeERC20 for ERC20;
 
     ERC20 public immutable usdc;
     ERC20 public immutable usdt;
@@ -226,15 +228,15 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         }
 
         if (usdcIn > 0) {
-            usdc.transferFrom(msg.sender, address(this), usdcIn);
+            usdc.safeTransferFrom(msg.sender, address(this), usdcIn);
         }
 
         if (usdtIn > 0) {
-            usdt.transferFrom(msg.sender, address(this), usdtIn);
+            usdt.safeTransferFrom(msg.sender, address(this), usdtIn);
         }
 
         if (daiIn > 0) {
-            dai.transferFrom(msg.sender, address(this), daiIn);
+            dai.safeTransferFrom(msg.sender, address(this), daiIn);
         }
 
         if (totalUserStake(msg.sender) == 0) {
@@ -271,19 +273,19 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         daiOut = denormalize(dai, daiOut);
 
         if (usdcOut > 0) {
-            usdc.transfer(to, usdcOut);
+            usdc.safeTransfer(to, usdcOut);
         }
 
         if (usdtOut > 0) {
-            usdt.transfer(to, usdtOut);
+            usdt.safeTransfer(to, usdtOut);
         }
 
         if (daiOut > 0) {
-            dai.transfer(to, daiOut);
+            dai.safeTransfer(to, daiOut);
         }
 
         if (reward > 0) {
-            sarco.transfer(to, reward);
+            sarco.safeTransfer(to, reward);
             userClaimedRewards[msg.sender] = userClaimedRewards[msg.sender].add(
                 reward
             );
@@ -311,7 +313,7 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         reward = _reward;
 
         if (reward > 0) {
-            sarco.transfer(to, reward);
+            sarco.safeTransfer(to, reward);
             userClaimedRewards[msg.sender] = userClaimedRewards[msg.sender].add(
                 reward
             );
@@ -414,7 +416,7 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
         address tokenToRescue,
         address to,
         uint256 amount
-    ) public onlyOwner nonReentrant returns (bool) {
+    ) public onlyOwner nonReentrant {
         if (tokenToRescue == address(usdc)) {
             require(
                 amount <= usdc.balanceOf(address(this)).sub(_totalStakeUsdc),
@@ -442,6 +444,6 @@ contract LiquidityMining is Ownable, ReentrancyGuard {
             }
         }
 
-        return IERC20(tokenToRescue).transfer(to, amount);
+        ERC20(tokenToRescue).safeTransfer(to, amount);
     }
 }
