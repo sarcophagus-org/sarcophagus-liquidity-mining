@@ -9,12 +9,14 @@ const Container = ({ children }) => {
   )
 }
 
+const currentTimeTooltip = "\"Current Time\" comes from the timestamp of the most recent Ethereum block. That's why it slightly jumps around, and probably doesn't directly match your system clock."
+
 const NotScheduled = () => {
   const { currentTime } = useData()
 
   return (
     <Container>
-      <ValueItem value={currentTime}>Current Time</ValueItem>
+      <ValueItem value={currentTime} tooltipText={currentTimeTooltip}>Current Time</ValueItem>
     </Container>
   )
 }
@@ -24,7 +26,7 @@ const Scheduled = () => {
 
   return (
     <Container>
-      <ValueItem value={currentTime}>Current Time</ValueItem>
+      <ValueItem value={currentTime} tooltipText={currentTimeTooltip}>Current Time</ValueItem>
       <ValueItem value={startTime}>Start Time</ValueItem>
       <ValueItem value={timeUntilKickoff}>Time Until Kickoff</ValueItem>
     </Container>
@@ -36,7 +38,7 @@ const Ready = () => {
 
   return (
     <Container>
-      <ValueItem value={currentTime}>Current Time</ValueItem>
+      <ValueItem value={currentTime} tooltipText={currentTimeTooltip}>Current Time</ValueItem>
       <ValueItem value={rewardsPerTime}>SARCO Per Second</ValueItem>
     </Container>
   )
@@ -48,7 +50,7 @@ const Active = () => {
   return (
     <Container>
       <ValueItem value={firstStakeTime}>Start Time</ValueItem>
-      <ValueItem value={currentTime}>Current Time</ValueItem>
+      <ValueItem value={currentTime} tooltipText={currentTimeTooltip}>Current Time</ValueItem>
       <ValueItem value={endTime}>End Time</ValueItem>
       <ValueItem value={remainingTime}>Remaining Time</ValueItem>
       <ValueItem value={rewardsPerTime}>SARCO Per Second</ValueItem>
@@ -63,7 +65,7 @@ const Over = () => {
     <Container>
       <ValueItem value={firstStakeTime}>Start Time</ValueItem>
       <ValueItem value={endTime}>End Time</ValueItem>
-      <ValueItem value={currentTime}>Current Time</ValueItem>
+      <ValueItem value={currentTime} tooltipText={currentTimeTooltip}>Current Time</ValueItem>
       <ValueItem value={rewardsPerTime}>SARCO Per Second</ValueItem>
     </Container>
   )
