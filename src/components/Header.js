@@ -55,7 +55,7 @@ const Top = () => {
 }
 
 const Title = () => {
-  const { systemState, StateEnum } = useData()
+  const { systemState, StateEnum, liquidityMining } = useData()
 
   const [liquidityMiningState, setLiquidityMiningState] = useState("Not Scheduled")
   const [badgeColor, setBadgeColor] = useState("bg-red")
@@ -83,12 +83,17 @@ const Title = () => {
   }, [systemState, StateEnum])
 
   return (
-    <div className="flex justify-center items-center">
-      <h1 className="text-xl">
-        Liquidity Mining
-      </h1>
-      <div className={`ml-3 py-1 px-2 ${badgeColor} text-gray-900 text-xs rounded`}>
-        {liquidityMiningState}
+    <div className="flex flex-col items-center">
+      <div className="flex justify-center items-center">
+        <h1 className="text-xl">
+          Liquidity Mining
+        </h1>
+        <div className={`ml-3 py-1 px-2 ${badgeColor} text-gray-900 text-xs rounded`}>
+          {liquidityMiningState}
+        </div>
+      </div>
+      <div className="mt-2 text-gray-400 text-sm underline">
+        <a target="_blank" rel="noreferrer" href={`https://etherscan.io/address/${liquidityMining?.address}`}>View on Etherscan</a>
       </div>
     </div>
   )
