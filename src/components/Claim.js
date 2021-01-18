@@ -25,7 +25,7 @@ const Claim = () => {
 
   const payout = () => {
     contractCall(
-      liquidityMining.payout, [account, { gasLimit: 200000 }],
+      liquidityMining.payout, [account, { }],
       "Paying out rewards...", "Payout failed!", "Payout successful!"
     )
   }

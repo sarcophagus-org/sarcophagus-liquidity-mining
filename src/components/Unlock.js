@@ -28,7 +28,7 @@ const Unlock = () => {
 
   const withdraw = () => {
     contractCall(
-      liquidityMining.withdraw, [account, { gasLimit: 250000 }],
+      liquidityMining.withdraw, [account, { }],
       "Unlocking stablecoins...", "Unlock failed!", "Unlock successful!"
     )
   }
