@@ -20,6 +20,7 @@ const web3Modal = new Web3Modal({ providerOptions })
 const useUserSuppliedConnect = () => {
   const [provider, setProvider] = useState(null)
   const [userSupplied, setUserSupplied] = useState(null)
+  const { selectedAddress } = window.ethereum
 
   web3Modal.on('connect', provider => {
     setProvider(provider)
@@ -47,15 +48,13 @@ const useUserSuppliedConnect = () => {
   }, [provider])
 
   useEffect(() => {
-    detectEthereumProvider().then(provider => {
-      const web3Provider = new ethers.providers.Web3Provider(provider)
-      web3Provider.listAccounts().then( accounts => {
-        if(provider && accounts.length) {
-          web3Modal.connectTo('injected')
-        }
-      })
+    detectEthereumProvider().then(injectedProvider => {
+      if(injectedProvider && selectedAddress) {
+        setProvider(injectedProvider)
+        setUserSupplied(new ethers.providers.Web3Provider(injectedProvider))
+      }
     })
-  }, [])
+  }, [selectedAddress])
 
   return userSupplied
 }
