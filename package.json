@@ -5,6 +5,7 @@
   "homepage": "https://mining.sarcophagus.io",
   "dependencies": {
     "@craco/craco": "^5.9.0",
+    "@metamask/detect-provider": "^1.2.0",
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.2",
     "@testing-library/user-event": "^12.2.2",
@@ -57,5 +58,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "engines": {
+    "node": "12.20.1"
   }
 }
