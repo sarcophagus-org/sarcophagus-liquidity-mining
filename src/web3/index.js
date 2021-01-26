@@ -28,7 +28,7 @@ const createWeb3Root = () => {
     })
 
     useEffect(() => {
-      if (userSupplied?.provider && supportedChains().includes(parseInt(userSupplied.provider.chainId))) {
+      if (userSupplied?.provider && userSupplied.provider.selectedAddress && supportedChains().includes(parseInt(userSupplied.provider.chainId))) {
         setWeb3({
           name: 'Injected provider',
           account: userSupplied.provider.selectedAddress,
