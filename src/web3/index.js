@@ -32,7 +32,7 @@ const createWeb3Root = () => {
         setWeb3({
           name: 'Injected provider',
           account: userSupplied.provider.selectedAddress,
-          chainId: userSupplied.provider.chainId,
+          chainId: parseInt(userSupplied.provider.chainId),
           provider: userSupplied,
           signerOrProvider: userSupplied.getSigner(),
         })
