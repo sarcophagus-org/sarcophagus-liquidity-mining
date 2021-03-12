@@ -28,14 +28,16 @@ const useCurrentBlock = () => {
 }
 
 const useCurrentTime = (blockNumber) => {
-  const [currentTime, setCurrentTime] = useState(BigNumber.from(0))
+  const [currentTime, setCurrentTime] = useState(BigNumber.from(Math.floor(Date.now() / 1000)))
   const { provider } = useWeb3()
 
   useEffect(() => {
     if (!provider) return
 
     provider.getBlock(blockNumber).then(block => {
-      setCurrentTime(BigNumber.from(block.timestamp))
+      if (blockNumber > 0) {
+        setCurrentTime(BigNumber.from(block.timestamp))
+      }
     }).catch(console.error)
 
     const timer = setInterval(() => {
