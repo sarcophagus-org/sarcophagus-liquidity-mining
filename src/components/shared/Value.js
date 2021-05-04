@@ -2,7 +2,7 @@ import Tooltip from './Tooltip'
 
 const ValueItem = ({ children, value, bigValue = false, bold = false, icon, tooltipText }) => {
   return (
-    <div className="mx-4 mb-6 text-sm">
+    <div className="mx-4 mb-6 text-sm w-64">
       <div className={`${bold ? "text-white font-bold" : "text-gray-400 font-normal"} mb-2`}>
         {tooltipText
           ? <div className="flex justify-center items-center">
