@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Contract } from 'ethers'
 import { useWeb3 } from '../web3'
 import { useAddresses } from '../web3/chains'
-import LiquidityMining from '../../build-contracts/LiquidityMining.json'
+import LiquidityMining from '../../build-contracts/LiquidityMining2.json'
 import ERC20 from '../../build-contracts/ERC20.json'
 
 const useLiquidityMiningContract = () => {
