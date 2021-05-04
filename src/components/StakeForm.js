@@ -155,9 +155,6 @@ const StakeForm = () => {
           <Input currency="dai" value={dai} setValue={setDai} balance={myDaiBalance} decimals={6} icon={daiIcon} />
         </div>
         <div className="mx-6">
-          <div className="mb-4 text-center text-gray-400 text-2xs">
-            Please see the documentation below for more info.
-          </div>
           <Button type="submit" disabled={!buttonEnabled} icon={lock}>
             {buttonText}
           </Button>
