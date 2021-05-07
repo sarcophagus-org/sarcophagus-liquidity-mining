@@ -60,19 +60,24 @@ const createDataRoot = () => {
 
   context.displayName = 'Data Provider'
   const Provider = context.Provider
-
-  const makeDecimals = decimals => {
-    return `0,0.[${Array(decimals).fill(0).join("")}]`
-  }
+  
+  const getDecimalNumber = (bigNumber, decimals) => {
+      return makeNumeral(bigNumber, decimals).value()
+    }
 
   const makeNumeral = (bigNumber, decimals) => {
     return numeral(utils.formatUnits(bigNumber, decimals))
   }
 
-  const moneyString = (bigNumber, decimals) => {
-    const money = makeNumeral(bigNumber, decimals).format(makeDecimals(decimals))
-    if (money === "NaN") return "0"
-    return money
+  const formatNumber = (number, decimals, decimalsToShow=6) => {
+    if (number === "NaN" || number === 0 || !decimals) return "0"
+    return Math.abs(number).toLocaleString(undefined, {minimumFractionDigits: decimalsToShow, maximumFractionDigits: decimalsToShow})
+  }
+
+  const moneyString = (bigNumber, decimals, decimalsToShow) => {
+    const money = makeNumeral(bigNumber, decimals).value()
+    const localeString = formatNumber(money, decimals, decimalsToShow)
+    return localeString
   }
 
   const counterString = seconds => {
@@ -94,10 +99,6 @@ const createDataRoot = () => {
 
   const dateString = seconds => {
     return new Date(seconds * 1000).toLocaleString()
-  }
-
-  const getDecimalNumber = (bigNumber, decimals) => {
-    return makeNumeral(bigNumber, decimals).value()
   }
 
   const StateEnum = Object.freeze({
@@ -187,12 +188,11 @@ const createDataRoot = () => {
     const canStake = useCanStake(systemState, StateEnum)
     const canPayout = useCanPayout(myPendingRewards)
     const canWithdraw = useCanWithdraw(myStakeUsdc, myStakeUsdt, myStakeDai)
-
     const dataContext = {
       liquidityMining, usdcContract, usdtContract, daiContract, sarcoContract,
       decimalsUsdc, decimalsUsdt, decimalsDai,
 
-      totalRewards: moneyString(totalRewards, decimalsSarco),
+      totalRewards: moneyString(totalRewards, decimalsSarco, 0),
       totalClaimedRewards: moneyString(totalClaimedRewards, decimalsSarco),
       rewardsPerTime: moneyString(rewardsPerTime, decimalsSarco),
       totalEmittedRewards: moneyString(totalEmittedRewards, decimalsSarco),
@@ -202,11 +202,11 @@ const createDataRoot = () => {
       totalStakeUsdc: moneyString(totalStakeUsdc, decimalsUsdc),
       totalStakeUsdt: moneyString(totalStakeUsdt, decimalsUsdt),
       totalStakeDai: moneyString(totalStakeDai, decimalsDai),
-      totalStakeStablecoins: numeral(
+      totalStakeStablecoins: formatNumber(numeral(
         getDecimalNumber(totalStakeUsdc, decimalsUsdc) +
         getDecimalNumber(totalStakeUsdt, decimalsUsdt) +
         getDecimalNumber(totalStakeDai, decimalsDai)
-      ).format(makeDecimals(decimalsDai)),
+      ).value(), decimalsDai),
 
       currentTime: dateString(currentTime),
       startTime: dateString(startTime),
@@ -218,11 +218,11 @@ const createDataRoot = () => {
       myStakeUsdc: moneyString(myStakeUsdc, decimalsUsdc),
       myStakeUsdt: moneyString(myStakeUsdt, decimalsUsdt),
       myStakeDai: moneyString(myStakeDai, decimalsDai),
-      myStakedStablecoins: numeral(
+      myStakedStablecoins: formatNumber(numeral(
         getDecimalNumber(myStakeUsdc, decimalsUsdc) +
         getDecimalNumber(myStakeUsdt, decimalsUsdt) +
         getDecimalNumber(myStakeDai, decimalsDai)
-      ).format(makeDecimals(decimalsDai)),
+      ).value()),
 
       myPendingRewards: moneyString(myPendingRewards, decimalsSarco),
       myClaimedRewards: moneyString(myClaimedRewards, decimalsSarco),

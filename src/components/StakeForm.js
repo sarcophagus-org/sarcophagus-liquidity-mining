@@ -149,12 +149,17 @@ const StakeForm = () => {
   return (
     <div>
       <form onSubmit={calls}>
-        <div className="mt-2 flex flex-col w-full">
+        <div className="flex flex-col w-full">
           <Input currency="usdc" value={usdc} setValue={setUsdc} balance={myUsdcBalance} decimals={decimalsUsdc} icon={usdcIcon} />
           <Input currency="usdt" value={usdt} setValue={setUsdt} balance={myUsdtBalance} decimals={decimalsUsdt} icon={usdtIcon} />
           <Input currency="dai" value={dai} setValue={setDai} balance={myDaiBalance} decimals={6} icon={daiIcon} />
         </div>
         <div className="mx-6">
+          <div className="mb-4 text-center text-gray-400 text-2xs">
+            <span>Please see the</span>
+            <a className="mx-2 text-white underline" href="https://sarcophagus.gitbook.io/sarcophagus-documentation/stablecoin-liquidity-mining-1/stablecoin-liquidity-mining" target="_blank" rel="noopener noreferrer">documentation</a>
+            <span>for more info</span>
+          </div>
           <Button type="submit" disabled={!buttonEnabled} icon={lock}>
             {buttonText}
           </Button>
